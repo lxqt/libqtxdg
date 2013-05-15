@@ -27,9 +27,9 @@
 
 
 #include "xdgmenu.h"
-#include <QtCore/QObject>
-#include <QtCore/QFileSystemWatcher>
-#include <QtCore/QTimer>
+#include <QObject>
+#include <QFileSystemWatcher>
+#include <QTimer>
 
 #define REBUILD_DELAY 3000
 

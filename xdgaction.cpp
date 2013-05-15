@@ -28,8 +28,8 @@
 
 #include "xdgaction.h"
 #include "xdgicon.h"
-#include <QtCore/QDebug>
-#include <QtCore/QCoreApplication>
+#include <QDebug>
+#include <QCoreApplication>
 
 
 /************************************************

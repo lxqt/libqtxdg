@@ -28,9 +28,9 @@
 
 #include "xdgautostart.h"
 #include "xdgdirs.h"
-#include <QtCore/QDebug>
-#include <QtCore/QSet>
-#include <QtCore/QDir>
+#include <QDebug>
+#include <QSet>
+#include <QDir>
 
 /************************************************
 The Autostart Directories are $XDG_CONFIG_DIRS/autostart. If the same filename is

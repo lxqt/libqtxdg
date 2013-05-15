@@ -34,9 +34,9 @@
 #ifndef QTXDG_XDGMENURULES_H
 #define QTXDG_XDGMENURULES_H
 
-#include <QtCore/QObject>
+#include <QObject>
 #include <QtXml/QDomElement>
-#include <QtCore/QLinkedList>
+#include <QLinkedList>
 
 #include "xdgdesktopfile.h"
 

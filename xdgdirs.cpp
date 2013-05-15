@@ -28,8 +28,8 @@
 
 #include "xdgdirs.h"
 #include <stdlib.h>
-#include <QtCore/QDir>
-#include <QtCore/QDebug>
+#include <QDir>
+#include <QDebug>
 
 
 /************************************************

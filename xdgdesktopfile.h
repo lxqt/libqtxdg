@@ -30,13 +30,13 @@
 #ifndef QTXDG_XDGDESKTOPFILE_H
 #define QTXDG_XDGDESKTOPFILE_H
 
-#include <QtCore/QSharedDataPointer>
+#include <QSharedDataPointer>
 //#include <QObject>
-#include <QtCore/QString>
-#include <QtCore/QVariant>
-#include <QtCore/QStringList>
+#include <QString>
+#include <QVariant>
+#include <QStringList>
 #include <QtGui/QIcon>
-#include <QtCore/QSettings>
+#include <QSettings>
 
 class XdgDesktopFileData;
 	

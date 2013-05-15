@@ -31,11 +31,11 @@
 #include "xdgdirs.h"
 #include "xmlhelper.h"
 
-#include <QtCore/QFile>
-#include <QtCore/QFileInfo>
-#include <QtCore/QDebug>
-#include <QtCore/QString>
-#include <QtCore/QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QDebug>
+#include <QString>
+#include <QDir>
 #include <QDebug>
 #include <QtXml/QDomNamedNodeMap>
 #include <QtXml/QDomNode>

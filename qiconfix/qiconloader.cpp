@@ -53,14 +53,14 @@
 #include <QtGui/QIconEnginePlugin>
 #include <QtGui/QPixmapCache>
 #include <QtGui/QIconEngine>
-#include <QtGui/QStyleOption>
-#include <QtCore/QList>
-#include <QtCore/QHash>
-#include <QtCore/QDir>
-#include <QtCore/QSettings>
+#include <QStyleOption>
+#include <QList>
+#include <QHash>
+#include <QDir>
+#include <QSettings>
 #include <QtGui/QPainter>
-#include <QtGui/QApplication>
-#include <QtCore/QLatin1Literal>
+#include <QApplication>
+#include <QLatin1Literal>
 //#ifdef Q_WS_MAC
 //#include <private/qt_cocoa_helpers_mac_p.h>
 //#endif

@@ -39,13 +39,13 @@
 #include "xdgdirs.h"
 
 #include <stdlib.h>
-#include <QtCore/QSharedData>
-#include <QtCore/QFile>
-#include <QtCore/QDir>
-#include <QtCore/QFileInfo>
+#include <QSharedData>
+#include <QFile>
+#include <QDir>
+#include <QFileInfo>
 #include <QDebug>
-#include <QtCore/QHash>
-#include <QtCore/QProcess>
+#include <QHash>
+#include <QProcess>
 #include <QUrl>
 #include <QDesktopServices>
 #include <QList>

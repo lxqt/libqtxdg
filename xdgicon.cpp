@@ -29,14 +29,14 @@
 
 #include "xdgicon.h"
 
-#include <QtCore/QString>
-#include <QtCore/QDebug>
-#include <QtCore/QDir>
-#include <QtCore/QStringList>
-#include <QtCore/QFileInfo>
-#include <QtCore/QCache>
+#include <QString>
+#include <QDebug>
+#include <QDir>
+#include <QStringList>
+#include <QFileInfo>
+#include <QCache>
 #include "qiconfix/qiconloader_p.h"
-#include <QtCore/QCoreApplication>
+#include <QCoreApplication>
 
 #define DEFAULT_APP_ICON "application-x-executable"
 

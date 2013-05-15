@@ -30,11 +30,11 @@
 #define QTXDG_XDGMENUAPPLINKPROCESSOR_H
 
 #include "xdgmenurules.h"
-#include <QtCore/QObject>
+#include <QObject>
 #include <QtXml/QDomElement>
-#include <QtCore/QLinkedList>
-#include <QtCore/QString>
-#include <QtCore/QHash>
+#include <QLinkedList>
+#include <QString>
+#include <QHash>
 
 class XdgMenu;
 class XdgMenuAppFileInfo;

@@ -33,7 +33,7 @@
 #include <QFileInfo>
 #include <magic.h>
 #include <QDebug>
-#include <QtCore/QStringList>
+#include <QStringList>
 #include <QMap>
 #include <QDir>
 #include <QFileInfo>

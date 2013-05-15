@@ -31,8 +31,8 @@
 #define QTXDG_XDGMENU_H
 
 #include <QObject>
-#include <QtCore/QString>
-#include <QtCore/QStringList>
+#include <QString>
+#include <QStringList>
 #include <QtXml/QDomDocument>
 
 

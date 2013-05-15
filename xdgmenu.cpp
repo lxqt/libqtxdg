@@ -36,19 +36,19 @@
 #include "xdgdirs.h"
 #include "xdgmenulayoutprocessor.h"
 
-#include <QtCore/QDebug>
+#include <QDebug>
 #include <QtXml/QDomElement>
 #include <QtXml/QDomNamedNodeMap>
-#include <QtCore/QFile>
-#include <QtCore/QSettings>
-#include <QtCore/QFileInfo>
-#include <QtCore/QDir>
-#include <QtCore/QHash>
-#include <QtCore/QLocale>
-#include <QtCore/QFileSystemWatcher>
-#include <QtCore/QTranslator>
-#include <QtCore/QCoreApplication>
-#include <QtCore/QCryptographicHash>
+#include <QFile>
+#include <QSettings>
+#include <QFileInfo>
+#include <QDir>
+#include <QHash>
+#include <QLocale>
+#include <QFileSystemWatcher>
+#include <QTranslator>
+#include <QCoreApplication>
+#include <QCryptographicHash>
 
 void installTranslation(const QString &name)
 {

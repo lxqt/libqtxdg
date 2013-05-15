@@ -45,7 +45,17 @@
  ************************************************/
 static void qt_cleanup_icon_cache();
 typedef QCache<QString, QIcon> IconCache;
-Q_GLOBAL_STATIC_WITH_INITIALIZER(IconCache, qtIconCache, qAddPostRoutine(qt_cleanup_icon_cache))
+
+namespace {
+struct QtIconCache: public IconCache
+{
+    QtIconCache()
+    {
+        qAddPostRoutine(qt_cleanup_icon_cache);
+    }
+};
+}
+Q_GLOBAL_STATIC(IconCache, qtIconCache);
 
 static void qt_cleanup_icon_cache()
 {

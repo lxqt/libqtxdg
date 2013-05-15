@@ -153,7 +153,11 @@ function(qtxdg_translate_ts _qmFiles)
 
     # QM files **********************************************    
     file(GLOB _tsFiles ${_translationDir}/${_tsSrcFileNameWE}_*.ts)    
-    qt4_add_translation(_qmFilesLocal ${_tsFiles})
+    if (USE_QT5)
+        qt5_add_translation(_qmFilesLocal ${_tsFiles})
+    else()
+        qt4_add_translation(_qmFilesLocal ${_tsFiles})
+    endif()
     install(FILES ${_qmFilesLocal} DESTINATION ${_installDir})
     
     set(${_qmFiles} ${_qmFilesLocal} PARENT_SCOPE)

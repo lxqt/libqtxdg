@@ -3,6 +3,7 @@ cmake_minimum_required( VERSION 2.6 )
 project(libqtxdg)
 
 option(USE_QT5 "Use Qt5. Defaults to Qt4" OFF)
+option(BUILD_TESTS "Builds tests" OFF)
 
 # additional cmake files
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -199,7 +200,7 @@ if (${CMAKE_CURRENT_BINARY_DIR} STREQUAL ${CMAKE_BINARY_DIR})
     message(STATUS "")
 endif()
 
-if(BUILD_TESTS STREQUAL "Yes")
+if(BUILD_TESTS)
     enable_testing()
     add_subdirectory(test)
 endif()

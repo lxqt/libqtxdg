@@ -20,6 +20,9 @@ if (USE_QT5)
     find_package(Qt5Widgets REQUIRED)
     find_package(Qt5Xml REQUIRED)
     find_package(Qt5LinguistTools REQUIRED)
+    if (BUILD_TESTS)
+        find_package(Qt5Test REQUIRED)
+    endif()
 
     # if both Qt4 and Qt5 are installed we must check what version was found
     if (NOT ${Qt5Core_VERSION_MAJOR} EQUAL 5)
@@ -35,6 +38,9 @@ if (USE_QT5)
     message(STATUS "Building with Qt ${Qt5Core_VERSION_STRING}")
 else()
     find_package(Qt4 REQUIRED QtCore QtGui QtXml)
+    if (BUILD_TESTS)
+        find_package(Qt4 REQUIRED QtTest)
+    endif()
 
     # if both Qt4 and Qt5 are installed we must check what version was found
     if (NOT ${QT_VERSION_MAJOR} EQUAL 4)

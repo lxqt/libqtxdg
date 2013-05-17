@@ -1,6 +1,4 @@
-project(qtxdg_test)
-cmake_minimum_required( VERSION 2.6 )
-
+set(PROJECT_NAME "qtxdg_test")
 
 set(${PROJECT_NAME}_SRCS
     qtxdg_test.cpp

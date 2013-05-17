@@ -182,7 +182,11 @@ add_library(qtxdg SHARED
 )
 
 if(USE_QT5)
-    target_link_libraries(qtxdg  ${Qt5Widgets_LIBRARIES} ${LIBMAGIC_LIBRARY})
+    target_link_libraries(qtxdg
+        ${Qt5Widgets_LIBRARIES}
+        ${Qt5Xml_LIBRARIES}
+        ${LIBMAGIC_LIBRARY}
+    )
 else()
     target_link_libraries(qtxdg  ${QT_LIBRARIES} ${LIBMAGIC_LIBRARY})
 endif()

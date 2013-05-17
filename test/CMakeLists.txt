@@ -13,12 +13,9 @@ set(LIBRARIES
     qtxdg
 )
 
-set(QT_USE_QTTEST true)
 
 add_definitions ( -Wall )
 
-find_package ( Qt4 REQUIRED )
-include ( ${QT_USE_FILE} )
 
 qt4_wrap_cpp(MOCS ${${PROJECT_NAME}_MOCS})
 

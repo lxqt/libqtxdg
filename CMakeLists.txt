@@ -133,10 +133,6 @@ configure_file(
     @ONLY
 )
 
-if (NOT USE_QT5)
-    set(QT_USE_QTXML TRUE)
-endif()
-
 
 # Translations **********************************
 # QtXdg is an independent library, so I do not use razor_translate_ts

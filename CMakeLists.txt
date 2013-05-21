@@ -35,6 +35,7 @@ if (USE_QT5)
         "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}"
     )
 
+    set(QTX_LIBRARIES ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES})
     message(STATUS "Building with Qt ${Qt5Core_VERSION_STRING}")
 else()
     find_package(Qt4 REQUIRED QtCore QtGui QtXml)
@@ -47,6 +48,8 @@ else()
         message(FATAL_ERROR "Qt was found, but NOT Qt4")
     endif()
 
+    include(${QT_USE_FILE})
+    set(QTX_LIBRARIES ${QT_LIBRARIES})
     message(STATUS "Building with Qt ${QTVERSION}")
 endif()
 
@@ -151,9 +154,6 @@ qtxdg_translate_ts(libqtxdg_QM_FILES
 #**********************************************************
 
 include(RazorLibSuffix)
-if (NOT USE_QT5)
-    include(${QT_USE_FILE})
-endif()
 
 if (USE_QT5)
     QT5_WRAP_CPP(libqtxdg_CXX_FILES ${libqtxdg_MOCS})
@@ -177,15 +177,8 @@ add_library(qtxdg SHARED
     ${libqtxdg_QM_FILES}
 )
 
-if(USE_QT5)
-    target_link_libraries(qtxdg
-        ${Qt5Widgets_LIBRARIES}
-        ${Qt5Xml_LIBRARIES}
-        ${LIBMAGIC_LIBRARY}
-    )
-else()
-    target_link_libraries(qtxdg  ${QT_LIBRARIES} ${LIBMAGIC_LIBRARY})
-endif()
+
+target_link_libraries(qtxdg ${QTX_LIBRARIES} ${LIBMAGIC_LIBRARY})
 
 set_target_properties(qtxdg PROPERTIES
   VERSION ${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}

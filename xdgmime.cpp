@@ -230,7 +230,7 @@ bool XdgMimeData::readXml(QIODevice* xml)
     }
 
     QDomNodeList commentNodes = rootElement.elementsByTagName("comment");
-    for(uint i = 0; i < commentNodes.length(); i++)
+    for(int i = 0; i < commentNodes.size(); i++)
     {
         if (! commentNodes.item(i).isElement())
         {
@@ -251,7 +251,7 @@ bool XdgMimeData::readXml(QIODevice* xml)
 
     QSet<QString> collectedPatterns; 
     QDomNodeList globNodes = rootElement.elementsByTagName("glob");
-    for(uint i = 0; i < globNodes.length(); i++)
+    for(int i = 0; i < globNodes.size(); i++)
     {
         if (globNodes.item(i).isElement() && globNodes.item(i).toElement().hasAttribute("pattern"))
         {

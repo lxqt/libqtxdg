@@ -29,6 +29,9 @@ if (USE_QT5)
         message(FATAL_ERROR "Qt was found, but NOT Qt5.")
     endif()
 
+    set(QTXDGX_LIBRARY_NAME "Qt5Xdg")
+    set(QTXDGX_FILE_NAME "qt5xdg")
+
     include_directories(${Qt5Widgets_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS})
     add_definitions(${Qt5Core_DEFINITIONS})
     set(CMAKE_CXX_FLAGS
@@ -47,6 +50,9 @@ else()
     if (NOT ${QT_VERSION_MAJOR} EQUAL 4)
         message(FATAL_ERROR "Qt was found, but NOT Qt4")
     endif()
+
+    set(QTXDGX_LIBRARY_NAME "qtxdg")
+    set(QTXDGX_FILE_NAME "qtxdg")
 
     include(${QT_USE_FILE})
     set(QTX_LIBRARIES ${QT_LIBRARIES})
@@ -117,25 +123,24 @@ set(QTXDG_PATCH_VERSION ${PATCH_VERSION})
 set(QTXDG_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/qtxdg-config.cmake.in
-    ${CMAKE_BINARY_DIR}/cmake/qtxdg-config.cmake
+    ${CMAKE_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}-config.cmake
     @ONLY
 )
 
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/qtxdg_use.cmake
-    ${CMAKE_BINARY_DIR}/cmake/qtxdg_use.cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${QTXDGX_FILE_NAME}_use.cmake
+    ${CMAKE_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}_use.cmake
     @ONLY
 )
 
 # Instalable ...............................
-set(QTXDG_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include/qtxdg)
+set(QTXDG_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include/${QTXDGX_FILE_NAME})
 
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/qtxdg-config.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/qtxdg-config.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake
     @ONLY
 )
-
 
 # Translations **********************************
 # QtXdg is an independent library, so I do not use razor_translate_ts
@@ -166,10 +171,10 @@ if (NOT CMAKE_BUILD_TYPE)
 endif (NOT CMAKE_BUILD_TYPE)
 
 
-set(APP_SHARE_DIR ${CMAKE_INSTALL_PREFIX}/share/libqtxdg)
+set(APP_SHARE_DIR ${CMAKE_INSTALL_PREFIX}/share/lib${QTXDGX_FILE_NAME})
 add_definitions(-DTRANSLATIONS_DIR=\"${APP_SHARE_DIR}\")
 
-add_library(qtxdg SHARED
+add_library(${QTXDGX_LIBRARY_NAME} SHARED
     ${libqtxdg_PUBLIC_H_FILES}
     ${libqtxdg_PRIVATE_H_FILES}
     ${libqtxdg_CPP_FILES}
@@ -178,20 +183,20 @@ add_library(qtxdg SHARED
 )
 
 
-target_link_libraries(qtxdg ${QTX_LIBRARIES} ${LIBMAGIC_LIBRARY})
+target_link_libraries(${QTXDGX_LIBRARY_NAME} ${QTX_LIBRARIES} ${LIBMAGIC_LIBRARY})
 
-set_target_properties(qtxdg PROPERTIES
+set_target_properties(${QTXDGX_LIBRARY_NAME} PROPERTIES
   VERSION ${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}
   SOVERSION ${MAJOR_VERSION}
 )
 
-install(TARGETS qtxdg DESTINATION lib${LIB_SUFFIX})
-install(FILES ${libqtxdg_PUBLIC_H_FILES} DESTINATION include/qtxdg)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/qtxdg-config.cmake DESTINATION share/cmake/qtxdg)
-install(FILES cmake/qtxdg_use.cmake DESTINATION share/cmake/qtxdg)
+install(TARGETS ${QTXDGX_LIBRARY_NAME} DESTINATION lib${LIB_SUFFIX})
+install(FILES ${libqtxdg_PUBLIC_H_FILES} DESTINATION include/${QTXDGX_FILE_NAME})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake DESTINATION share/cmake/${QTXDGX_FILE_NAME})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}_use.cmake DESTINATION share/cmake/${QTXDGX_FILE_NAME})
 
 include(create_pkgconfig_file)
-create_pkgconfig_file(qtxdg "QtXdg, a Qt implementation of XDG standards")
+create_pkgconfig_file(${QTXDGX_FILE_NAME} "QtXdg, a Qt implementation of XDG standards")
 
 if (${CMAKE_CURRENT_BINARY_DIR} STREQUAL ${CMAKE_BINARY_DIR})
     message(STATUS "")

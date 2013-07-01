@@ -42,7 +42,7 @@ endif()
 
 function(qtxdg_translate_ts _qmFiles)
     set(_translationDir "translations")
-    set(_installDir "${CMAKE_INSTALL_PREFIX}/share/libqtxdg/")
+    set(_installDir "${CMAKE_INSTALL_PREFIX}/share/lib${QTXDGX_FILE_NAME}/")
     
     # Parse arguments ***************************************
     set(_state "")

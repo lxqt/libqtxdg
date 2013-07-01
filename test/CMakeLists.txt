@@ -8,9 +8,8 @@ set(${PROJECT_NAME}_MOCS
     qtxdg_test.h
 )
 
-
 set(LIBRARIES
-    qtxdg
+    ${QTXDGX_LIBRARY_NAME}
 )
 
 

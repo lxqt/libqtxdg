@@ -81,6 +81,18 @@ set(libqtxdg_PUBLIC_H_FILES
     xdgautostart.h
 )
 
+set(libqtxdg_PUBLIC_CLASSES
+    XdgAction
+    XdgDesktopFile
+    XdgDirs
+    XdgIcon
+    XdgMenu
+    XdgMenuWidget
+    XdgMime
+    XmlHelper
+    XdgAutoStart
+)
+
 set(libqtxdg_PRIVATE_H_FILES
     xdgmenuapplinkprocessor.h
     xdgmenulayoutprocessor.h
@@ -172,6 +184,7 @@ else()
     QT4_WRAP_CPP(libqtxdg_CXX_FILES ${libqtxdg_MOCS})
 endif()
 
+
 if (NOT CMAKE_BUILD_TYPE)
     set ( CMAKE_BUILD_TYPE Release )
 endif (NOT CMAKE_BUILD_TYPE)
@@ -196,10 +209,15 @@ set_target_properties(${QTXDGX_LIBRARY_NAME} PROPERTIES
   SOVERSION ${MAJOR_VERSION}
 )
 
+# create the portable headers
+include(create_portable_headers)
+create_portable_headers(libqtxdg_PORTABLE_HEADERS ${libqtxdg_PUBLIC_CLASSES})
+
 install(TARGETS ${QTXDGX_LIBRARY_NAME} DESTINATION lib${LIB_SUFFIX})
 install(FILES ${libqtxdg_PUBLIC_H_FILES} DESTINATION include/${QTXDGX_FILE_NAME})
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake DESTINATION share/cmake/${QTXDGX_FILE_NAME})
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}_use.cmake DESTINATION share/cmake/${QTXDGX_FILE_NAME})
+install(FILES ${libqtxdg_PORTABLE_HEADERS} DESTINATION include/${QTXDGX_FILE_NAME})
 
 include(create_pkgconfig_file)
 create_pkgconfig_file(${QTXDGX_LIBRARY_NAME}

@@ -11,7 +11,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set (MAJOR_VERSION 0)
 set (MINOR_VERSION 5)
 set (PATCH_VERSION 0)
-
+set(QTXDG_VERSION_STRING ${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION})
 
 add_definitions(-Wall)
 
@@ -31,6 +31,9 @@ if (USE_QT5)
 
     set(QTXDGX_LIBRARY_NAME "Qt5Xdg")
     set(QTXDGX_FILE_NAME "qt5xdg")
+
+    set(QTXDGX_PKG_CONFIG_DESCRIPTION "Qt5Xdg, a Qt5 implementation of XDG standards")
+    set(QTXDGX_PKG_CONFIG_REQUIRES "Qt5Core, Qt5Xml")
 
     include_directories(${Qt5Widgets_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS})
     add_definitions(${Qt5Core_DEFINITIONS})
@@ -53,6 +56,9 @@ else()
 
     set(QTXDGX_LIBRARY_NAME "qtxdg")
     set(QTXDGX_FILE_NAME "qtxdg")
+
+    set(QTXDGX_PKG_CONFIG_DESCRIPTION "QtXdg, a Qt4 implementation of XDG standards")
+    set(QTXDGX_PKG_CONFIG_REQUIRES "QtCore, QtXml")
 
     include(${QT_USE_FILE})
     set(QTX_LIBRARIES ${QT_LIBRARIES})
@@ -196,7 +202,12 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake DESTI
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}_use.cmake DESTINATION share/cmake/${QTXDGX_FILE_NAME})
 
 include(create_pkgconfig_file)
-create_pkgconfig_file(${QTXDGX_FILE_NAME} "QtXdg, a Qt implementation of XDG standards")
+create_pkgconfig_file(${QTXDGX_LIBRARY_NAME}
+    ${QTXDGX_PKG_CONFIG_DESCRIPTION}
+    ${QTXDGX_PKG_CONFIG_REQUIRES}
+    ${QTXDGX_FILE_NAME}
+    ${QTXDG_VERSION_STRING}
+)
 
 if (${CMAKE_CURRENT_BINARY_DIR} STREQUAL ${CMAKE_BINARY_DIR})
     message(STATUS "")

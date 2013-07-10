@@ -3,8 +3,11 @@
 # Arguments:
 #   name: a library name (withoud "lib" prefix and "so" suffixes
 #   desc: a desription string
+#   requires: required libraries
+#   include_rel_dir: include directory, relative to includedir
+#   version: package version
 #
-macro (create_pkgconfig_file name desc)
+macro (create_pkgconfig_file name desc requires include_rel_dir version)
     set(_pkgfname "${CMAKE_CURRENT_BINARY_DIR}/${name}.pc")
     message(STATUS "${name}: writing pkgconfig file ${_pkgfname}")
 
@@ -15,9 +18,10 @@ includedir=\${prefix}/include
 
 Name: ${name}
 Description: ${desc}
-Version: ${RAZOR_VERSION}
+Version: ${version}
+Requires: ${requires}
 Libs: -L\${libdir} -l${name}
-Cflags: -I\${includedir}
+Cflags: -I\${includedir} -I\${includedir}/${include_rel_dir}
 
 ")
 

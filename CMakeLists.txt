@@ -138,7 +138,7 @@ set(QTXDG_MINOR_VERSION ${MINOR_VERSION})
 set(QTXDG_PATCH_VERSION ${PATCH_VERSION})
 
 # In tree compilation ......................
-set(QTXDG_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(QTXDG_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR};${CMAKE_CURRENT_BINARY_DIR}")
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/qtxdg-config.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}-config.cmake

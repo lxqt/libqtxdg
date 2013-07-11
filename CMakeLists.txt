@@ -141,13 +141,13 @@ set(QTXDG_PATCH_VERSION ${PATCH_VERSION})
 set(QTXDG_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/qtxdg-config.cmake.in
-    ${CMAKE_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}-config.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}-config.cmake
     @ONLY
 )
 
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${QTXDGX_FILE_NAME}_use.cmake
-    ${CMAKE_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}_use.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}_use.cmake
     @ONLY
 )
 

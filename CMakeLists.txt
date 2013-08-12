@@ -176,7 +176,7 @@ qtxdg_translate_ts(libqtxdg_QM_FILES
 
 #**********************************************************
 
-include(RazorLibSuffix)
+include(FindLibSuffix)
 
 if (USE_QT5)
     QT5_WRAP_CPP(libqtxdg_CXX_FILES ${libqtxdg_MOCS})

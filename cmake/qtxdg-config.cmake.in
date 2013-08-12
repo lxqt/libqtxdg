@@ -17,12 +17,17 @@
 #
 # QTXDG_QT_LIBRARIES   - The Qt libraries needed by QtXdg
 #
-# Typical usage could be something like:
-#   find_package(QTXDG REQUIRED)
-#   include(${QTXDG_USE_FILE})
+# Typical usage:
+#    option(USE_QT5 "Build using Qt5. Default off" OFF)
+#    if (USE_QT5)
+#        find_package(QT5XDG)
+#    else()
+#        find_package(QTXDG)
+#    endif()
 #
-#   add_executable(myexe main.cpp)
-#   target_link_libraries(myexe ${QTXDG_LIBRARIES})
+#    include(${QTXDG_USE_FILE})
+#    add_executable(use-qtxdg main.cpp)
+#    target_link_libraries(use-qtxdg ${QTXDG_QT_LIBRARIES} ${QTXDG_LIBRARIES})
 
 set(QTXDG_INCLUDE_DIR   @QTXDG_INCLUDE_DIR@)
 set(QTXDG_LIBRARY       @QTXDGX_LIBRARY_NAME@)

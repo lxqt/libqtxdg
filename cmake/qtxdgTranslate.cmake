@@ -42,7 +42,7 @@ endif()
 
 function(qtxdg_translate_ts _qmFiles)
     set(_translationDir "translations")
-    set(_installDir "${CMAKE_INSTALL_PREFIX}/share/libqtxdg/")
+    set(_installDir "${CMAKE_INSTALL_PREFIX}/share/lib${QTXDGX_FILE_NAME}/")
     
     # Parse arguments ***************************************
     set(_state "")
@@ -153,7 +153,11 @@ function(qtxdg_translate_ts _qmFiles)
 
     # QM files **********************************************    
     file(GLOB _tsFiles ${_translationDir}/${_tsSrcFileNameWE}_*.ts)    
-    qt4_add_translation(_qmFilesLocal ${_tsFiles})
+    if (USE_QT5)
+        qt5_add_translation(_qmFilesLocal ${_tsFiles})
+    else()
+        qt4_add_translation(_qmFilesLocal ${_tsFiles})
+    endif()
     install(FILES ${_qmFilesLocal} DESTINATION ${_installDir})
     
     set(${_qmFiles} ${_qmFilesLocal} PARENT_SCOPE)

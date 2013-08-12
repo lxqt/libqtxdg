@@ -73,7 +73,7 @@
 #include <QtGui/QPixmapCache>
 //#include "qt/qicon_p.h"
 //#include "qt/qfactoryloader_p.h"
-#include <QtCore/QHash>
+#include <QHash>
 
 QT_BEGIN_NAMESPACE
 
@@ -123,7 +123,11 @@ struct PixmapEntry : public QIconLoaderEngineEntry
 
 typedef QList<QIconLoaderEngineEntry*> QThemeIconEntries;
 
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 class QIconLoaderEngineFixed : public QIconEngineV2
+#else
+class QIconLoaderEngineFixed : public QIconEngine
+#endif
 {
 public:
     QIconLoaderEngineFixed(const QString& iconName = QString());
@@ -132,7 +136,11 @@ public:
     void paint(QPainter *painter, const QRect &rect, QIcon::Mode mode, QIcon::State state);
     QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state);
     QSize actualSize(const QSize &size, QIcon::Mode mode, QIcon::State state);
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     QIconEngineV2 *clone() const;
+#else
+    QIconEngine *clone() const;
+#endif
     bool read(QDataStream &in);
     bool write(QDataStream &out) const;
 

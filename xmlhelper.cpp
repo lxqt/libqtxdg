@@ -28,7 +28,7 @@
 
 #include "xmlhelper.h"
 
-#include <QtCore/QDebug>
+#include <QDebug>
 #include <QtXml/QDomElement>
 #include <QtXml/QDomNode>
 

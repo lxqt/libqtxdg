@@ -32,8 +32,8 @@
 
 #include "xdgdesktopfile.h"
 
-#include <QtGui/QAction>
-#include <QtCore/QString>
+#include <QAction>
+#include <QString>
 
 
 /*******************************************************************/ /*!

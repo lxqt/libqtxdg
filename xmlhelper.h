@@ -29,7 +29,7 @@
 #ifndef QTXDG_XMLHELPER_H
 #define QTXDG_XMLHELPER_H
 
-#include <QtCore/QDebug>
+#include <QDebug>
 #include <QtXml/QDomElement>
 #include <QtXml/QDomNode>
 

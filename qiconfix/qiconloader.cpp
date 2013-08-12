@@ -53,14 +53,14 @@
 #include <QtGui/QIconEnginePlugin>
 #include <QtGui/QPixmapCache>
 #include <QtGui/QIconEngine>
-#include <QtGui/QStyleOption>
-#include <QtCore/QList>
-#include <QtCore/QHash>
-#include <QtCore/QDir>
-#include <QtCore/QSettings>
+#include <QStyleOption>
+#include <QList>
+#include <QHash>
+#include <QDir>
+#include <QSettings>
 #include <QtGui/QPainter>
-#include <QtGui/QApplication>
-#include <QtCore/QLatin1Literal>
+#include <QApplication>
+#include <QLatin1Literal>
 //#ifdef Q_WS_MAC
 //#include <private/qt_cocoa_helpers_mac_p.h>
 //#endif
@@ -407,13 +407,22 @@ QIconLoaderEngineFixed::~QIconLoaderEngineFixed()
 }
 
 QIconLoaderEngineFixed::QIconLoaderEngineFixed(const QIconLoaderEngineFixed &other)
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
         : QIconEngineV2(other),
+#else
+        : QIconEngine(other),
+#endif
         m_iconName(other.m_iconName),
         m_key(0)
 {
 }
 
+
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 QIconEngineV2 *QIconLoaderEngineFixed::clone() const
+#else
+QIconEngine *QIconLoaderEngineFixed::clone() const
+#endif
 {
     return new QIconLoaderEngineFixed(*this);
 }
@@ -570,7 +579,11 @@ QSize QIconLoaderEngineFixed::actualSize(const QSize &size, QIcon::Mode mode,
             return QSize(result, result);
         }
     }
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     return QIconEngineV2::actualSize(size, mode, state);
+#else
+    return QIconEngine::actualSize(size, mode, state);
+#endif
 }
 
 QPixmap PixmapEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state)
@@ -642,10 +655,19 @@ void QIconLoaderEngineFixed::virtual_hook(int id, void *data)
     ensureLoaded();
 
     switch (id) {
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     case QIconEngineV2::AvailableSizesHook:
+#else
+    case QIconEngine::AvailableSizesHook:
+#endif
         {
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
             QIconEngineV2::AvailableSizesArgument &arg
                     = *reinterpret_cast<QIconEngineV2::AvailableSizesArgument*>(data);
+#else
+            QIconEngine::AvailableSizesArgument &arg
+                    = *reinterpret_cast<QIconEngine::AvailableSizesArgument*>(data);
+#endif
             const QList<QIconDirInfo> directoryKey = iconLoaderInstance()->theme().keyList();
             arg.sizes.clear();
 
@@ -656,18 +678,29 @@ void QIconLoaderEngineFixed::virtual_hook(int id, void *data)
             }
         }
         break;
-#if QT_VERSION >= 0x040700
+#if (QT_VERSION >= 0x040700) && (QT_VERSION < 0x050000)
     case QIconEngineV2::IconNameHook:
         {
             QString &name = *reinterpret_cast<QString*>(data);
             name = m_iconName;
         }
         break;
-#else
+#elif QT_VERSION > QT_VERSION_CHECK(5,0,0)
+    case QIconEngine::IconNameHook:
+        {
+            QString &name = *reinterpret_cast<QString*>(data);
+            name = m_iconName;
+        }
+        break;
+#else// QT_VERSION > QT_VERSION_CHECK(5,0,0)
 #warning QIconEngineV2::IconNameHook is ignored due Qt version. Upgrade to 4.7.x
 #endif
     default:
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
         QIconEngineV2::virtual_hook(id, data);
+#else
+        QIconEngine::virtual_hook(id, data);
+#endif
     }
 }
 

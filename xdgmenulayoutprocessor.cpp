@@ -29,7 +29,7 @@
 #include "xdgmenulayoutprocessor.h"
 #include "xmlhelper.h"
 #include <QDebug>
-#include <QtCore/QMap>
+#include <QMap>
 
 
 /************************************************

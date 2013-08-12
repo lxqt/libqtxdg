@@ -17,11 +17,11 @@ add_definitions(-Wall)
 
 if (USE_QT5)
     cmake_minimum_required(VERSION 2.8.3)
-    find_package(Qt5Widgets REQUIRED)
-    find_package(Qt5Xml REQUIRED)
-    find_package(Qt5LinguistTools REQUIRED)
+    find_package(Qt5Widgets REQUIRED QUIET)
+    find_package(Qt5Xml REQUIRED QUIET)
+    find_package(Qt5LinguistTools REQUIRED QUIET)
     if (BUILD_TESTS)
-        find_package(Qt5Test REQUIRED)
+        find_package(Qt5Test REQUIRED QUIET)
     endif()
 
     # if both Qt4 and Qt5 are installed we must check what version was found
@@ -44,9 +44,9 @@ if (USE_QT5)
     set(QTX_LIBRARIES ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES})
     message(STATUS "Building with Qt ${Qt5Core_VERSION_STRING}")
 else()
-    find_package(Qt4 REQUIRED QtCore QtGui QtXml)
+    find_package(Qt4 REQUIRED QtCore QtGui QtXml QUIET)
     if (BUILD_TESTS)
-        find_package(Qt4 REQUIRED QtTest)
+        find_package(Qt4 REQUIRED QtTest QUIET)
     endif()
 
     # if both Qt4 and Qt5 are installed we must check what version was found

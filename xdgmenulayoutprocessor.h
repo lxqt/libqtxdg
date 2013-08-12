@@ -30,7 +30,7 @@
 #define QTXDG_XDGMENULAYOUTPROCESSOR_H
 
 #include <QtXml/QDomElement>
-#include <QtCore/QList>
+#include <QList>
 
 struct LayoutItem
 {

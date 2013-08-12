@@ -32,12 +32,16 @@
 #include "xdgaction.h"
 #include "xdgmenu.h"
 
-#include <QtCore/QEvent>
-#include <QtCore/QDebug>
-#include <QtCore/QUrl>
+#include <QEvent>
+#include <QDebug>
+#include <QUrl>
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+#else
+#include <QMimeData>
+#endif
 #include <QtGui/QDrag>
 #include <QtGui/QMouseEvent>
-#include <QtGui/QApplication>
+#include <QApplication>
 
 class XdgMenuWidgetPrivate
 {

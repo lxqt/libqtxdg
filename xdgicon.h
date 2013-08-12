@@ -31,8 +31,8 @@
 #define QTXDG_XDGICON_H
 
 #include <QtGui/QIcon>
-#include <QtCore/QString>
-#include <QtCore/QStringList>
+#include <QString>
+#include <QStringList>
 
 class XdgIcon
 {

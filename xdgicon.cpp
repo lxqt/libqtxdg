@@ -29,14 +29,14 @@
 
 #include "xdgicon.h"
 
-#include <QtCore/QString>
-#include <QtCore/QDebug>
-#include <QtCore/QDir>
-#include <QtCore/QStringList>
-#include <QtCore/QFileInfo>
-#include <QtCore/QCache>
+#include <QString>
+#include <QDebug>
+#include <QDir>
+#include <QStringList>
+#include <QFileInfo>
+#include <QCache>
 #include "qiconfix/qiconloader_p.h"
-#include <QtCore/QCoreApplication>
+#include <QCoreApplication>
 
 #define DEFAULT_APP_ICON "application-x-executable"
 
@@ -45,7 +45,17 @@
  ************************************************/
 static void qt_cleanup_icon_cache();
 typedef QCache<QString, QIcon> IconCache;
-Q_GLOBAL_STATIC_WITH_INITIALIZER(IconCache, qtIconCache, qAddPostRoutine(qt_cleanup_icon_cache))
+
+namespace {
+struct QtIconCache: public IconCache
+{
+    QtIconCache()
+    {
+        qAddPostRoutine(qt_cleanup_icon_cache);
+    }
+};
+}
+Q_GLOBAL_STATIC(IconCache, qtIconCache);
 
 static void qt_cleanup_icon_cache()
 {

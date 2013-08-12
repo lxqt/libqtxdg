@@ -29,8 +29,8 @@
 #ifndef QTXDG_XDGMIME_H
 #define QTXDG_XDGMIME_H
 
-#include <QtCore/QString>
-#include <QtCore/QFileInfo>
+#include <QString>
+#include <QFileInfo>
 #include <QtGui/QIcon>
 
 struct XdgMimeData;

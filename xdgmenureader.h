@@ -29,9 +29,9 @@
 #ifndef QTXDG_XDGMENUREADER_H
 #define QTXDG_XDGMENUREADER_H
 
-#include <QtCore/QObject>
-#include <QtCore/QString>
-#include <QtCore/QStringList>
+#include <QObject>
+#include <QString>
+#include <QStringList>
 #include <QtXml/QDomDocument>
 #include <QtXml/QDomElement>
 class XdgMenu;

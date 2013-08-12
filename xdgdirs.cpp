@@ -28,8 +28,8 @@
 
 #include "xdgdirs.h"
 #include <stdlib.h>
-#include <QtCore/QDir>
-#include <QtCore/QDebug>
+#include <QDir>
+#include <QDebug>
 
 
 /************************************************
@@ -47,7 +47,11 @@ void fixBashShortcuts(QString &s)
  ************************************************/
 QString xdgSingleDir(const QString &envVar, const QString &def, bool createDir)
 {
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     QString s(getenv(envVar.toAscii()));
+#else
+    QString s(getenv(envVar.toLatin1()));
+#endif
 
     if (!s.isEmpty())
         fixBashShortcuts(s);
@@ -70,7 +74,11 @@ QString xdgSingleDir(const QString &envVar, const QString &def, bool createDir)
  ************************************************/
 QStringList xdgDirList(const QString &envVar)
 {
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     QStringList dirs = QString(getenv(envVar.toAscii())).split(':', QString::SkipEmptyParts);
+#else
+    QStringList dirs = QString(getenv(envVar.toLatin1())).split(':', QString::SkipEmptyParts);
+#endif
     for (QStringList::Iterator i=dirs.begin(); i!=dirs.end(); ++i)
     {
         fixBashShortcuts((*i));

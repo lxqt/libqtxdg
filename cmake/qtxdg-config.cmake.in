@@ -14,6 +14,8 @@
 #                        the compilation environment for include directories and populates a
 #                        QTXDG_LIBRARIES variable.
 #
+# QTXDG_QT_LIBRARIES   - The Qt libraries needed by QtXdg
+#
 # Typical usage could be something like:
 #   find_package(QTXDG REQUIRED)
 #   include(${QTXDG_USE_FILE})

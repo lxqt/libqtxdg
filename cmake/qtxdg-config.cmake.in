@@ -9,17 +9,25 @@
 #
 #  QTXDG_LIBRARIES     - The libraries needed to use QtXdg
 #
-#  QTXDG_USE_FILE      - The variable QTXDG_USE_FILE is set which is the path to a CMake file that
-#                        can be included to compile qtxdg applications and libraries. It sets up
-#                        the compilation environment for include directories and populates a
+#  QTXDG_USE_FILE      - The variable QTXDG_USE_FILE is set which is the path
+#                        to a CMake file that can be included to compile qtxdg
+#                        applications and libraries. It sets up the compilation
+#                        environment for include directories and populates a
 #                        QTXDG_LIBRARIES variable.
 #
-# Typical usage could be something like:
-#   find_package(QTXDG REQUIRED)
-#   include(${QTXDG_USE_FILE})
+# QTXDG_QT_LIBRARIES   - The Qt libraries needed by QtXdg
 #
-#   add_executable(myexe main.cpp)
-#   target_link_libraries(myexe ${QTXDG_LIBRARIES})
+# Typical usage:
+#    option(USE_QT5 "Build using Qt5. Default off" OFF)
+#    if (USE_QT5)
+#        find_package(QT5XDG)
+#    else()
+#        find_package(QTXDG)
+#    endif()
+#
+#    include(${QTXDG_USE_FILE})
+#    add_executable(use-qtxdg main.cpp)
+#    target_link_libraries(use-qtxdg ${QTXDG_QT_LIBRARIES} ${QTXDG_LIBRARIES})
 
 set(QTXDG_INCLUDE_DIR   @QTXDG_INCLUDE_DIR@)
 set(QTXDG_LIBRARY       @QTXDGX_LIBRARY_NAME@)

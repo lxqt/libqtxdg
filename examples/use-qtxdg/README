@@ -6,4 +6,4 @@ cmake..
 
 To build with Qt5 just pass to set the USE_QT5 to Yes. Ex:
 
-cmake -DUSE_QT5=On ..
+cmake -DUSE_QT5=ON ..

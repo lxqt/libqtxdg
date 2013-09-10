@@ -34,7 +34,9 @@
 #include <stdlib.h>
 
 #include "xdgdesktopfile.h"
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 #include "xdgmime.h"
+#endif
 #include "xdgicon.h"
 #include "xdgdirs.h"
 
@@ -51,6 +53,8 @@
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 #else
 #include <QStandardPaths>
+#include <QMimeDatabase>
+#include <QMimeType>
 #endif
 
 #include <QList>
@@ -387,10 +391,17 @@ bool XdgDesktopFileData::startLinkDetached(const XdgDesktopFile *q) const
     if (scheme.isEmpty() || scheme.toUpper() == "FILE")
     {
         // Local file
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
         QFileInfo fi(url);
         XdgMimeInfo mimeInfo(fi);
 
         XdgDesktopFile* desktopFile = XdgDesktopFileCache::getDefaultApp(mimeInfo.mimeType());
+#else
+        QMimeDatabase db;
+        QMimeType mimeType = db.mimeTypeForUrl(url);
+
+        XdgDesktopFile* desktopFile = XdgDesktopFileCache::getDefaultApp(mimeType.name());
+#endif
         if (desktopFile)
             return desktopFile->startDetached(url);
     }

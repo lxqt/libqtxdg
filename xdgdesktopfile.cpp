@@ -37,8 +37,8 @@
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 #include "xdgmime.h"
 #include "xdgicon.h"
-#endif
 #include "xdgdirs.h"
+#endif
 
 #include <stdlib.h>
 #include <QSharedData>
@@ -1186,6 +1186,7 @@ QString findDesktopFile(const QString& dirName, const QString& desktopName)
  ************************************************/
 QString findDesktopFile(const QString& desktopName)
 {
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     QStringList dataDirs = XdgDirs::dataDirs();
     dataDirs.prepend(XdgDirs::dataHome(false));
 
@@ -1197,6 +1198,9 @@ QString findDesktopFile(const QString& desktopName)
     }
 
     return QString();
+#else
+    return QStandardPaths::locate(QStandardPaths::ApplicationsLocation, desktopName);
+#endif
 }
 
 
@@ -1485,8 +1489,12 @@ XdgDesktopFileCache::~XdgDesktopFileCache()
 
 void XdgDesktopFileCache::initialize()
 {
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     QStringList dataDirs = XdgDirs::dataDirs();
     dataDirs.prepend(XdgDirs::dataHome(false));
+#else
+    QStringList dataDirs = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation);
+#endif
 
     foreach (const QString dirname, dataDirs) 
     {
@@ -1506,13 +1514,21 @@ QList<XdgDesktopFile*>  XdgDesktopFileCache::getApps(const QString& mimetype)
  ************************************************/
 XdgDesktopFile* XdgDesktopFileCache::getDefaultApp(const QString& mimetype)
 {
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     // First, we look in ~/.local/share/applications/defaults.list, /usr/local/share/applications/defaults.list and
     // /usr/share/applications/defaults.list (in that order) for a default.
     QStringList dataDirs = XdgDirs::dataDirs();
     dataDirs.prepend(XdgDirs::dataHome(false));
+#else
+    QStringList dataDirs = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation);
+#endif
     foreach(const QString dataDir, dataDirs)
     {
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
         QString defaultsListPath = dataDir + "/applications/defaults.list";
+#else
+        QString defaultsListPath = dataDir + "/defaults.list";
+#endif
         if (QFileInfo(defaultsListPath).exists())
         {
             QSettings defaults(defaultsListPath, desktopFileSettingsFormat());

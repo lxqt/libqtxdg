@@ -36,8 +36,8 @@
 #include "xdgdesktopfile.h"
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 #include "xdgmime.h"
-#endif
 #include "xdgicon.h"
+#endif
 #include "xdgdirs.h"
 
 #include <stdlib.h>
@@ -722,10 +722,18 @@ QString XdgDesktopFile::fileName() const
  ************************************************/
 QIcon const XdgDesktopFile::icon(const QIcon& fallback) const
 {
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     QIcon result = XdgIcon::fromTheme(value("Icon").toString(), fallback);
+#else
+    QIcon result = QIcon::fromTheme(value("Icon").toString(), fallback);
+#endif
 
     if (result.isNull() && type() == ApplicationType) {
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
         result = XdgIcon::fromTheme("application-x-executable.png");
+#else
+        result = QIcon::fromTheme("application-x-executable");
+#endif
         // TODO Maybe defaults for other desktopfile types as well..
     }
 

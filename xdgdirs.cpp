@@ -108,13 +108,13 @@ QString XdgDirs::configHome(bool createDir)
 /************************************************
 
  ************************************************/
-QStringList XdgDirs::dataDirs()
+QStringList XdgDirs::dataDirs(const QString &postfix)
 {
     QStringList dirs = xdgDirList("XDG_DATA_DIRS");
     if (dirs.isEmpty())
     {
-        dirs << "/usr/local/share/";
-        dirs << "/usr/share/";
+        dirs << "/usr/local/share/" + postfix;
+        dirs << "/usr/share/" + postfix;
     }
 
     return dirs;
@@ -124,12 +124,12 @@ QStringList XdgDirs::dataDirs()
 /************************************************
 
  ************************************************/
-QStringList XdgDirs::configDirs()
+QStringList XdgDirs::configDirs(const QString &postfix)
 {
     QStringList dirs = xdgDirList("XDG_CONFIG_DIRS");
     if (dirs.isEmpty())
     {
-        dirs << "/etc/xdg";
+        dirs << "/etc/xdg" << postfix;
     }
 
     return dirs;
@@ -176,11 +176,11 @@ QString XdgDirs::autostartHome(bool createDir)
 /************************************************
 
  ************************************************/
-QStringList XdgDirs::autostartDirs()
+QStringList XdgDirs::autostartDirs(const QString &postfix)
 {
     QStringList dirs;
     foreach(QString dir, configDirs())
-        dirs << QString("%1/autostart").arg(dir);
+        dirs << QString("%1/autostart").arg(dir) + postfix;
 
     return dirs;
 }

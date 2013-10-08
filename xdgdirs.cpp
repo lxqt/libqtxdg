@@ -72,7 +72,7 @@ QString xdgSingleDir(const QString &envVar, const QString &def, bool createDir)
 /************************************************
  Helper func.
  ************************************************/
-QStringList xdgDirList(const QString &envVar)
+QStringList xdgDirList(const QString &envVar, const QString &postfix)
 {
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     QStringList dirs = QString(getenv(envVar.toAscii())).split(':', QString::SkipEmptyParts);
@@ -82,6 +82,7 @@ QStringList xdgDirList(const QString &envVar)
     for (QStringList::Iterator i=dirs.begin(); i!=dirs.end(); ++i)
     {
         fixBashShortcuts((*i));
+        *i += postfix;
     }
     return dirs;
 }
@@ -110,7 +111,7 @@ QString XdgDirs::configHome(bool createDir)
  ************************************************/
 QStringList XdgDirs::dataDirs(const QString &postfix)
 {
-    QStringList dirs = xdgDirList("XDG_DATA_DIRS");
+    QStringList dirs = xdgDirList("XDG_DATA_DIRS", postfix);
     if (dirs.isEmpty())
     {
         dirs << "/usr/local/share/" + postfix;
@@ -126,7 +127,7 @@ QStringList XdgDirs::dataDirs(const QString &postfix)
  ************************************************/
 QStringList XdgDirs::configDirs(const QString &postfix)
 {
-    QStringList dirs = xdgDirList("XDG_CONFIG_DIRS");
+    QStringList dirs = xdgDirList("XDG_CONFIG_DIRS", postfix);
     if (dirs.isEmpty())
     {
         dirs << "/etc/xdg" << postfix;

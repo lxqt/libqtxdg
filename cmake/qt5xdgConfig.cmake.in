@@ -1,0 +1,35 @@
+# - Find the QtXdg include and library dirs and define a some macros
+#
+# The module defines the following variables
+#  QTXDG_FOUND         - Set to TRUE if all of the above has been found
+#
+#  QTXDG_INCLUDE_DIRS  - The QtXdg include directories
+#
+#  QTXDG_LIBRARIES     - The libraries needed to use QtXdg
+#
+# Typical usage:
+#    find_package(qt5xdg)
+#    include_directories(${QTXDG_INCLUDE_DIRS})
+#    add_executable(use-qtxdg main.cpp)
+#    target_link_libraries(use-qtxdg ${QTXDG_LIBRARIES})
+
+# Compute paths
+get_filename_component(_qtxdg_install_prefix "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+# Include directories and libraries
+set(QTXDG_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
+set(QTXDG_LIBRARIES @QTXDGX_LIBRARY_NAME@)
+
+# Our library dependencies (contains definitions for IMPORTED targets)
+if(NOT TARGET @QTXDGX_LIBRARY_NAME@)
+    include("${_qtxdg_install_prefix}/@QTXDGX_FILE_NAME@Targets.cmake")
+
+    set(_module_deps "@QTXDGX_QT_DEPENDENCIES@")
+    foreach(_module_dep ${_module_deps})
+        if(NOT Qt5${_module_dep}_FOUND)
+            find_package(Qt5${_module_dep} @QTXDGX_MIN_QT_VERSION@ REQUIRED)
+            list(APPEND QTXDG_INCLUDE_DIRS "${Qt5${_module_dep}_INCLUDE_DIRS}")
+        endif()
+    endforeach()
+    list(REMOVE_DUPLICATES QTXDG_INCLUDE_DIRS)
+endif()

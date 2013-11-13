@@ -22,8 +22,7 @@ else()
 endif()
 
 include_directories (
-    ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
-    ${CMAKE_SOURCE_DIR}/libraries/
+    ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 if (USE_QT5)

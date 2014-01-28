@@ -231,7 +231,7 @@ create_pkgconfig_file(${QTXDGX_LIBRARY_NAME}
 )
 
 
-if(BUILD_TESTS STREQUAL "Yes")
+if(BUILD_TESTS)
     enable_testing()
     add_subdirectory(test)
 else()

@@ -36,7 +36,7 @@ if (USE_QT5)
     set(QTXDGX_FILE_NAME "qt5xdg")
 
     set(QTXDGX_PKG_CONFIG_DESCRIPTION "Qt5Xdg, a Qt5 implementation of XDG standards")
-    set(QTXDGX_PKG_CONFIG_REQUIRES "Qt5Core, Qt5Xml")
+    set(QTXDGX_PKG_CONFIG_REQUIRES "Qt5Core, Qt5Xml, Qt5Widgets")
 
     include_directories(${Qt5Widgets_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS})
     add_definitions(${Qt5Core_DEFINITIONS})

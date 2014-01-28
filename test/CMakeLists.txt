@@ -30,6 +30,9 @@ if (USE_QT5)
     include_directories (
         ${Qt5Test_INCLUDE_DIRS}
     )
+    set(CMAKE_CXX_FLAGS
+        "${CMAKE_CXX_FLAGS} ${Qt5Test_EXECUTABLE_COMPILE_FLAGS}"
+    )
 else()
     include_directories (
         ${QT_QTCORE_INCLUDE_DIR}

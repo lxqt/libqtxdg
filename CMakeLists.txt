@@ -1,4 +1,4 @@
-cmake_minimum_required( VERSION 2.6 )
+cmake_minimum_required( VERSION 2.8.5 )
 
 project(libqtxdg)
 
@@ -36,7 +36,7 @@ if (USE_QT5)
     set(QTXDGX_FILE_NAME "qt5xdg")
 
     set(QTXDGX_PKG_CONFIG_DESCRIPTION "Qt5Xdg, a Qt5 implementation of XDG standards")
-    set(QTXDGX_PKG_CONFIG_REQUIRES "Qt5Core, Qt5Xml")
+    set(QTXDGX_PKG_CONFIG_REQUIRES "Qt5Core, Qt5Xml, Qt5Widgets")
 
     include_directories(${Qt5Widgets_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS})
     add_definitions(${Qt5Core_DEFINITIONS})
@@ -231,7 +231,7 @@ create_pkgconfig_file(${QTXDGX_LIBRARY_NAME}
 )
 
 
-if(BUILD_TESTS STREQUAL "Yes")
+if(BUILD_TESTS)
     enable_testing()
     add_subdirectory(test)
 else()

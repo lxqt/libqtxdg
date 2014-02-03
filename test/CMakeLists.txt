@@ -44,6 +44,4 @@ else()
     target_link_libraries ( ${PROJECT_NAME} ${QT_LIBRARIES}  ${LIBRARIES} )
 endif()
 
-add_dependencies(${PROJECT_NAME} razorqt)
-
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})

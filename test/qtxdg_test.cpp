@@ -1,7 +1,7 @@
 #include "qtxdg_test.h"
 
-#include "qtxdg/xdgdesktopfile.h"
-#include "qtxdg/xdgdirs.h"
+#include "xdgdesktopfile.h"
+#include "xdgdirs.h"
 
 #include <QtTest>
 

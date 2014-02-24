@@ -95,7 +95,7 @@ QString XdgIcon::themeName()
 void XdgIcon::setThemeName(const QString& themeName)
 {
     QIcon::setThemeName(themeName);
-    QIconLoader::instance()->updateSystemTheme();
+    QtXdg::QIconLoader::instance()->updateSystemTheme();
 }
 
 
@@ -125,7 +125,7 @@ QIcon XdgIcon::fromTheme(const QString& iconName, const QIcon& fallback)
     } else {
         QIcon *cachedIcon;
         if (!isAbsolute)
-            cachedIcon = new QIcon(new QIconLoaderEngineFixed(name));
+            cachedIcon = new QIcon(new QtXdg::QIconLoaderEngineFixed(name));
         else
             cachedIcon = new QIcon(iconName);
         qtIconCache()->insert(name, cachedIcon);

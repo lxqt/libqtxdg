@@ -74,7 +74,7 @@
 #include <limits.h>
 #endif
 
-QT_BEGIN_NAMESPACE
+namespace QtXdg {
 
 Q_GLOBAL_STATIC(QIconLoader, iconLoaderInstance)
 
@@ -704,6 +704,6 @@ void QIconLoaderEngineFixed::virtual_hook(int id, void *data)
     }
 }
 
-QT_END_NAMESPACE
+} // QtXdg
 
 #endif //QT_NO_ICON

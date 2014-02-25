@@ -75,7 +75,7 @@
 //#include "qt/qfactoryloader_p.h"
 #include <QHash>
 
-QT_BEGIN_NAMESPACE
+namespace QtXdg {
 
 class QIconLoader;
 
@@ -209,7 +209,7 @@ private:
     mutable QHash <QString, QIconTheme> themeList;
 };
 
-QT_END_NAMESPACE
+} // QtXdg
 
 #endif // QDESKTOPICON_P_H
 

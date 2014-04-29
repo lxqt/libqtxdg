@@ -248,3 +248,13 @@ configure_file(
 
 add_custom_target(uninstall
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+
+# building tarball with CPack -------------------------------------------------
+include (InstallRequiredSystemLibraries)
+set (CPACK_PACKAGE_VERSION_MAJOR ${MAJOR_VERSION})
+set (CPACK_PACKAGE_VERSION_MINOR ${MINOR_VERSION})
+set (CPACK_PACKAGE_VERSION_PATCH ${PATCH_VERSION})
+set (CPACK_GENERATOR TBZ2)
+set (CPACK_SOURCE_GENERATOR TBZ2)
+set (CPACK_SOURCE_IGNORE_FILES /build/;.gitignore;.*~;.git;.kdev4;temp)
+include (CPack)

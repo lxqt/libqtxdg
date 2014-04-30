@@ -118,7 +118,8 @@ void XdgAction::load(const XdgDesktopFile& desktopFile)
     mDesktopFile = desktopFile;
     if (mDesktopFile.isValid())
     {
-        setText(mDesktopFile.name());
+        // & is reserved for mnemonics
+        setText(mDesktopFile.name().replace('&', QLatin1String("&&")));
         setToolTip(mDesktopFile.comment());
 
         connect(this, SIGNAL(triggered()), this, SLOT(runConmmand()));

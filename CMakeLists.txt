@@ -32,8 +32,8 @@ if (USE_QT5)
         message(FATAL_ERROR "Qt was found, but NOT Qt5.")
     endif()
 
-    set(QTXDGX_LIBRARY_NAME "Qt5Xdg")
-    set(QTXDGX_FILE_NAME "qt5xdg")
+    set(QTXDGX_LIBRARY_NAME "Qt5Xdg1")
+    set(QTXDGX_FILE_NAME "qt5xdg1")
 
     set(QTXDGX_PKG_CONFIG_DESCRIPTION "Qt5Xdg, a Qt5 implementation of XDG standards")
     set(QTXDGX_PKG_CONFIG_REQUIRES "Qt5Core, Qt5Xml, Qt5Widgets")
@@ -57,8 +57,8 @@ else()
         message(FATAL_ERROR "Qt was found, but NOT Qt4")
     endif()
 
-    set(QTXDGX_LIBRARY_NAME "qtxdg")
-    set(QTXDGX_FILE_NAME "qtxdg")
+    set(QTXDGX_LIBRARY_NAME "qtxdg1")
+    set(QTXDGX_FILE_NAME "qtxdg1")
 
     set(QTXDGX_PKG_CONFIG_DESCRIPTION "QtXdg, a Qt4 implementation of XDG standards")
     set(QTXDGX_PKG_CONFIG_REQUIRES "QtCore, QtXml")

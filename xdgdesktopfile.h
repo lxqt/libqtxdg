@@ -39,7 +39,7 @@
 #include <QSettings>
 
 class XdgDesktopFileData;
-
+	
 /**
  \brief Desktop files handling.
  XdgDesktopFile class gives the interface for reading the values from the XDG .desktop file.
@@ -171,7 +171,7 @@ public:
 
     /*! The desktop entry specification defines a number of fields to control the visibility of the application menu. This function
          checks whether to display a this application or not. */
-    bool isShow(const QString& environment = "LXQt") const;
+    bool isShow(const QString& environment = "Razor") const;
 
     /*! This fuction returns true if the desktop file is applicable to the current environment.
         @par excludeHidden - if set to true (default), files with "Hidden=true" will be considered "not applicable".
@@ -211,7 +211,7 @@ private:
     XdgDesktopFileCache();
     ~XdgDesktopFileCache();
 
-    void initialize();
+    void initialize();    
     void initialize(const QString & dirName);
     bool m_IsInitialized;
     QHash<QString, QList<XdgDesktopFile*> > m_defaultAppsCache;

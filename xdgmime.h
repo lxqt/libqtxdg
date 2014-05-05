@@ -40,11 +40,11 @@ struct XdgMimeData;
 class XdgMimeInfo
 {
 public:
-    /// Constructs a XdgMimeInfo with the mimeType type.
+    /// Constructs a RazorMimeInfo with the mimeType type.
     explicit XdgMimeInfo(const QString& mimeType);
 
     /**
-    Constructs a new XdgMimeInfo that gives mime information about the given file.
+    Constructs a new RazorMimeInfo that gives mime information about the given file.
     If file is symlink and followSymLinks is true function gives information for the
     file the link references rather than for the link itself.
     **/
@@ -80,7 +80,7 @@ private:
 };
 
 
-class XdgMimeInfoCache
+class XdgMimeInfoCache 
 {
 public:
     static QStringList mediatypes();

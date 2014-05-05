@@ -738,8 +738,8 @@ QString XdgMenu::getMenuFileName(const QString& baseName)
     }
 
     QStringList wellKnownFiles;
-    // Prioritize LXQt
-    wellKnownFiles << "lxqt-applications.menu";
+    // razor- is a priority for us
+    wellKnownFiles << "razor-applications.menu";
     // the "global" menu file name on suse and fedora
     wellKnownFiles << "applications.menu";
     // rest files ordered by priority (descending)

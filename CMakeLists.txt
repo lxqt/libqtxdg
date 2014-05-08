@@ -82,6 +82,7 @@ set(libqtxdg_PUBLIC_H_FILES
     xdgmime.h
     xmlhelper.h
     xdgautostart.h
+    xdgmacros.h
 )
 
 set(libqtxdg_PUBLIC_CLASSES

@@ -27,11 +27,10 @@ void QtXdgTest::testDefaultApp()
             foreach (QString mimeXmlFileName, QDir(mediaDir.absoluteFilePath()).entryList(filters, QDir::Files))
             {
                 QString mimetype = mediaDir.fileName() + "/" + mimeXmlFileName.left(mimeXmlFileName.length() - 4);
-                
                 QString xdg_utils_default = xdgUtilDefaultApp(mimetype);
                 QString desktop_file_default = xdgDesktopFileDefaultApp(mimetype);
-                
-                if (xdg_utils_default != desktop_file_default) 
+
+                if (xdg_utils_default != desktop_file_default)
                 {
                     qDebug() << mimetype;
                     qDebug() << "xdg-mime query default:" << xdg_utils_default;
@@ -39,7 +38,7 @@ void QtXdgTest::testDefaultApp()
                 }
             }
         }
-         
+
     }
 }
 
@@ -47,7 +46,7 @@ void QtXdgTest::compare(QString mimetype)
 {
     QString xdgUtilDefault = xdgUtilDefaultApp(mimetype);
     QString xdgDesktopDefault = xdgDesktopFileDefaultApp(mimetype);
-    if (xdgUtilDefault != xdgDesktopDefault) 
+    if (xdgUtilDefault != xdgDesktopDefault)
     {
         qDebug() << mimetype;
         qDebug() << "xdg-mime default:" << xdgUtilDefault;
@@ -111,12 +110,12 @@ void QtXdgTest::testCustomFormat()
 
 QString QtXdgTest::xdgDesktopFileDefaultApp(QString mimetype)
 {
-    XdgDesktopFile *defaultApp = XdgDesktopFileCache::getDefaultApp(mimetype); 
+    XdgDesktopFile *defaultApp = XdgDesktopFileCache::getDefaultApp(mimetype);
     QString defaultAppS;
     if (defaultApp)
     {
         defaultAppS = QFileInfo(defaultApp->fileName()).fileName();
-    } 
+    }
     return defaultAppS;
 }
 

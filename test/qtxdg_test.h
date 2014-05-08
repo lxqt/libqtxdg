@@ -13,7 +13,7 @@ private slots:
     void testCustomFormat();
 
 private:
-    // Test that XdgDesktopFile and xdg-mime script agree on 
+    // Test that XdgDesktopFile and xdg-mime script agree on
     // default application for each mime-type.
     void testDefaultApp();
 

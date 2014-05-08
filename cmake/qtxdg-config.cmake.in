@@ -7,6 +7,8 @@
 #
 #  QTXDG_INCLUDE_DIRS  - The QtXdg include directory
 #
+#  QTXDG_LIBRARY_DIRS  - The QtXdg library directory
+#
 #  QTXDG_LIBRARIES     - The libraries needed to use QtXdg
 #
 #  QTXDG_USE_FILE      - The variable QTXDG_USE_FILE is set which is the path
@@ -34,6 +36,8 @@ set(QTXDG_LIBRARY       @QTXDGX_LIBRARY_NAME@)
 
 set(QTXDG_LIBRARIES     ${QTXDG_LIBRARY})
 set(QTXDG_INCLUDE_DIRS  ${QTXDG_INCLUDE_DIR})
+
+set(QTXDG_LIBRARY_DIRS  @CMAKE_INSTALL_FULL_LIBDIR@)
 
 set(QTXDG_USE_FILE      ${CMAKE_CURRENT_LIST_DIR}/@QTXDGX_FILE_NAME@_use.cmake)
 set(QTXDG_FOUND 1)

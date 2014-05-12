@@ -34,9 +34,11 @@
 #include <stdlib.h>
 
 #include "xdgdesktopfile.h"
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 #include "xdgmime.h"
 #include "xdgicon.h"
 #include "xdgdirs.h"
+#endif
 
 #include <stdlib.h>
 #include <QSharedData>
@@ -51,6 +53,8 @@
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 #else
 #include <QStandardPaths>
+#include <QMimeDatabase>
+#include <QMimeType>
 #endif
 
 #include <QList>
@@ -387,10 +391,17 @@ bool XdgDesktopFileData::startLinkDetached(const XdgDesktopFile *q) const
     if (scheme.isEmpty() || scheme.toUpper() == "FILE")
     {
         // Local file
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
         QFileInfo fi(url);
         XdgMimeInfo mimeInfo(fi);
 
         XdgDesktopFile* desktopFile = XdgDesktopFileCache::getDefaultApp(mimeInfo.mimeType());
+#else
+        QMimeDatabase db;
+        QMimeType mimeType = db.mimeTypeForUrl(url);
+
+        XdgDesktopFile* desktopFile = XdgDesktopFileCache::getDefaultApp(mimeType.name());
+#endif
         if (desktopFile)
             return desktopFile->startDetached(url);
     }
@@ -711,10 +722,18 @@ QString XdgDesktopFile::fileName() const
  ************************************************/
 QIcon const XdgDesktopFile::icon(const QIcon& fallback) const
 {
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     QIcon result = XdgIcon::fromTheme(value("Icon").toString(), fallback);
+#else
+    QIcon result = QIcon::fromTheme(value("Icon").toString(), fallback);
+#endif
 
     if (result.isNull() && type() == ApplicationType) {
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
         result = XdgIcon::fromTheme("application-x-executable.png");
+#else
+        result = QIcon::fromTheme("application-x-executable");
+#endif
         // TODO Maybe defaults for other desktopfile types as well..
     }
 
@@ -1167,6 +1186,7 @@ QString findDesktopFile(const QString& dirName, const QString& desktopName)
  ************************************************/
 QString findDesktopFile(const QString& desktopName)
 {
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     QStringList dataDirs = XdgDirs::dataDirs();
     dataDirs.prepend(XdgDirs::dataHome(false));
 
@@ -1178,6 +1198,9 @@ QString findDesktopFile(const QString& desktopName)
     }
 
     return QString();
+#else
+    return QStandardPaths::locate(QStandardPaths::ApplicationsLocation, desktopName);
+#endif
 }
 
 
@@ -1466,8 +1489,12 @@ XdgDesktopFileCache::~XdgDesktopFileCache()
 
 void XdgDesktopFileCache::initialize()
 {
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     QStringList dataDirs = XdgDirs::dataDirs();
     dataDirs.prepend(XdgDirs::dataHome(false));
+#else
+    QStringList dataDirs = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation);
+#endif
 
     foreach (const QString dirname, dataDirs) 
     {
@@ -1487,13 +1514,21 @@ QList<XdgDesktopFile*>  XdgDesktopFileCache::getApps(const QString& mimetype)
  ************************************************/
 XdgDesktopFile* XdgDesktopFileCache::getDefaultApp(const QString& mimetype)
 {
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     // First, we look in ~/.local/share/applications/defaults.list, /usr/local/share/applications/defaults.list and
     // /usr/share/applications/defaults.list (in that order) for a default.
     QStringList dataDirs = XdgDirs::dataDirs();
     dataDirs.prepend(XdgDirs::dataHome(false));
+#else
+    QStringList dataDirs = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation);
+#endif
     foreach(const QString dataDir, dataDirs)
     {
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
         QString defaultsListPath = dataDir + "/applications/defaults.list";
+#else
+        QString defaultsListPath = dataDir + "/defaults.list";
+#endif
         if (QFileInfo(defaultsListPath).exists())
         {
             QSettings defaults(defaultsListPath, desktopFileSettingsFormat());

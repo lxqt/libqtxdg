@@ -54,10 +54,6 @@ XdgDesktopFileList XdgAutoStart::desktopFileList(QStringList dirs, bool excludeH
 {
     dirs.removeDuplicates();
 
-    QString desktopEnvironment = QString::fromLatin1(qgetenv("XDG_CURRENT_DESKTOP"));
-    if(desktopEnvironment.isEmpty())
-        desktopEnvironment = QLatin1String("LXQt");
-
     QSet<QString> processed;
     XdgDesktopFileList ret;
     foreach (QString dirName, dirs)
@@ -78,7 +74,7 @@ XdgDesktopFileList XdgAutoStart::desktopFileList(QStringList dirs, bool excludeH
             if (!desktop.load(fi.absoluteFilePath()))
                 continue;
 
-            if (!desktop.isApplicable(excludeHidden, desktopEnvironment))
+            if (!desktop.isApplicable(excludeHidden))
                 continue;
 
             ret << desktop;

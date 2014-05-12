@@ -177,7 +177,7 @@ public:
         @par excludeHidden - if set to true (default), files with "Hidden=true" will be considered "not applicable".
                              Setting this to false is be useful when the user wants to enable/disable items and wants to see those
                              that are Hidden */
-    bool isApplicable(bool excludeHidden = true, const QString& environment = "LXQt") const;
+    bool isApplicable(bool excludeHidden = true, const QString& environment = "Razor") const;
 
 protected:
     virtual QString prefix() const { return "Desktop Entry"; }

@@ -74,7 +74,7 @@ XdgDesktopFileList XdgAutoStart::desktopFileList(QStringList dirs, bool excludeH
             if (!desktop.load(fi.absoluteFilePath()))
                 continue;
 
-            if (!desktop.isApplicable(excludeHidden))
+            if (!desktop.isSuitable(excludeHidden))
                 continue;
 
             ret << desktop;

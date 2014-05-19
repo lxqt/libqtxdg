@@ -1125,12 +1125,12 @@ bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) 
     if (environment.isEmpty())
         env = QString(detectDesktopEnvironment());
     else {
-        env = environment;
+        env = environment.toUpper();
     }
 
     if (contains("OnlyShowIn"))
     {
-        QStringList s = value("OnlyShowIn").toString().split(';');
+        QStringList s = value("OnlyShowIn").toString().toUpper().split(';');
         if (!s.contains(env))
             return false;
     }

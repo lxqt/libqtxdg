@@ -1088,18 +1088,29 @@ bool XdgDesktopFile::isApplicable(bool excludeHidden, const QString& environment
     // A list of strings identifying the environments that should display/not
     // display a given desktop entry.
     // OnlyShowIn ........
+    QString env;
+    if (environment.isEmpty())
+        env = QString(detectDesktopEnvironment());
+    else {
+        env = environment.toUpper();
+    }
+
+
+    // A list of strings identifying the environments that should display/not
+    // display a given desktop entry.
+    // OnlyShowIn ........
     if (contains("OnlyShowIn"))
     {
-        QStringList s = value("OnlyShowIn").toString().split(';');
-        if (!s.contains(environment))
+        QStringList s = value("OnlyShowIn").toString().toUpper().split(';');
+        if (!s.contains(env))
             return false;
     }
 
     // NotShowIn .........
     if (contains("NotShowIn"))
     {
-        QStringList s = value("NotShowIn").toString().split(';');
-        if (s.contains(environment))
+        QStringList s = value("NotShowIn").toString().toUpper().split(';');
+        if (s.contains(env))
             return false;
     }
 

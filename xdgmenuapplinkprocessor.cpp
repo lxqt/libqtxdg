@@ -143,11 +143,11 @@ void XdgMenuApplinkProcessor::step2()
         // OnlyShowIn ........
         if (file->contains("OnlyShowIn"))
         {
-            QString s = ";" + file->value("OnlyShowIn").toString() + ";";
+            QString s = ";" + file->value("OnlyShowIn").toString().toUpper() + ";";
             bool show = false;
             foreach (QString env, mMenu->environments())
             {
-                if (s.contains(env))
+                if (s.contains(env.toUpper()))
                 {
                     show = true;
                     break;
@@ -161,11 +161,11 @@ void XdgMenuApplinkProcessor::step2()
         // NotShowIn .........
         if (file->contains("NotShowIn"))
         {
-            QString s = ";" + file->value("NotShowIn").toString() + ";";
+            QString s = ";" + file->value("NotShowIn").toString().toUpper() + ";";
             bool show = true;
             foreach (QString env, mMenu->environments())
             {
-                if (s.contains(env))
+                if (s.contains(env.toUpper()))
                 {
                     show = false;
                     break;

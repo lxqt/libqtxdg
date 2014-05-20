@@ -175,6 +175,15 @@ public:
          checks whether to display a this application or not. */
     QTXDG_DEPRECATED bool isShow(const QString& environment = "Razor") const;
 
+    /*! The desktop entry specification defines a number of fields to control
+        the visibility of the application menu. Thisfunction checks whether
+        to display a this application or not.
+        @par environment - User supplied desktop environment name. If not
+            supplied the desktop will be detected reading the
+            XDG_CURRENT_DESKTOP environment variable. If not set, "UNKNOWN"
+            will be used as the desktop name. All operations envolving the
+            desktop environment name are case insensitive.
+    */
     bool isShown(const QString &environment = QString()) const;
 
     /*! This fuction returns true if the desktop file is applicable to the current environment.
@@ -183,6 +192,18 @@ public:
                              that are Hidden */
     QTXDG_DEPRECATED bool isApplicable(bool excludeHidden = true, const QString& environment = "Razor") const;
 
+    /*! This fuction returns true if the desktop file is applicable to the
+        current environment.
+        @par excludeHidden - if set to true (default), files with
+            "Hidden=true" will be considered "not applicable". Setting this
+            to false is be useful when the user wants to enable/disable items
+            and wants to see those that are Hidden
+        @par environment - User supplied desktop environment name. If not
+            supplied the desktop will be detected reading the
+            XDG_CURRENT_DESKTOP environment variable. If not set, "UNKNOWN"
+            will be used as the desktop name. All operations envolving the
+            desktop environment name are case insensitive.
+    */
     bool isSuitable(bool excludeHidden = true, const QString &environment = QString()) const;
 
 protected:

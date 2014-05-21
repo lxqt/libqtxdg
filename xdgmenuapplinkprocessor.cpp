@@ -147,7 +147,7 @@ void XdgMenuApplinkProcessor::step2()
             bool show = false;
             foreach (QString env, mMenu->environments())
             {
-                if (s.contains(env))
+                if (s.contains(env, Qt::CaseInsensitive))
                 {
                     show = true;
                     break;
@@ -165,7 +165,7 @@ void XdgMenuApplinkProcessor::step2()
             bool show = true;
             foreach (QString env, mMenu->environments())
             {
-                if (s.contains(env))
+                if (s.contains(env, Qt::CaseInsensitive))
                 {
                     show = false;
                     break;

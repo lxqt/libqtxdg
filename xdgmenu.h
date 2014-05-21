@@ -80,9 +80,17 @@ public:
 
     QDomElement findMenu(QDomElement& baseElement, const QString& path, bool createNonExisting);
 
-    /// A list of strings identifying the environments that should display a desktop entry.
+    /*! Returns a  list of strings identifying the environments that should
+     *  display a desktop entry. Internally all comparisions involving the
+     *  desktop enviroment names are made case insensitive.
+     */
     QStringList environments();
-    /// Set currently running environments. Example: RAZOR, KDE, or GNOME...
+
+    /*!
+     *  Set currently running environments. Example: RAZOR, KDE, or GNOME...
+     *  Internally all comparisions involving the desktop enviroment names
+     *  are made case insensitive.
+     */
     void setEnvironments(const QStringList &envs);
     void setEnvironments(const QString &env);
 

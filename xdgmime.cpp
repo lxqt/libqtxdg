@@ -71,6 +71,11 @@ XdgMimeInfo::XdgMimeInfo(const QString& mimeType)
     mData = new XdgMimeData(media, subtype);
 }
 
+XdgMimeInfo::~XdgMimeInfo()
+{
+    delete mData;
+    mData = 0;
+}
 
 /************************************************
 

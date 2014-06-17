@@ -50,6 +50,8 @@ public:
     **/
     explicit XdgMimeInfo(const QFileInfo& file, bool followSymLinks=true);
 
+    ~XdgMimeInfo();
+
     /// Returns the name of the mime type.
     QString mimeType() const;
 

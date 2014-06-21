@@ -2,7 +2,9 @@ cmake_minimum_required( VERSION 2.8.5 )
 
 project(libqtxdg)
 
-option(USE_QT5 "Use Qt5. Defaults to Qt4" OFF)
+# Support different versions of Qt
+option(USE_QT5 "Build with Qt5." $ENV{USE_QT5})
+
 option(BUILD_TESTS "Builds tests" OFF)
 
 # Standard directories for installation

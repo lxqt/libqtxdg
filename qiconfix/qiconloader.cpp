@@ -123,6 +123,7 @@ void QIconLoader::ensureInitialized()
 
 QIconLoader *QIconLoader::instance()
 {
+    iconLoaderInstance()->ensureInitialized();
    return iconLoaderInstance();
 }
 
@@ -446,17 +447,14 @@ bool QIconLoaderEngineFixed::hasIcon() const
 // Lazily load the icon
 void QIconLoaderEngineFixed::ensureLoaded()
 {
-
-    iconLoaderInstance()->ensureInitialized();
-
-    if (!(iconLoaderInstance()->themeKey() == m_key)) {
+    if (!(QtXdg::QIconLoader::instance()->themeKey() == m_key)) {
 
         while (!m_entries.isEmpty())
             delete m_entries.takeLast();
 
         Q_ASSERT(m_entries.size() == 0);
-        m_entries = iconLoaderInstance()->loadIcon(m_iconName);
-        m_key = iconLoaderInstance()->themeKey();
+        m_entries = QtXdg::QIconLoader::instance()->loadIcon(m_iconName);
+        m_key = QtXdg::QIconLoader::instance()->themeKey();
     }
 }
 
@@ -668,7 +666,7 @@ void QIconLoaderEngineFixed::virtual_hook(int id, void *data)
             QIconEngine::AvailableSizesArgument &arg
                     = *reinterpret_cast<QIconEngine::AvailableSizesArgument*>(data);
 #endif
-            const QList<QIconDirInfo> directoryKey = iconLoaderInstance()->theme().keyList();
+            const QList<QIconDirInfo> directoryKey = QtXdg::QIconLoader::instance()->theme().keyList();
             arg.sizes.clear();
 
             // Gets all sizes from the DirectoryInfo entries

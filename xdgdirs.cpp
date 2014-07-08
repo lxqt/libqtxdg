@@ -87,6 +87,116 @@ QStringList xdgDirList(const QString &envVar, const QString &postfix)
     return dirs;
 }
 
+/************************************************
+
+ ************************************************/
+QString XdgDirs::userDir(XdgDirs::UserDirectory dir)
+{
+    // possible values for UserDirectory
+    if (dir < 0 || dir > 7)
+        return QString();
+
+    QString folderName = userDirectoryString[dir];
+
+    QString fallback;
+    if (getenv("HOME") == NULL)
+        return QString("/tmp");
+    else if (dir == XdgDirs::Desktop)
+        fallback = QString("%1/%2").arg(getenv("HOME")).arg("Desktop");
+    else
+        fallback = QString(getenv("HOME"));
+
+    QString configDir(configHome());
+    QFile configFile(configDir + "/user-dirs.dirs");
+    if (!configFile.exists())
+        return fallback;
+
+    if (!configFile.open(QIODevice::ReadOnly | QIODevice::Text))
+        return fallback;
+
+    QString userDirVar("XDG_" + folderName.toUpper() + "_DIR");
+    QTextStream in(&configFile);
+    QString line;
+    while (!in.atEnd())
+    {
+        line = in.readLine();
+        if (line.contains(userDirVar))
+        {
+            configFile.close();
+
+            // get path between quotes
+            line = line.section('"', 1, 1);
+            line.replace("$HOME", "~");
+            fixBashShortcuts(line);
+            return line;
+        }
+    }
+
+    configFile.close();
+    return fallback;
+}
+
+
+/************************************************
+
+ ************************************************/
+bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool createDir)
+{
+    // possible values for UserDirectory
+    if (dir < 0 || dir > 7)
+        return false;
+
+    if (!(value.startsWith("$HOME") || value.startsWith("~/") || value.startsWith(QString(getenv("HOME")))))
+        return false;
+
+    QString folderName = userDirectoryString[dir];
+
+    QString configDir(configHome());
+    QFile configFile(configDir + "/user-dirs.dirs");
+
+    // create the file if doesn't exist and opens it
+    if (!configFile.open(QIODevice::ReadWrite | QIODevice::Text))
+        return false;
+
+    QTextStream stream(&configFile);
+    QVector<QString> lines;
+    QString line;
+    bool foundVar = false;
+    while (!stream.atEnd())
+    {
+        line = stream.readLine();
+        if (line.indexOf("XDG_" + folderName.toUpper() + "_DIR") == 0)
+        {
+            foundVar = true;
+            QString path = line.section('"', 1, 1);
+            line.replace(path, value);
+            lines.append(line);
+        }
+        else if (line.indexOf("XDG_") == 0)
+        {
+            lines.append(line);
+        }
+    }
+
+    stream.reset();
+    configFile.resize(0);
+    if (!foundVar)
+        stream << QString("XDG_%1_DIR=\"%2\"\n").arg(folderName.toUpper()).arg(value);
+
+    for (QVector<QString>::iterator i = lines.begin(); i != lines.end(); ++i)
+        stream << *i << "\n";
+
+    configFile.close();
+
+    if (createDir) {
+        QString path = QString(value).replace("$HOME", "~");
+        fixBashShortcuts(path);
+        QDir().mkpath(path);
+    }
+
+    return true;
+}
+
 
 /************************************************
 

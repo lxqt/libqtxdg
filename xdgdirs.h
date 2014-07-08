@@ -39,9 +39,46 @@
  *
  * @sa http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
  */
+
+static const QString userDirectoryString[8] =
+{
+    "Desktop",
+    "Download",
+    "Templates",
+    "Publicshare",
+    "Documents",
+    "Music",
+    "Pictures",
+    "Videos"
+};
+
 class XdgDirs
 {
 public:
+    enum UserDirectory
+    {
+        Desktop,
+        Download,
+        Templates,
+        PublicShare,
+        Documents,
+        Music,
+        Pictures,
+        Videos
+    };
+
+    /*! @brief Returns the path to the user folder passed as parameter dir defined in
+     * $XDG_CONFIG_HOME/user-dirs.dirs. Returns /tmp if no $HOME defined, $HOME/Desktop if
+     * dir equals XdgDirs::Desktop or $HOME othewise.
+     */
+    static QString userDir(UserDirectory dir);
+
+    /*! @brief Returns true if writting into configuration file $XDG_CONFIG_HOME/user-dirs.dirs
+     * the path in value for the directory in dir is succesfull. Returns false otherwise. If
+     * createDir is true, dir will be created if it doesn't exist.
+     */
+    static bool setUserDir(UserDirectory dir, const QString &value, bool createDir);
+
     /*! @brief Returns the path to the directory that corresponds to the $XDG_DATA_HOME.
      * If @i createDir is true, the function will create the directory.
      *
@@ -70,7 +107,6 @@ public:
      * If the postfix is not empty it will append to end of each returned directory.
      */
     static QStringList dataDirs(const QString &postfix = "");
-
 
 
     /*! @brief Returns a list of all directories that corresponds to the $XDG_CONFIG_DIRS.

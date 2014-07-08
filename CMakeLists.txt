@@ -135,6 +135,14 @@ set(libqtxdg_MOCS
     xdgmenuwidget.h
 )
 
+if (USE_QT5)
+    list(APPEND libqtxdg_PRIVATE_H_FILES qiconfix/qiconloader_p.h)
+    list(APPEND libqtxdg_CPP_FILES qiconfix/qiconloader.cpp)
+else()
+    list(APPEND libqtxdg_PRIVATE_H_FILES qiconfix/qiconloader_p_qt4.h)
+    list(APPEND libqtxdg_CPP_FILES qiconfix/qiconloader_qt4.cpp)
+endif()
+
 #************************************************
 # Build 2 config.cmake files
 # One for in-tree build and second for normal one.

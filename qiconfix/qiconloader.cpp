@@ -285,6 +285,7 @@ QThemeIconEntries QIconLoader::findIconHelper(const QString &themeName,
 
     const QString svgext(QLatin1String(".svg"));
     const QString pngext(QLatin1String(".png"));
+    const QString xpmext(QLatin1String(".xpm"));
 
     // Add all relevant files
     for (int i = 0; i < subDirs.size() ; ++i) {
@@ -304,6 +305,15 @@ QThemeIconEntries QIconLoader::findIconHelper(const QString &themeName,
             iconEntry->dir = dirInfo;
             iconEntry->filename = currentDir.filePath(iconName + svgext);
             entries.append(iconEntry);
+            break;
+        } else if (currentDir.exists(iconName + xpmext)) {
+            PixmapEntry *iconEntry = new PixmapEntry;
+            iconEntry->dir = dirInfo;
+            iconEntry->filename = currentDir.filePath(iconName + xpmext);
+            // Notice we ensure that pixmap entries always come before
+            // scalable to preserve search order afterwards
+            entries.append(iconEntry);
+            break;
         }
     }
 

@@ -1,88 +1,100 @@
+/* BEGIN_COMMON_COPYRIGHT_HEADER
+ * (c)LGPL2
+ */
 /****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
-** Contact: http://www.qt-project.org/legal
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the QtGui module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and Digia.  For licensing terms and
-** conditions see http://qt.digia.com/licensing.  For further information
-** use the contact form at http://qt.digia.com/contact-us.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Digia gives you certain additional
-** rights.  These rights are described in the Digia Qt LGPL Exception
+** In addition, as a special exception, Nokia gives you certain additional
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
+**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
+**
+**
+**
 **
 **
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QT_NO_ICON
-#include "qiconloader_p.h"
+//END_COMMON_COPYRIGHT_HEADER
 
-//#include <private/qguiapplication_p.h>
-//#include <private/qicon_p.h>
+#ifndef QT_NO_ICON
+#include "qiconloader_p_qt4.h"
+
+//#include "qt/qapplication_p.h"
+//#include <qt/qicon_p.h>
+//#include <qt/qguiplatformplugin_p.h>
 
 #include <QtGui/QIconEnginePlugin>
 #include <QtGui/QPixmapCache>
-//#include <QtGui/qpa/qplatformtheme.h>
 #include <QtGui/QIconEngine>
-#include <QtGui/QPalette>
-#include <QtCore/QList>
-#include <QtCore/QHash>
-#include <QtCore/QDir>
-#include <QtCore/QSettings>
+#include <QStyleOption>
+#include <QList>
+#include <QHash>
+#include <QDir>
+#include <QSettings>
 #include <QtGui/QPainter>
 #include <QApplication>
 #include <QLatin1Literal>
-
 //#ifdef Q_WS_MAC
 //#include <private/qt_cocoa_helpers_mac_p.h>
 //#endif
 
-#include "qhexstring_p.h"
+//#ifdef Q_WS_X11
+//#include "qt/qt_x11_p.h"
+//#endif
+#include <QDebug>
 
-//QT_BEGIN_NAMESPACE
+#if QT_VERSION < 0x040700
+#include <limits.h>
+#endif
 
 namespace QtXdg {
 
 Q_GLOBAL_STATIC(QIconLoader, iconLoaderInstance)
 
 /* Theme to use in last resort, if the theme does not have the icon, neither the parents  */
-
-static QString fallbackTheme()
+/*static QString fallbackTheme()
 {
-#if 0
-    if (const QPlatformTheme *theme = QGuiApplicationPrivate::platformTheme()) {
-        const QVariant themeHint = theme->themeHint(QPlatformTheme::SystemIconThemeName);
-        if (themeHint.isValid())
-            return themeHint.toString();
+#ifdef Q_WS_X11
+    if (X11->desktopEnvironment == DE_GNOME) {
+        return QLatin1String("gnome");
+    } else if (X11->desktopEnvironment == DE_KDE) {
+        return X11->desktopVersion >= 4
+            ? QString::fromLatin1("oxygen")
+            : QString::fromLatin1("crystalsvg");
+    } else {
+        return QLatin1String("hicolor");
     }
 #endif
-    return QString("hicolor");
+    return QString();
 }
-
+*/
 QIconLoader::QIconLoader() :
         m_themeKey(1), m_supportsSvg(false), m_initialized(false)
 {
@@ -90,35 +102,6 @@ QIconLoader::QIconLoader() :
 
 // We lazily initialize the loader to make static icons
 // work. Though we do not officially support this.
-
-static inline QString systemThemeName()
-{
-#if 0
-    if (const QPlatformTheme *theme = QGuiApplicationPrivate::platformTheme()) {
-        const QVariant themeHint = theme->themeHint(QPlatformTheme::SystemIconThemeName);
-        if (themeHint.isValid())
-            return themeHint.toString();
-    }
-#endif
-    return QIcon::themeName();
-}
-
-static inline QStringList systemIconSearchPaths()
-{
-#if 0
-    if (const QPlatformTheme *theme = QGuiApplicationPrivate::platformTheme()) {
-        const QVariant themeHint = theme->themeHint(QPlatformTheme::IconThemeSearchPaths);
-        if (themeHint.isValid())
-            return themeHint.toStringList();
-    }
-#endif
-    return QIcon::themeSearchPaths();
-}
-
-#ifndef QT_NO_LIBRARY
-//extern QFactoryLoader *qt_iconEngineFactoryLoader(); // qicon.cpp
-#endif
-
 void QIconLoader::ensureInitialized()
 {
     if (!m_initialized) {
@@ -126,13 +109,13 @@ void QIconLoader::ensureInitialized()
 
         Q_ASSERT(qApp);
 
-//        m_systemTheme = systemThemeName();
         m_systemTheme = QIcon::themeName();
 
-        if (m_systemTheme.isEmpty())
-            m_systemTheme = fallbackTheme();
 #ifndef QT_NO_LIBRARY
-//        if (qt_iconEngineFactoryLoader()->keyMap().key(QLatin1String("svg"), -1) != -1)
+//        QFactoryLoader iconFactoryLoader(QIconEngineFactoryInterfaceV2_iid,
+//                                         QLatin1String("/iconengines"),
+//                                         Qt::CaseInsensitive);
+//        if (iconFactoryLoader.keys().contains(QLatin1String("svg")))
             m_supportsSvg = true;
 #endif //QT_NO_LIBRARY
     }
@@ -140,7 +123,6 @@ void QIconLoader::ensureInitialized()
 
 QIconLoader *QIconLoader::instance()
 {
-   iconLoaderInstance()->ensureInitialized();
    return iconLoaderInstance();
 }
 
@@ -150,9 +132,9 @@ void QIconLoader::updateSystemTheme()
 {
     // Only change if this is not explicitly set by the user
     if (m_userTheme.isEmpty()) {
-        QString theme = systemThemeName();
-        if (theme.isEmpty())
-            theme = fallbackTheme();
+        QString theme = QIcon::themeName();//qt_guiPlatformPlugin()->systemIconThemeName();
+        //if (theme.isEmpty())
+        //    theme = fallbackTheme();
         if (theme != m_systemTheme) {
             m_systemTheme = theme;
             invalidateKey();
@@ -175,17 +157,20 @@ void QIconLoader::setThemeSearchPath(const QStringList &searchPaths)
 
 QStringList QIconLoader::themeSearchPaths() const
 {
-    if (m_iconDirs.isEmpty()) {
-        m_iconDirs = systemIconSearchPaths();
+    if (m_iconDirs.isEmpty())
+    {
+        m_iconDirs = QIcon::themeSearchPaths();//qt_guiPlatformPlugin()->iconThemeSearchPaths();
         // Always add resource directory as search path
         m_iconDirs.append(QLatin1String(":/icons"));
     }
     return m_iconDirs;
 }
 
+
 QIconTheme::QIconTheme(const QString &themeName)
         : m_valid(false)
 {
+
     QFile themeIndex;
 
     QList <QIconDirInfo> keyList;
@@ -197,9 +182,19 @@ QIconTheme::QIconTheme(const QString &themeName)
         if (themeIndex.exists()) {
             m_contentDir = themeDir;
             m_valid = true;
+
+            QStringList themeSearchPaths = QIcon::themeSearchPaths();
+            foreach (QString path, themeSearchPaths)
+            {
+                if (!path.startsWith(':') && QFileInfo(path).isDir())
+                    m_contentDirs.append(path + QLatin1Char('/') + themeName);
+            }
+
             break;
         }
     }
+
+
 #ifndef QT_NO_SETTINGS
     if (themeIndex.exists()) {
         const QSettings indexReader(themeIndex.fileName(), QSettings::IniFormat);
@@ -246,11 +241,8 @@ QIconTheme::QIconTheme(const QString &themeName)
                 QLatin1String("Icon Theme/Inherits")).toStringList();
 
         // Ensure a default platform fallback for all themes
-        if (m_parents.isEmpty()) {
-            const QString fallback = fallbackTheme();
-            if (!fallback.isEmpty())
-                m_parents.append(fallback);
-        }
+        if (m_parents.isEmpty())
+            m_parents.append(QIcon::themeName());//fallbackTheme());
 
         // Ensure that all themes fall back to hicolor
         if (!m_parents.contains(QLatin1String("hicolor")))
@@ -258,6 +250,7 @@ QIconTheme::QIconTheme(const QString &themeName)
     }
 #endif //QT_NO_SETTINGS
 }
+
 
 QThemeIconEntries QIconLoader::findIconHelper(const QString &themeName,
                                  const QString &iconName,
@@ -275,35 +268,57 @@ QThemeIconEntries QIconLoader::findIconHelper(const QString &themeName,
     if (!theme.isValid()) {
         theme = QIconTheme(themeName);
         if (!theme.isValid())
-            theme = QIconTheme(fallbackTheme());
+            theme = QIconTheme(QIcon::themeName());//fallbackTheme());
 
         themeList.insert(themeName, theme);
     }
 
-    QString contentDir = theme.contentDir() + QLatin1Char('/');
+    QStringList contentDirs = theme.contentDirs();
     QList<QIconDirInfo> subDirs = theme.keyList();
 
     const QString svgext(QLatin1String(".svg"));
     const QString pngext(QLatin1String(".png"));
+    const QString xpmext(QLatin1String(".xpm"));
 
     // Add all relevant files
-    for (int i = 0; i < subDirs.size() ; ++i) {
+    for (int i = 0; i < subDirs.size() ; ++i)
+    {
         const QIconDirInfo &dirInfo = subDirs.at(i);
         QString subdir = dirInfo.path;
-        QDir currentDir(contentDir + subdir);
-        if (currentDir.exists(iconName + pngext)) {
-            PixmapEntry *iconEntry = new PixmapEntry;
-            iconEntry->dir = dirInfo;
-            iconEntry->filename = currentDir.filePath(iconName + pngext);
-            // Notice we ensure that pixmap entries always come before
-            // scalable to preserve search order afterwards
-            entries.prepend(iconEntry);
-        } else if (m_supportsSvg &&
-            currentDir.exists(iconName + svgext)) {
-            ScalableEntry *iconEntry = new ScalableEntry;
-            iconEntry->dir = dirInfo;
-            iconEntry->filename = currentDir.filePath(iconName + svgext);
-            entries.append(iconEntry);
+
+        foreach (QString contentDir, contentDirs)
+        {
+            QDir currentDir(contentDir + '/' + subdir);
+
+            if (currentDir.exists(iconName + pngext))
+            {
+                PixmapEntry *iconEntry = new PixmapEntry;
+                iconEntry->dir = dirInfo;
+                iconEntry->filename = currentDir.filePath(iconName + pngext);
+                // Notice we ensure that pixmap entries always come before
+                // scalable to preserve search order afterwards
+                entries.prepend(iconEntry);
+                break;
+            }
+            else if (m_supportsSvg &&
+                     currentDir.exists(iconName + svgext))
+            {
+                ScalableEntry *iconEntry = new ScalableEntry;
+                iconEntry->dir = dirInfo;
+                iconEntry->filename = currentDir.filePath(iconName + svgext);
+                entries.append(iconEntry);
+                break;
+            }
+            else if (currentDir.exists(iconName + xpmext))
+            {
+                PixmapEntry *iconEntry = new PixmapEntry;
+                iconEntry->dir = dirInfo;
+                iconEntry->filename = currentDir.filePath(iconName + xpmext);
+                // Notice we ensure that pixmap entries always come before
+                // scalable to preserve search order afterwards
+                entries.append(iconEntry);
+                break;
+            }
         }
     }
 
@@ -321,6 +336,47 @@ QThemeIconEntries QIconLoader::findIconHelper(const QString &themeName,
                 break;
         }
     }
+
+    /*********************************************************************
+    Author: Kaitlin Rupert <kaitlin.rupert@intel.com>
+    Date: Aug 12, 2010
+    Description: Make it so that the QIcon loader honors /usr/share/pixmaps
+                 directory.  This is a valid directory per the Freedesktop.org
+                 icon theme specification.
+    Bug: https://bugreports.qt.nokia.com/browse/QTBUG-12874
+     *********************************************************************/
+#ifdef Q_OS_LINUX
+    /* Freedesktop standard says to look in /usr/share/pixmaps last */
+    if (entries.isEmpty()) {
+        const QString pixmaps(QLatin1String("/usr/share/pixmaps"));
+
+        QDir currentDir(pixmaps);
+        QIconDirInfo dirInfo(pixmaps);
+        if (currentDir.exists(iconName + pngext)) {
+            PixmapEntry *iconEntry = new PixmapEntry;
+            iconEntry->dir = dirInfo;
+            iconEntry->filename = currentDir.filePath(iconName + pngext);
+            // Notice we ensure that pixmap entries always come before
+            // scalable to preserve search order afterwards
+            entries.prepend(iconEntry);
+        } else if (m_supportsSvg &&
+                   currentDir.exists(iconName + svgext)) {
+            ScalableEntry *iconEntry = new ScalableEntry;
+            iconEntry->dir = dirInfo;
+            iconEntry->filename = currentDir.filePath(iconName + svgext);
+            entries.append(iconEntry);
+        } else if (currentDir.exists(iconName + xpmext)) {
+            PixmapEntry *iconEntry = new PixmapEntry;
+            iconEntry->dir = dirInfo;
+            iconEntry->filename = currentDir.filePath(iconName + xpmext);
+            // Notice we ensure that pixmap entries always come before
+            // scalable to preserve search order afterwards
+            entries.append(iconEntry);
+        }
+
+    }
+#endif
+
     return entries;
 }
 
@@ -351,13 +407,22 @@ QIconLoaderEngineFixed::~QIconLoaderEngineFixed()
 }
 
 QIconLoaderEngineFixed::QIconLoaderEngineFixed(const QIconLoaderEngineFixed &other)
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+        : QIconEngineV2(other),
+#else
         : QIconEngine(other),
+#endif
         m_iconName(other.m_iconName),
         m_key(0)
 {
 }
 
+
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+QIconEngineV2 *QIconLoaderEngineFixed::clone() const
+#else
 QIconEngine *QIconLoaderEngineFixed::clone() const
+#endif
 {
     return new QIconLoaderEngineFixed(*this);
 }
@@ -381,14 +446,17 @@ bool QIconLoaderEngineFixed::hasIcon() const
 // Lazily load the icon
 void QIconLoaderEngineFixed::ensureLoaded()
 {
-    if (!(QIconLoader::instance()->themeKey() == m_key)) {
+
+    iconLoaderInstance()->ensureInitialized();
+
+    if (!(iconLoaderInstance()->themeKey() == m_key)) {
 
         while (!m_entries.isEmpty())
             delete m_entries.takeLast();
 
         Q_ASSERT(m_entries.size() == 0);
-        m_entries = QIconLoader::instance()->loadIcon(m_iconName);
-        m_key = QIconLoader::instance()->themeKey();
+        m_entries = iconLoaderInstance()->loadIcon(m_iconName);
+        m_key = iconLoaderInstance()->themeKey();
     }
 }
 
@@ -492,18 +560,30 @@ QSize QIconLoaderEngineFixed::actualSize(const QSize &size, QIcon::Mode mode,
                                    QIcon::State state)
 {
     ensureLoaded();
-
     QIconLoaderEngineEntry *entry = entryForSize(size);
     if (entry) {
         const QIconDirInfo &dir = entry->dir;
         if (dir.type == QIconDirInfo::Scalable)
+        {
             return size;
+        }
         else {
+            if (dir.size == 0)
+            {
+                entry->dir.size = QPixmap(entry->filename).size().width();
+                entry->dir.minSize = dir.size;
+                entry->dir.maxSize = dir.size;
+            }
             int result = qMin<int>(dir.size, qMin(size.width(), size.height()));
+
             return QSize(result, result);
         }
     }
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+    return QIconEngineV2::actualSize(size, mode, state);
+#else
     return QIconEngine::actualSize(size, mode, state);
+#endif
 }
 
 QPixmap PixmapEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state)
@@ -519,25 +599,24 @@ QPixmap PixmapEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State st
     if (!actualSize.isNull() && (actualSize.width() > size.width() || actualSize.height() > size.height()))
         actualSize.scale(size, Qt::KeepAspectRatio);
 
-    QString key = QLatin1String("$qt_theme_")
-                  % HexString<qint64>(basePixmap.cacheKey())
-                  % HexString<int>(mode)
-                  % HexString<qint64>(QGuiApplication::palette().cacheKey())
-                  % HexString<int>(actualSize.width())
-                  % HexString<int>(actualSize.height());
+
+    QString key = QString("$qt_theme_%1%2%3%4%5")
+                    .arg(basePixmap.cacheKey(),     16, 16, QChar('0'))
+                    .arg(mode,                      8,  16, QChar('0'))
+                    .arg(qApp->palette().cacheKey(),16, 16, QChar('0'))
+                    .arg(actualSize.width(),        8,  16, QChar('0'))
+                    .arg(actualSize.height(),       8,  16, QChar('0'));
 
     QPixmap cachedPixmap;
     if (QPixmapCache::find(key, &cachedPixmap)) {
         return cachedPixmap;
     } else {
         if (basePixmap.size() != actualSize)
-            cachedPixmap = basePixmap.scaled(actualSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-        else
-            cachedPixmap = basePixmap;
-#if 0
-        if (QGuiApplication *guiApp = qobject_cast<QGuiApplication *>(qApp))
-            cachedPixmap = static_cast<QGuiApplicationPrivate*>(QObjectPrivate::get(guiApp))->applyQIconStyleHelper(mode, cachedPixmap);
-#endif
+            basePixmap = basePixmap.scaled(actualSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+
+        QStyleOption opt(0);
+        opt.palette = qApp->palette();
+        cachedPixmap = qApp->style()->generatedIconPixmap(mode, basePixmap, &opt);
         QPixmapCache::insert(key, cachedPixmap);
     }
     return cachedPixmap;
@@ -555,9 +634,11 @@ QPixmap ScalableEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State 
 QPixmap QIconLoaderEngineFixed::pixmap(const QSize &size, QIcon::Mode mode,
                                  QIcon::State state)
 {
+
     ensureLoaded();
 
     QIconLoaderEngineEntry *entry = entryForSize(size);
+
     if (entry)
         return entry->pixmap(size, mode, state);
 
@@ -574,11 +655,20 @@ void QIconLoaderEngineFixed::virtual_hook(int id, void *data)
     ensureLoaded();
 
     switch (id) {
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+    case QIconEngineV2::AvailableSizesHook:
+#else
     case QIconEngine::AvailableSizesHook:
+#endif
         {
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+            QIconEngineV2::AvailableSizesArgument &arg
+                    = *reinterpret_cast<QIconEngineV2::AvailableSizesArgument*>(data);
+#else
             QIconEngine::AvailableSizesArgument &arg
                     = *reinterpret_cast<QIconEngine::AvailableSizesArgument*>(data);
-            const QList<QIconDirInfo> directoryKey = QIconLoader::instance()->theme().keyList();
+#endif
+            const QList<QIconDirInfo> directoryKey = iconLoaderInstance()->theme().keyList();
             arg.sizes.clear();
 
             // Gets all sizes from the DirectoryInfo entries
@@ -588,19 +678,32 @@ void QIconLoaderEngineFixed::virtual_hook(int id, void *data)
             }
         }
         break;
+#if (QT_VERSION >= 0x040700) && (QT_VERSION < 0x050000)
+    case QIconEngineV2::IconNameHook:
+        {
+            QString &name = *reinterpret_cast<QString*>(data);
+            name = m_iconName;
+        }
+        break;
+#elif QT_VERSION > QT_VERSION_CHECK(5,0,0)
     case QIconEngine::IconNameHook:
         {
             QString &name = *reinterpret_cast<QString*>(data);
             name = m_iconName;
         }
         break;
+#else// QT_VERSION > QT_VERSION_CHECK(5,0,0)
+#warning QIconEngineV2::IconNameHook is ignored due Qt version. Upgrade to 4.7.x
+#endif
     default:
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+        QIconEngineV2::virtual_hook(id, data);
+#else
         QIconEngine::virtual_hook(id, data);
+#endif
     }
 }
 
 } // QtXdg
-
-//QT_END_NAMESPACE
 
 #endif //QT_NO_ICON

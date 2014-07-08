@@ -1,48 +1,60 @@
+/* BEGIN_COMMON_COPYRIGHT_HEADER
+ * (c)LGPL2
+ */
 /****************************************************************************
 **
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
-** Contact: http://www.qt-project.org/legal
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the QtGui module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and Digia.  For licensing terms and
-** conditions see http://qt.digia.com/licensing.  For further information
-** use the contact form at http://qt.digia.com/contact-us.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Digia gives you certain additional
-** rights.  These rights are described in the Digia Qt LGPL Exception
+** In addition, as a special exception, Nokia gives you certain additional
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
 ** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 3.0 as published by the Free Software
-** Foundation and appearing in the file LICENSE.GPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU General Public License version 3.0 requirements will be
-** met: http://www.gnu.org/copyleft/gpl.html.
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
+**
+** Other Usage
+** Alternatively, this file may be used in accordance with the terms and
+** conditions contained in a signed written agreement between you and Nokia.
+**
+**
+**
 **
 **
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+//END_COMMON_COPYRIGHT_HEADER
 
-#ifndef QICONLOADER_P_H
-#define QICONLOADER_P_H
+/*************************************************************************
+ It's fixes the following bugs:
+   * QIcon::fromTheme returns pixmaps that are bigger than requested
+        https://bugreports.qt.nokia.com/browse/QTBUG-17953
 
-#include <QtCore/qglobal.h>
+   * Qt should honor /usr/share/pixmaps as a valid icon directory on Linux
+        https://bugreports.qt.nokia.com/browse/QTBUG-12874
+
+  *************************************************************************/
+
+#ifndef QDESKTOPICON_P_H
+#define QDESKTOPICON_P_H
 
 #ifndef QT_NO_ICON
 //
@@ -59,11 +71,9 @@
 #include <QtGui/QIcon>
 #include <QtGui/QIconEngine>
 #include <QtGui/QPixmapCache>
-//#include <private/qicon_p.h>
-//#include <private/qfactoryloader_p.h>
-#include <QtCore/QHash>
-
-//QT_BEGIN_NAMESPACE
+//#include "qt/qicon_p.h"
+//#include "qt/qfactoryloader_p.h"
+#include <QHash>
 
 namespace QtXdg {
 
@@ -113,8 +123,11 @@ struct PixmapEntry : public QIconLoaderEngineEntry
 
 typedef QList<QIconLoaderEngineEntry*> QThemeIconEntries;
 
-//class QIconLoaderEngine : public QIconEngine
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+class QIconLoaderEngineFixed : public QIconEngineV2
+#else
 class QIconLoaderEngineFixed : public QIconEngine
+#endif
 {
 public:
     QIconLoaderEngineFixed(const QString& iconName = QString());
@@ -123,7 +136,11 @@ public:
     void paint(QPainter *painter, const QRect &rect, QIcon::Mode mode, QIcon::State state);
     QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state);
     QSize actualSize(const QSize &size, QIcon::Mode mode, QIcon::State state);
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+    QIconEngineV2 *clone() const;
+#else
     QIconEngine *clone() const;
+#endif
     bool read(QDataStream &in);
     bool write(QDataStream &out) const;
 
@@ -149,16 +166,18 @@ public:
     QStringList parents() { return m_parents; }
     QList <QIconDirInfo> keyList() { return m_keyList; }
     QString contentDir() { return m_contentDir; }
+    QStringList contentDirs() { return m_contentDirs; }
     bool isValid() { return m_valid; }
 
 private:
     QString m_contentDir;
+    QStringList m_contentDirs;
     QList <QIconDirInfo> m_keyList;
     QStringList m_parents;
     bool m_valid;
 };
 
-class Q_GUI_EXPORT QIconLoader : public QObject
+class QIconLoader : public QObject
 {
 public:
     QIconLoader();
@@ -192,8 +211,6 @@ private:
 
 } // QtXdg
 
-//QT_END_NAMESPACE
+#endif // QDESKTOPICON_P_H
 
-#endif // QT_NO_ICON
-
-#endif // QICONLOADER_P_H
+#endif //QT_NO_ICON

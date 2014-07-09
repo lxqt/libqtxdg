@@ -105,7 +105,6 @@ set(libqtxdg_PRIVATE_H_FILES
     xdgmenu_p.h
     xdgmenureader.h
     xdgmenurules.h
-    qiconfix/qiconloader_p.h
 )
 
 set(libqtxdg_CPP_FILES
@@ -122,7 +121,6 @@ set(libqtxdg_CPP_FILES
     xdgmime.cpp
     xmlhelper.cpp
     xdgautostart.cpp
-    qiconfix/qiconloader.cpp
 )
 
 set(libqtxdg_MOCS

@@ -36,9 +36,9 @@
 #include <QFileInfo>
 #include <QCache>
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-#include "qiconfix/qiconloader_p.h"
-#else
 #include "qiconfix/qiconloader_p_qt4.h"
+#else
+#include "qiconfix/qiconloader_p.h"
 #endif
 #include <QCoreApplication>
 

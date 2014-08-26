@@ -66,7 +66,11 @@ else()
     set(QTXDGX_PKG_CONFIG_REQUIRES "QtCore, QtXml")
 
     include(${QT_USE_FILE})
-    set(QTX_LIBRARIES ${QT_LIBRARIES})
+    set(QTX_LIBRARIES
+        ${QT_QTCORE_LIBRARY}
+        ${QT_QTGUI_LIBRARY}
+        ${QT_QTXML_LIBRARY}
+    )
     message(STATUS "Building with Qt ${QTVERSION}")
 endif()
 

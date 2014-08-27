@@ -33,11 +33,13 @@
 #include <QFileInfo>
 #include <QtGui/QIcon>
 
+#include "xdgmacros.h"
+
 struct XdgMimeData;
 
 /*! @brief The XdgMimeInfo class provides mime information about file.
  */
-class XdgMimeInfo
+class QTXDG_DEPRECATED XdgMimeInfo
 {
 public:
     /// Constructs a XdgMimeInfo with the mimeType type.
@@ -82,7 +84,7 @@ private:
 };
 
 
-class XdgMimeInfoCache
+class QTXDG_DEPRECATED XdgMimeInfoCache
 {
 public:
     static QStringList mediatypes();

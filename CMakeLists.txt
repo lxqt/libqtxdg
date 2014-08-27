@@ -7,6 +7,13 @@ option(USE_QT5 "Build with Qt5." $ENV{USE_QT5})
 
 option(BUILD_TESTS "Builds tests" OFF)
 
+# The Qt4 version can be compiled with libmagic or with QtMimeTypes
+# QtMimeTypes is the preferred way and also the default. libmagic will be
+# dropped in future releases.
+if (NOT USE_QT5)
+    option(USE_QTMIMETYPES "Use QtMimeTypes library" ON)
+endif()
+
 # Standard directories for installation
 include(GNUInstallDirs)
 
@@ -19,6 +26,8 @@ set (PATCH_VERSION 3)
 set(QTXDG_VERSION_STRING ${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION})
 
 add_definitions(-Wall)
+
+find_package(PkgConfig)
 
 if (USE_QT5)
     find_package(Qt5Widgets REQUIRED QUIET)
@@ -45,6 +54,13 @@ if (USE_QT5)
 #        "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}"
 #    )
 
+    # QMimeDatabase and QMimeType are part of Qt5Core
+    # We just use that as an mimetype provider.
+    # An empty MIMETYPES_PROVIDER_LIBRARY means we are using Qt internal
+    # mimetypes support
+    set(MIMETYPES_PROVIDER_LIBRARY "")
+    add_definitions("-DHAVE_QTMIMETYPES")
+
     set(QTX_LIBRARIES ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES})
     message(STATUS "Building with Qt ${Qt5Core_VERSION_STRING}")
 else()
@@ -62,7 +78,6 @@ else()
     set(QTXDGX_FILE_NAME "qtxdg")
 
     set(QTXDGX_PKG_CONFIG_DESCRIPTION "QtXdg, a Qt4 implementation of XDG standards")
-    set(QTXDGX_PKG_CONFIG_REQUIRES "QtCore, QtXml")
 
     include(${QT_USE_FILE})
     set(QTX_LIBRARIES
@@ -74,9 +89,6 @@ else()
 endif()
 
 
-find_package(LibMagic REQUIRED QUIET)
-
-
 set(libqtxdg_PUBLIC_H_FILES
     xdgaction.h
     xdgdesktopfile.h
@@ -84,7 +96,6 @@ set(libqtxdg_PUBLIC_H_FILES
     xdgicon.h
     xdgmenu.h
     xdgmenuwidget.h
-    xdgmime.h
     xmlhelper.h
     xdgautostart.h
     xdgmacros.h
@@ -97,7 +108,6 @@ set(libqtxdg_PUBLIC_CLASSES
     XdgIcon
     XdgMenu
     XdgMenuWidget
-    XdgMime
     XmlHelper
     XdgAutoStart
 )
@@ -121,7 +131,6 @@ set(libqtxdg_CPP_FILES
     xdgmenureader.cpp
     xdgmenurules.cpp
     xdgmenuwidget.cpp
-    xdgmime.cpp
     xmlhelper.cpp
     xdgautostart.cpp
 )
@@ -143,6 +152,36 @@ else()
     list(APPEND libqtxdg_PRIVATE_H_FILES qiconfix/qiconloader_p_qt4.h)
     list(APPEND libqtxdg_CPP_FILES qiconfix/qiconloader_qt4.cpp)
 endif()
+
+if (NOT USE_QT5)
+    if (USE_QTMIMETYPES)
+        # Using QtMimeTypes to provide a better mimetype support on Qt4
+        # Project repo: https://qt.gitorious.org/qtplayground/mimetypes
+        pkg_check_modules(QTMIMETYPES REQUIRED
+            QtMimeTypes
+        )
+        include_directories(${QTMIMETYPES_INCLUDE_DIRS})
+        set(QTXDGX_PKG_CONFIG_REQUIRES "QtCore, QtXml, QtMimeTypes")
+        set(MIMETYPES_PROVIDER_LIBRARY ${QTMIMETYPES_LIBRARIES})
+        add_definitions("-DHAVE_QTMIMETYPES")
+    else()
+        # Use libmagic
+        find_package(LibMagic REQUIRED QUIET)
+        set(MIMETYPES_PROVIDER_LIBRARY ${LIBMAGIC_LIBRARY})
+        set(QTXDGX_PKG_CONFIG_REQUIRES "QtCore, QtXml")
+
+        list(APPEND libqtxdg_PUBLIC_H_FILES xdgmime.h)
+        list(APPEND libqtxdg_PUBLIC_CLASSES XdgMime)
+        list(APPEND libqtxdg_CPP_FILES xdgmime.cpp)
+    endif()
+endif()
+
+if (USE_QTMIMETYPES OR USE_QT5)
+    list(APPEND libqtxdg_PUBLIC_H_FILES xdgmimetype.h)
+    list(APPEND libqtxdg_PUBLIC_CLASSES XdgMimeType)
+    list(APPEND libqtxdg_CPP_FILES xdgmimetype.cpp)
+endif()
+
 
 #************************************************
 # Build 2 config.cmake files
@@ -217,7 +256,10 @@ add_library(${QTXDGX_LIBRARY_NAME} SHARED
 )
 
 
-target_link_libraries(${QTXDGX_LIBRARY_NAME} ${QTX_LIBRARIES} ${LIBMAGIC_LIBRARY})
+target_link_libraries(${QTXDGX_LIBRARY_NAME}
+    ${QTX_LIBRARIES}
+    ${MIMETYPES_PROVIDER_LIBRARY}
+)
 
 set_target_properties(${QTXDGX_LIBRARY_NAME} PROPERTIES
   VERSION ${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}

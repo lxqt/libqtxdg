@@ -34,7 +34,14 @@
 #include <stdlib.h>
 
 #include "xdgdesktopfile.h"
+
+#ifdef HAVE_QTMIMETYPES
+#include <QMimeDatabase>
+#include <QMimeType>
+#else
 #include "xdgmime.h"
+#endif
+
 #include "xdgicon.h"
 #include "xdgdirs.h"
 #include "desktopenvironment_p.cpp"
@@ -389,9 +396,16 @@ bool XdgDesktopFileData::startLinkDetached(const XdgDesktopFile *q) const
     {
         // Local file
         QFileInfo fi(url);
-        XdgMimeInfo mimeInfo(fi);
 
+#ifdef HAVE_QTMIMETYPES
+        QMimeDatabase db;
+        QMimeType mimeInfo = db.mimeTypeForFile(fi);
+        XdgDesktopFile* desktopFile = XdgDesktopFileCache::getDefaultApp(mimeInfo.name());
+#else
+        XdgMimeInfo mimeInfo(fi);
         XdgDesktopFile* desktopFile = XdgDesktopFileCache::getDefaultApp(mimeInfo.mimeType());
+#endif
+
         if (desktopFile)
             return desktopFile->startDetached(url);
     }

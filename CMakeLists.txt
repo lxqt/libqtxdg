@@ -21,7 +21,6 @@ set(QTXDG_VERSION_STRING ${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION})
 add_definitions(-Wall)
 
 if (USE_QT5)
-    cmake_minimum_required(VERSION 2.8.3)
     find_package(Qt5Widgets REQUIRED QUIET)
     find_package(Qt5Xml REQUIRED QUIET)
     find_package(Qt5LinguistTools REQUIRED QUIET)

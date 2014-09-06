@@ -20,9 +20,9 @@ include(GNUInstallDirs)
 # additional cmake files
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-set (MAJOR_VERSION 0)
-set (MINOR_VERSION 5)
-set (PATCH_VERSION 3)
+set (MAJOR_VERSION 1)
+set (MINOR_VERSION 0)
+set (PATCH_VERSION 0)
 set(QTXDG_VERSION_STRING ${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION})
 
 add_definitions(-Wall)

@@ -163,6 +163,7 @@ if (NOT USE_QT5)
         include_directories(${QTMIMETYPES_INCLUDE_DIRS})
         set(QTXDGX_PKG_CONFIG_REQUIRES "QtCore, QtXml, QtMimeTypes")
         set(MIMETYPES_PROVIDER_LIBRARY ${QTMIMETYPES_LIBRARIES})
+        link_directories(${QTMIMETYPES_LIBRARY_DIRS})
         add_definitions("-DHAVE_QTMIMETYPES")
     else()
         # Use libmagic

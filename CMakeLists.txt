@@ -4,8 +4,8 @@ project(libqtxdg)
 
 # Support different versions of Qt
 option(USE_QT5 "Build with Qt5." $ENV{USE_QT5})
-
 option(BUILD_TESTS "Builds tests" OFF)
+option(UPDATE_TRANSLATIONS "Update source translation translations/*.ts files" OFF)
 
 # The Qt4 version can be compiled with libmagic or with QtMimeTypes
 # QtMimeTypes is the preferred way and also the default. libmagic will be
@@ -184,6 +184,10 @@ if (USE_QTMIMETYPES OR USE_QT5)
 endif()
 
 
+set(APP_SHARE_DIR ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/lib${QTXDGX_FILE_NAME})
+add_definitions(-DTRANSLATIONS_DIR=\"${APP_SHARE_DIR}\")
+
+
 #************************************************
 # Build 2 config.cmake files
 # One for in-tree build and second for normal one.
@@ -217,13 +221,17 @@ configure_file(
 
 # Translations **********************************
 # QtXdg is an independent library, so I do not use razor_translate_ts
-include(qtxdgTranslate)
-qtxdg_translate_ts(libqtxdg_QM_FILES
+include(QtTranslate)
+QtTranslate(libqtxdg_QM_FILES
+    USE_QT5 ${USE_QT5}
+    UPDATE_TRANSLATIONS ${UPDATE_TRANSLATIONS}
     SOURCES
         ${libqtxdg_PUBLIC_H_FILES}
         ${libqtxdg_PRIVATE_H_FILES}
         ${libqtxdg_CPP_FILES}
         ${libqtxdg_UI_FILES}
+    INSTALL_DIR 
+        ${APP_SHARE_DIR}
 )
 
 #************************************************
@@ -244,9 +252,6 @@ if (NOT CMAKE_BUILD_TYPE)
     set ( CMAKE_BUILD_TYPE Release )
 endif (NOT CMAKE_BUILD_TYPE)
 
-
-set(APP_SHARE_DIR ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/lib${QTXDGX_FILE_NAME})
-add_definitions(-DTRANSLATIONS_DIR=\"${APP_SHARE_DIR}\")
 
 add_library(${QTXDGX_LIBRARY_NAME} SHARED
     ${libqtxdg_PUBLIC_H_FILES}

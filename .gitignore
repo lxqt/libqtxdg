@@ -1,7 +1,8 @@
-/build
+build*
 *.qm
 *~
 *.autosave
 *-swp
+*.swp
 CMakeLists.txt.user*
 nbproject/

@@ -71,7 +71,7 @@ bool XdgMenuReader::load(const QString& fileName, const QString& baseDir)
 {
     if (fileName.isEmpty())
     {
-        mErrorStr = tr("Menu file not defined.");
+        mErrorStr = QLatin1String("Menu file not defined.");
         return false;
     }
 
@@ -88,7 +88,7 @@ bool XdgMenuReader::load(const QString& fileName, const QString& baseDir)
     QFile file(mFileName);
     if (!file.open(QFile::ReadOnly | QFile::Text))
     {
-        mErrorStr = tr("%1 not loading: %2").arg(fileName).arg(file.errorString());
+        mErrorStr = QString("%1 not loading: %2").arg(fileName).arg(file.errorString());
         return false;
     }
     //qDebug() << "Load file:" << mFileName;
@@ -100,7 +100,7 @@ bool XdgMenuReader::load(const QString& fileName, const QString& baseDir)
 
     if (!mXml.setContent(&file, true, &errorStr, &errorLine, &errorColumn))
     {
-        mErrorStr = tr("Parse error at line %1, column %2:\n%3")
+        mErrorStr = QString("Parse error at line %1, column %2:\n%3")
                         .arg(errorLine)
                         .arg(errorColumn)
                         .arg(errorStr);

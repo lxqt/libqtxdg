@@ -5,7 +5,6 @@ project(libqtxdg)
 # Support different versions of Qt
 option(USE_QT5 "Build with Qt5." $ENV{USE_QT5})
 option(BUILD_TESTS "Builds tests" OFF)
-option(UPDATE_TRANSLATIONS "Update source translation translations/*.ts files" OFF)
 
 # The Qt4 version can be compiled with libmagic or with QtMimeTypes
 # QtMimeTypes is the preferred way and also the default. libmagic will be
@@ -32,7 +31,6 @@ find_package(PkgConfig)
 if (USE_QT5)
     find_package(Qt5Widgets REQUIRED QUIET)
     find_package(Qt5Xml REQUIRED QUIET)
-    find_package(Qt5LinguistTools REQUIRED QUIET)
     if (BUILD_TESTS)
         find_package(Qt5Test REQUIRED QUIET)
     endif()
@@ -219,24 +217,6 @@ configure_file(
     @ONLY
 )
 
-# Translations **********************************
-# QtXdg is an independent library, so I do not use razor_translate_ts
-include(QtTranslate)
-QtTranslate(libqtxdg_QM_FILES
-    USE_QT5 ${USE_QT5}
-    UPDATE_TRANSLATIONS ${UPDATE_TRANSLATIONS}
-    SOURCES
-        ${libqtxdg_PUBLIC_H_FILES}
-        ${libqtxdg_PRIVATE_H_FILES}
-        ${libqtxdg_CPP_FILES}
-        ${libqtxdg_UI_FILES}
-    INSTALL_DIR 
-        ${APP_SHARE_DIR}
-)
-
-#************************************************
-
-
 #**********************************************************
 
 include(FindLibSuffix)
@@ -258,7 +238,6 @@ add_library(${QTXDGX_LIBRARY_NAME} SHARED
     ${libqtxdg_PRIVATE_H_FILES}
     ${libqtxdg_CPP_FILES}
     ${libqtxdg_CXX_FILES}
-    ${libqtxdg_QM_FILES}
 )
 
 

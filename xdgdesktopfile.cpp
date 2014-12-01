@@ -1559,13 +1559,13 @@ QList<XdgDesktopFile*>  XdgDesktopFileCache::getApps(const QString& mimetype)
  ************************************************/
 XdgDesktopFile* XdgDesktopFileCache::getDefaultApp(const QString& mimetype)
 {
-    // First, we look in ~/.local/share/applications/defaults.list, /usr/local/share/applications/defaults.list and
-    // /usr/share/applications/defaults.list (in that order) for a default.
+    // First, we look in ~/.local/share/applications/mimeapps.list, /usr/local/share/applications/mimeapps.list and
+    // /usr/share/applications/mimeapps.list (in that order) for a default.
     QStringList dataDirs = XdgDirs::dataDirs();
     dataDirs.prepend(XdgDirs::dataHome(false));
     foreach(const QString dataDir, dataDirs)
     {
-        QString defaultsListPath = dataDir + "/applications/defaults.list";
+        QString defaultsListPath = dataDir + "/applications/mimeapps.list";
         if (QFileInfo(defaultsListPath).exists())
         {
             QSettings defaults(defaultsListPath, desktopFileSettingsFormat());

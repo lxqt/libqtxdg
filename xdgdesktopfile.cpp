@@ -67,6 +67,28 @@
 #include <QSettings>
 #include <QTextStream>
 #include <QFile>
+
+
+// Helper functions prototypes
+bool checkTryExec(const QString& progName);
+QString &doEscape(QString& str, const QHash<QChar,QChar> &repl);
+QString &doUnEscape(QString& str, const QHash<QChar,QChar> &repl);
+QString &escape(QString& str);
+QString &escapeExec(QString& str);
+QString expandDynamicUrl(QString url);
+QString expandEnvVariables(const QString str);
+QStringList expandEnvVariables(const QStringList strs);
+QString findDesktopFile(const QString& dirName, const QString& desktopName);
+QString findDesktopFile(const QString& desktopName);
+static QStringList parseCombinedArgString(const QString &program);
+bool read(const QString &prefix);
+bool readDesktopFile(QIODevice & device, QSettings::SettingsMap & map);
+void replaceVar(QString &str, const QString &varName, const QString &after);
+QString &unEscape(QString& str);
+QString &unEscapeExec(QString& str);
+bool writeDesktopFile(QIODevice & device, const QSettings::SettingsMap & map);
+void loadMimeCacheDir(const QString& dirName, QHash<QString, QList<XdgDesktopFile*> > & cache);
+
 /************************************************
 
  ************************************************/

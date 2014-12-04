@@ -32,6 +32,11 @@
 #include <QDebug>
 
 
+// Helper functions prototypes
+void fixBashShortcuts(QString &s);
+QString xdgSingleDir(const QString &envVar, const QString &def, bool createDir);
+QStringList xdgDirList(const QString &envVar, const QString &postfix);
+
 /************************************************
  Helper func.
  ************************************************/

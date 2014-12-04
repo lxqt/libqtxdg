@@ -50,6 +50,11 @@
 #include <QCoreApplication>
 #include <QCryptographicHash>
 
+
+// Helper functions prototypes
+void installTranslation(const QString &name);
+bool isParent(const QDomElement& parent, const QDomElement& child);
+
 void installTranslation(const QString &name)
 {
     static bool alreadyLoaded = false;

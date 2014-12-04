@@ -32,6 +32,10 @@
 #include <QMap>
 
 
+// Helper functions prototypes
+QDomElement findLastElementByTag(const QDomElement element, const QString tagName);
+int childsCount(const QDomElement& element);
+
 /************************************************
 
  ************************************************/

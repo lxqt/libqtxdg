@@ -521,7 +521,15 @@ bool XdgDesktopFile::operator==(const XdgDesktopFile &other) const
  ************************************************/
 bool XdgDesktopFile::load(const QString& fileName)
 {
-    d->mFileName = fileName;
+    if (fileName.startsWith(QDir::separator())) { // absolute path
+        QFileInfo f(fileName);
+        if (f.exists())
+            d->mFileName = f.canonicalFilePath();
+        else
+            d->mFileName = QString();
+    } else { // relative path
+        d->mFileName = findDesktopFile(fileName);
+    }
     d->read(prefix());
     d->mIsValid = d->mIsValid && check();
     d->mType = d->detectType(this);

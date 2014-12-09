@@ -99,7 +99,6 @@ public:
     //! Saves the DesktopFile to the file with the given fileName. Returns true if successful; otherwise returns false.
     virtual bool save(const QString &fileName) const;
 
-
     /*! This is an overloaded function.
         This function writes a DesktopFile to the given device. */
     virtual bool save(QIODevice *device) const;
@@ -131,7 +130,8 @@ public:
     //! Returns true if the XdgDesktopFile is valid; otherwise returns false.
     bool isValid() const;
 
-    //! Returns the file name of the desktop file.
+    /*! Returns the file name of the desktop file.
+     *  Returns QString() if the file wasn't found when load was called. */
     QString fileName() const;
 
     //! Returns an icon specified in this file.

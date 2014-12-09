@@ -1300,26 +1300,34 @@ XdgDesktopFile* XdgDesktopFileCache::getFile(const QString& fileName)
         // Absolute path ........................
         //qDebug() << "XdgDesktopFileCache: add new file" << fileName;
         XdgDesktopFile* desktopFile = load(fileName);
-        instance().m_fileCache.insert(fileName, desktopFile);
+        if (desktopFile->isValid())
+            instance().m_fileCache.insert(fileName, desktopFile);
         return desktopFile;
     }
     else
     {
         // Search desktop file ..................
         QString filePath = findDesktopFile(fileName);
-        //qDebug() << "Sokoloff XdgDesktopFileCache::getFile found fileName" << fileName << filePath;
         XdgDesktopFile* desktopFile;
-
-        if (!instance().m_fileCache.contains(filePath))
+        //qDebug() << "Sokoloff XdgDesktopFileCache::getFile found fileName" << fileName << filePath;
+        if (!filePath.isEmpty())
         {
-            desktopFile = load(filePath);
-            instance().m_fileCache.insert(filePath, desktopFile);
+            // The file was found
+            if (!instance().m_fileCache.contains(filePath))
+            {
+                desktopFile = load(filePath);
+                instance().m_fileCache.insert(filePath, desktopFile);
+            }
+            else
+                desktopFile = instance().m_fileCache.value(filePath);
+
+            return desktopFile;
+
         }
         else
-            desktopFile = instance().m_fileCache.value(filePath);
-
-        instance().m_fileCache.insert(fileName, desktopFile);
-        return desktopFile;
+        {
+            return new XdgDesktopFile;
+        }
     }
 }
 

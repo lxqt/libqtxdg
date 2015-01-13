@@ -3,8 +3,14 @@ cmake_minimum_required( VERSION 2.8.5 )
 project(libqtxdg)
 
 # Support different versions of Qt
-option(USE_QT5 "Build with Qt5." $ENV{USE_QT5})
+option(USE_QT4 "Build with Qt4." $ENV{USE_QT4})
 option(BUILD_TESTS "Builds tests" OFF)
+
+if (USE_QT4)
+    set(USE_QT5 FALSE)
+else()
+    set(USE_QT5 TRUE)
+endif()
 
 # The Qt4 version can be compiled with libmagic or with QtMimeTypes
 # QtMimeTypes is the preferred way and also the default. libmagic will be

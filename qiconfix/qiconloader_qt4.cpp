@@ -377,6 +377,34 @@ QThemeIconEntries QIconLoader::findIconHelper(const QString &themeName,
     }
 #endif
 
+    if (entries.isEmpty()) {
+       // Search for unthemed icons in main dir of search paths
+       QStringList themeSearchPaths = QIcon::themeSearchPaths();
+        foreach (QString contentDir, themeSearchPaths)  {
+            QDir currentDir(contentDir);
+
+            if (currentDir.exists(iconName + pngext)) {
+                PixmapEntry *iconEntry = new PixmapEntry;
+                iconEntry->filename = currentDir.filePath(iconName + pngext);
+                // Notice we ensure that pixmap entries always come before
+                // scalable to preserve search order afterwards
+                entries.prepend(iconEntry);
+            } else if (m_supportsSvg &&
+                currentDir.exists(iconName + svgext)) {
+                ScalableEntry *iconEntry = new ScalableEntry;
+                iconEntry->filename = currentDir.filePath(iconName + svgext);
+                entries.append(iconEntry);
+                break;
+            } else if (currentDir.exists(iconName + xpmext)) {
+                PixmapEntry *iconEntry = new PixmapEntry;
+                iconEntry->filename = currentDir.filePath(iconName + xpmext);
+                // Notice we ensure that pixmap entries always come before
+                // scalable to preserve search order afterwards
+                entries.append(iconEntry);
+                break;
+            }
+        }
+    }
     return entries;
 }
 

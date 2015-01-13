@@ -29,6 +29,7 @@ add_definitions(-Wall)
 find_package(PkgConfig)
 
 if (USE_QT5)
+    cmake_minimum_required(VERSION 2.8.11)
     find_package(Qt5Widgets REQUIRED QUIET)
     find_package(Qt5Xml REQUIRED QUIET)
     if (BUILD_TESTS)

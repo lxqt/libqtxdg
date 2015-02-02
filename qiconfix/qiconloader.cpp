@@ -288,7 +288,7 @@ QThemeIconEntries QIconLoader::findIconHelper(const QString &themeName,
     }
 
     QStringList contentDirs = theme.contentDirs();
-    QList<QIconDirInfo> subDirs = theme.keyList();
+    const QVector<QIconDirInfo> subDirs = theme.keyList();
 
     const QString svgext(QLatin1String(".svg"));
     const QString pngext(QLatin1String(".png"));

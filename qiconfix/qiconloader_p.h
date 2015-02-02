@@ -62,6 +62,7 @@
 //#include <private/qicon_p.h>
 //#include <private/qfactoryloader_p.h>
 #include <QtCore/QHash>
+#include <QtCore/QTypeInfo>
 
 //QT_BEGIN_NAMESPACE
 
@@ -193,6 +194,10 @@ private:
 };
 
 } // QtXdg
+
+// Note: class template specialization of 'QTypeInfo' must occur at
+//       global scope
+Q_DECLARE_TYPEINFO(QtXdg::QIconDirInfo, Q_MOVABLE_TYPE);
 
 //QT_END_NAMESPACE
 

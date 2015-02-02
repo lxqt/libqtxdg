@@ -668,7 +668,6 @@ void QIconLoaderEngineFixed::virtual_hook(int id, void *data)
         {
             QIconEngine::AvailableSizesArgument &arg
                     = *reinterpret_cast<QIconEngine::AvailableSizesArgument*>(data);
-            const QList<QIconDirInfo> directoryKey = QIconLoader::instance()->theme().keyList();
             arg.sizes.clear();
 
             // Gets all sizes from the DirectoryInfo entries

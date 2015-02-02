@@ -550,8 +550,10 @@ QIconLoaderEngineEntry *QIconLoaderEngineFixed::entryForSize(const QSize &size)
     // Note that m_entries are sorted so that png-files
     // come first
 
+    const int numEntries = m_entries.size();
+
     // Search for exact matches first
-    for (int i = 0; i < m_entries.count(); ++i) {
+    for (int i = 0; i < numEntries; ++i) {
         QIconLoaderEngineEntry *entry = m_entries.at(i);
         if (directoryMatchesSize(entry->dir, iconsize)) {
             return entry;
@@ -561,7 +563,7 @@ QIconLoaderEngineEntry *QIconLoaderEngineFixed::entryForSize(const QSize &size)
     // Find the minimum distance icon
     int minimalSize = INT_MAX;
     QIconLoaderEngineEntry *closestMatch = 0;
-    for (int i = 0; i < m_entries.count(); ++i) {
+    for (int i = 0; i < numEntries; ++i) {
         QIconLoaderEngineEntry *entry = m_entries.at(i);
         int distance = directorySizeDistance(entry->dir, iconsize);
         if (distance < minimalSize) {

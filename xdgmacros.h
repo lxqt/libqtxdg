@@ -28,4 +28,10 @@
 #  endif
 #endif
 
+#ifdef QTXDG_COMPILATION
+    #define QTXDG_API    Q_DECL_EXPORT
+#else
+    #define QTXDG_API    Q_DECL_IMPORT
+#endif
+
 #endif // QTXDG_MACROS_H

@@ -30,6 +30,7 @@
 #ifndef QTXDG_XDGACTION_H
 #define QTXDG_XDGACTION_H
 
+#include "xdgmacros.h"
 #include "xdgdesktopfile.h"
 
 #include <QAction>
@@ -52,7 +53,7 @@
   the application defined in XdgDesktopFile. @sa XdgDesktopFile::startDetached.
 ****************************************/
 //*******************************************************************
-class XdgAction : public QAction
+class QTXDG_API XdgAction : public QAction
 {
     Q_OBJECT
 public:

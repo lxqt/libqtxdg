@@ -29,6 +29,7 @@
 #ifndef QTXDG_XDGMENUWIDGET_H
 #define QTXDG_XDGMENUWIDGET_H
 
+#include "xdgmacros.h"
 #include <QMenu>
 #include <QtXml/QDomElement>
 
@@ -58,7 +59,7 @@ class XdgMenuWidgetPrivate;
  @endcode
  */
 
-class XdgMenuWidget : public QMenu
+class QTXDG_API XdgMenuWidget : public QMenu
 {
     Q_OBJECT
 public:

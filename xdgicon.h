@@ -30,11 +30,12 @@
 #ifndef QTXDG_XDGICON_H
 #define QTXDG_XDGICON_H
 
+#include "xdgmacros.h"
 #include <QtGui/QIcon>
 #include <QString>
 #include <QStringList>
 
-class XdgIcon
+class QTXDG_API XdgIcon
 {
 public:
     static QIcon fromTheme(const QString& iconName, const QIcon& fallback = QIcon());

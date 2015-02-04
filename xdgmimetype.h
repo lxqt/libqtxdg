@@ -21,6 +21,7 @@
 #ifndef QTXDG_MIMETYPE_H
 #define QTXDG_MIMETYPE_H
 
+#include "xdgmacros.h"
 #include <QMimeType>
 #include <QIcon>
 #include <QString>
@@ -40,7 +41,7 @@ class XdgMimeTypePrivate;
  * @author Luís Pereira (luis.artur.pereira@gmail.com)
  */
 
-class XdgMimeType : public QMimeType {
+class QTXDG_API XdgMimeType : public QMimeType {
 public:
 
     /*! Constructs an XdgMimeType object initialized with default property

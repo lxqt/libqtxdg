@@ -30,6 +30,7 @@
 #ifndef QTXDG_XDGDIRS_H
 #define QTXDG_XDGDIRS_H
 
+#include "xdgmacros.h"
 #include <QString>
 #include <QStringList>
 
@@ -52,7 +53,7 @@ static const QString userDirectoryString[8] =
     "Videos"
 };
 
-class XdgDirs
+class QTXDG_API XdgDirs
 {
 public:
     enum UserDirectory

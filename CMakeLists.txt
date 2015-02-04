@@ -30,7 +30,12 @@ set (MINOR_VERSION 0)
 set (PATCH_VERSION 0)
 set(QTXDG_VERSION_STRING ${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION})
 
-add_definitions(-Wall)
+add_definitions(-Wall -DQTXDG_COMPILATION=1)
+
+if (CMAKE_COMPILER_IS_GNUCXX)
+    # set visibility to hidden to hide symbols, unless they're exported manually in the code
+    set(CMAKE_CXX_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden -fno-exceptions ${CMAKE_CXX_FLAGS}")
+endif()
 
 find_package(PkgConfig)
 

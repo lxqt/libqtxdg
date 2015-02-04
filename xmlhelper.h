@@ -29,11 +29,12 @@
 #ifndef QTXDG_XMLHELPER_H
 #define QTXDG_XMLHELPER_H
 
+#include "xdgmacros.h"
 #include <QDebug>
 #include <QtXml/QDomElement>
 #include <QtXml/QDomNode>
 
-class DomElementIterator
+class QTXDG_API DomElementIterator
 {
 public:
     explicit DomElementIterator(const QDomNode& parentNode, const QString& tagName="")

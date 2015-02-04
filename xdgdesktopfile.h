@@ -56,7 +56,7 @@ class XdgDesktopFileData;
  \author Alexander Sokoloff <sokoloff.a@gmail.com>
  */
 
-class XdgDesktopFile
+class QTXDG_API XdgDesktopFile
 {
 public:
     /*! The Desktop Entry Specification defines 3 types of desktop entries: Application, Link and
@@ -222,7 +222,7 @@ private:
 typedef QList<XdgDesktopFile> XdgDesktopFileList;
 
 
-class XdgDesktopFileCache
+class QTXDG_API XdgDesktopFileCache
 {
 public:
     static XdgDesktopFile* getFile(const QString& fileName);

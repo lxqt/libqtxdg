@@ -30,6 +30,7 @@
 #ifndef QTXDG_XDGMENU_H
 #define QTXDG_XDGMENU_H
 
+#include "xdgmacros.h"
 #include <QObject>
 #include <QString>
 #include <QStringList>
@@ -62,7 +63,7 @@ class XdgMenuPrivate;
  @sa http://specifications.freedesktop.org/menu-spec/menu-spec-latest.html
  */
 
-class XdgMenu : public QObject
+class QTXDG_API XdgMenu : public QObject
 {
 Q_OBJECT
     friend class XdgMenuReader;

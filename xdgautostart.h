@@ -29,6 +29,7 @@
 #ifndef QTXDG_XDGAUTOSTART_H
 #define QTXDG_XDGAUTOSTART_H
 
+#include "xdgmacros.h"
 #include "xdgdesktopfile.h"
 
 /*! @brief The XdgAutoStart class implements the "Desktop Application Autostart Specification"
@@ -39,7 +40,7 @@
  *
  * @sa http://standards.freedesktop.org/autostart-spec/autostart-spec-latest.html
  */
-class XdgAutoStart
+class QTXDG_API XdgAutoStart
 {
 public:
     /*! Returns a list of XdgDesktopFile objects for all the .desktop files in the Autostart directories

@@ -41,18 +41,6 @@
  * @sa http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
  */
 
-static const QString userDirectoryString[8] =
-{
-    "Desktop",
-    "Download",
-    "Templates",
-    "Publicshare",
-    "Documents",
-    "Music",
-    "Pictures",
-    "Videos"
-};
-
 class QTXDG_API XdgDirs
 {
 public:

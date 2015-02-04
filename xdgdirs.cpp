@@ -31,6 +31,17 @@
 #include <QDir>
 #include <QDebug>
 
+static const QString userDirectoryString[8] =
+{
+    "Desktop",
+    "Download",
+    "Templates",
+    "Publicshare",
+    "Documents",
+    "Music",
+    "Pictures",
+    "Videos"
+};
 
 // Helper functions prototypes
 void fixBashShortcuts(QString &s);

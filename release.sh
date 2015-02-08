@@ -1,5 +1,6 @@
 PROJECT="libqtxdg"
 version="$1"
+prefix=$PROJECT-$version
 shift
 
 if [[ -z $version ]]; then
@@ -8,12 +9,12 @@ if [[ -z $version ]]; then
 fi
 
 mkdir -p "dist/$version"
-echo "Creating $PROJECT.tar.gz"
-git archive -9 --format tar.gz $version --prefix="$PROJECT/" > "dist/$version/$PROJECT.tar.gz"
-gpg --armor --detach-sign "dist/$version/$PROJECT.tar.gz"
-echo "Creating $PROJECT.tar.xz"
-git archive -9 --format tar.xz $version --prefix="$PROJECT/" > "dist/$version/$PROJECT.tar.xz"
-gpg --armor --detach-sign "dist/$version/$PROJECT.tar.xz"
+echo "Creating $prefix.tar.gz"
+git archive -9 --format tar.gz $version --prefix="$prefix/" > "dist/$version/$prefix.tar.gz"
+gpg --armor --detach-sign "dist/$version/$prefix.tar.gz"
+echo "Creating $prefix.tar.xz"
+git archive -9 --format tar.xz $version --prefix="$prefix/" > "dist/$version/$prefix.tar.xz"
+gpg --armor --detach-sign "dist/$version/$prefix.tar.xz"
 cd "dist/$version"
 
 sha1sum --tag *.tar.gz *.tar.xz >> CHECKSUMS

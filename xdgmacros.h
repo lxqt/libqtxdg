@@ -34,4 +34,12 @@
     #define QTXDG_API    Q_DECL_IMPORT
 #endif
 
+#if defined(QTXDG_COMPILATION) && defined(QTXDG_BUILDING_TESTS)
+#    define QTXDG_AUTOTEST Q_DECL_IMPORT
+#elif defined(QTXDG_COMPILATION) && defined(QTXDG_TESTS)
+#    define QTXDG_AUTOTEST Q_DECL_EXPORT
+#else
+#    define QTXDG_AUTOTEST
+#endif
+
 #endif // QTXDG_MACROS_H

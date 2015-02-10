@@ -13,7 +13,9 @@ set(LIBRARIES
 )
 
 
-add_definitions ( -Wall )
+if (BUILD_TESTS)
+    add_definitions(-DQTXDG_BUILDING_TESTS=1)
+endif()
 
 if (USE_QT5)
     qt5_wrap_cpp(MOCS ${${PROJECT_NAME}_MOCS})

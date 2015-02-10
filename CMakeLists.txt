@@ -132,6 +132,7 @@ set(libqtxdg_PRIVATE_H_FILES
     xdgmenu_p.h
     xdgmenureader.h
     xdgmenurules.h
+    xdgdesktopfile_p.h
 )
 
 set(libqtxdg_CPP_FILES
@@ -288,6 +289,7 @@ create_pkgconfig_file(${QTXDGX_LIBRARY_NAME}
 
 if(BUILD_TESTS)
     enable_testing()
+    add_definitions(-DQTXDG_TESTS=1)
     add_subdirectory(test)
 else()
     message(STATUS "")

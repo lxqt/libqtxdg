@@ -1,6 +1,7 @@
 #include "qtxdg_test.h"
 
 #include "xdgdesktopfile.h"
+#include "xdgdesktopfile_p.h"
 #include "xdgdirs.h"
 
 #include <QtTest>
@@ -64,11 +65,6 @@ void QtXdgTest::testMeldComparison()
 {
     compare("application/x-meld-comparison");
 }
-
-// Implemented in xdgdesktopfile.cpp
-bool readDesktopFile(QIODevice & device, QSettings::SettingsMap & map);
-bool writeDesktopFile(QIODevice & device, const QSettings::SettingsMap & map);
-
 
 void QtXdgTest::testCustomFormat()
 {

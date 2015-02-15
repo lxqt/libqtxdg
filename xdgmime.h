@@ -39,7 +39,7 @@ struct XdgMimeData;
 
 /*! @brief The XdgMimeInfo class provides mime information about file.
  */
-class QTXDG_DEPRECATED QTXQD_API XdgMimeInfo
+class QTXDG_DEPRECATED QTXDG_API XdgMimeInfo
 {
 public:
     /// Constructs a XdgMimeInfo with the mimeType type.

@@ -62,7 +62,11 @@ if (USE_QT5)
     set(QTXDGX_PKG_CONFIG_DESCRIPTION "Qt5Xdg, a Qt5 implementation of XDG standards")
     set(QTXDGX_PKG_CONFIG_REQUIRES "Qt5Core, Qt5Xml, Qt5Widgets")
 
-    include_directories(${Qt5Widgets_INCLUDE_DIRS} ${Qt5Xml_INCLUDE_DIRS})
+    include_directories(
+        ${Qt5Widgets_INCLUDE_DIRS}
+        ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
+        ${Qt5Xml_INCLUDE_DIRS}
+    )
     add_definitions(${Qt5Core_DEFINITIONS})
 #    set(CMAKE_CXX_FLAGS
 #        "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}"
@@ -161,7 +165,7 @@ set(libqtxdg_MOCS
 )
 
 if (USE_QT5)
-    list(APPEND libqtxdg_PRIVATE_H_FILES qiconfix/qiconloader_p.h)
+    list(APPEND libqtxdg_PRIVATE_INSTALLABLE_H_FILES qiconfix/qiconloader_p.h)
     list(APPEND libqtxdg_CPP_FILES qiconfix/qiconloader.cpp)
 else()
     list(APPEND libqtxdg_PRIVATE_H_FILES qiconfix/qiconloader_p_qt4.h)
@@ -213,11 +217,21 @@ set(QTXDG_PATCH_VERSION ${PATCH_VERSION})
 
 # In tree compilation ......................
 set(QTXDG_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR};${CMAKE_CURRENT_BINARY_DIR}")
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/qtxdg-config.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}-config.cmake
-    @ONLY
-)
+
+if (USE_QT5)
+    set(QTXDG_PRIVATE_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/qiconfix")
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/qt5xdg-config.cmake.in
+        ${CMAKE_CURRENT_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}-config.cmake
+        @ONLY
+    )
+else()
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/qtxdg-config.cmake.in
+        ${CMAKE_CURRENT_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}-config.cmake
+        @ONLY
+    )
+endif()
 
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/${QTXDGX_FILE_NAME}_use.cmake
@@ -228,11 +242,20 @@ configure_file(
 # Instalable ...............................
 set(QTXDG_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME})
 
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/qtxdg-config.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake
-    @ONLY
-)
+if (USE_QT5)
+    set(QTXDG_PRIVATE_INCLUDE_DIR ${QTXDG_INCLUDE_DIR}/${QTXDG_VERSION_STRING})
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/qt5xdg-config.cmake.in
+        ${CMAKE_CURRENT_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake
+        @ONLY
+    )
+else()
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/qtxdg-config.cmake.in
+        ${CMAKE_CURRENT_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake
+        @ONLY
+    )
+endif()
 
 #**********************************************************
 
@@ -252,6 +275,8 @@ endif (NOT CMAKE_BUILD_TYPE)
 
 add_library(${QTXDGX_LIBRARY_NAME} SHARED
     ${libqtxdg_PUBLIC_H_FILES}
+    ${libqtxdg_PRIVATE_H_FILES}
+    ${libqtxdg_PRIVATE_INSTALLABLE_H_FILES}
     ${libqtxdg_PRIVATE_H_FILES}
     ${libqtxdg_CPP_FILES}
     ${libqtxdg_CXX_FILES}
@@ -274,6 +299,15 @@ create_portable_headers(libqtxdg_PORTABLE_HEADERS ${libqtxdg_PUBLIC_CLASSES})
 
 install(TARGETS ${QTXDGX_LIBRARY_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(FILES ${libqtxdg_PUBLIC_H_FILES} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME})
+
+if (USE_QT5)
+    install(FILES
+            ${libqtxdg_PRIVATE_INSTALLABLE_H_FILES}
+        DESTINATION
+            "${QTXDG_PRIVATE_INCLUDE_DIR}/private/qtxdg"
+    )
+endif()
+
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake DESTINATION ${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_FILE_NAME})
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}_use.cmake DESTINATION ${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_FILE_NAME})
 install(FILES ${libqtxdg_PORTABLE_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME})
@@ -305,6 +339,7 @@ configure_file(
 
 add_custom_target(uninstall
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+
 
 # building tarball with CPack -------------------------------------------------
 include (InstallRequiredSystemLibraries)

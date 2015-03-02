@@ -98,7 +98,11 @@ QStringList xdgDirList(const QString &envVar, const QString &postfix)
     for (QStringList::Iterator i=dirs.begin(); i!=dirs.end(); ++i)
     {
         fixBashShortcuts((*i));
-        *i += postfix;
+        if (!(*i).isEmpty()) {
+            if (!(*i).endsWith(QLatin1Char('/')))
+                *i += "/";
+            *i += postfix;
+        }
     }
     return dirs;
 }

@@ -57,6 +57,7 @@
 #include <QProcess>
 #include <QUrl>
 #include <QDesktopServices>
+#include <QStringBuilder> // for the % operator
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 #else
 #include <QStandardPaths>
@@ -1582,6 +1583,19 @@ void XdgDesktopFileCache::initialize()
         initialize(dirname + "/applications");
 //        loadMimeCacheDir(dirname + "/applications", m_defaultAppsCache);
     }
+}
+
+QList<XdgDesktopFile*> XdgDesktopFileCache::getAppsOfCategory(const QString& category)
+{
+    QList<XdgDesktopFile*> list;
+    const QString _category = category.toUpper();
+    foreach (XdgDesktopFile *desktopFile, instance().m_fileCache.values())
+    {
+        QStringList categories = desktopFile->value("Categories").toString().toUpper().split(QLatin1Char(';'));
+        if (!categories.isEmpty() && (categories.contains(_category) || categories.contains(QLatin1String("X-") % _category)))
+            list.append(desktopFile);
+    }
+    return list;
 }
 
 QList<XdgDesktopFile*>  XdgDesktopFileCache::getApps(const QString& mimetype)

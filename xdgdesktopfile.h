@@ -231,6 +231,14 @@ public:
     static XdgDesktopFile* getDefaultApp(const QString& mimeType);
     static QSettings::Format desktopFileSettingsFormat();
 
+    /*! Return all desktop apps that have category for their Categories key
+     * Note that, according to xdg's spec, for non-standard categories "X-"
+     * is added to the beginning of the category's name. This method takes care
+     * of both cases.
+     * See http://standards.freedesktop.org/menu-spec/menu-spec-latest.html#desktop-entry-extensions
+     */
+    static QList<XdgDesktopFile*> getAppsOfCategory(const QString &category);
+
 private:
     static XdgDesktopFileCache & instance();
     static XdgDesktopFile* load(const QString & fileName);

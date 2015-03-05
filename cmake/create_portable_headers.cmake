@@ -19,10 +19,10 @@ function(create_portable_headers outfiles)
     foreach(f ${class_list})
         string(TOLOWER "${f}.h" _filename)
 
-        file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${f}
+        file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/${f}"
             "#include \"${_filename}\"")
 
-        list(APPEND ${outfiles} ${CMAKE_CURRENT_BINARY_DIR}/${f})
+        list(APPEND ${outfiles} "${CMAKE_CURRENT_BINARY_DIR}/${f}")
     endforeach()
 
     set(${outfiles} ${${outfiles}} PARENT_SCOPE)

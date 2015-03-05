@@ -12,10 +12,10 @@ set(CMAKE_CXX_FLAGS
 set(QTXDG_QT_LIBRARIES ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES})
 set(QTXDG_LIBRARIES ${QTXDG_LIBRARIES} ${QTXDG_QT_LIBRARIES})
 set(QTXDG_INCLUDE_DIRS
-    ${QTXDG_INCLUDE_DIRS}
-    ${Qt5Widgets_INCLUDE_DIRS}
-    ${Qt5Xml_INCLUDE_DIRS}
+    "${QTXDG_INCLUDE_DIRS}"
+    "${Qt5Widgets_INCLUDE_DIRS}"
+    "${Qt5Xml_INCLUDE_DIRS}"
 )
 
-link_directories(${QTXDG_LIBRARY_DIRS})
-include_directories(${QTXDG_INCLUDE_DIRS})
+link_directories("${QTXDG_LIBRARY_DIRS}")
+include_directories("${QTXDG_INCLUDE_DIRS}")

@@ -7,12 +7,12 @@ IF(NOT DEFINED LIB_SUFFIX AND LIB_SUFFIX_ALREADY_SET)
     # All 32bit system have empty lib suffix
     if(CMAKE_SIZEOF_VOID_P EQUAL 8)
         # If there is lib64 dir, set suffix to 64
-        if(IS_DIRECTORY ${CMAKE_INSTALL_PREFIX}/lib64)
+        if(IS_DIRECTORY "${CMAKE_INSTALL_PREFIX}/lib64")
             set(LIB_SUFFIX 64)
-        elseif(IS_DIRECTORY ${CMAKE_INSTALL_PREFIX}/lib)
+        elseif(IS_DIRECTORY "${CMAKE_INSTALL_PREFIX}/lib")
             set(LIB_SUFFIX "")
         else()
-            message(WARNING "LIB_SUFFIX cannot be autodetected. No ${CMAKE_INSTALL_PREFIX}/lib neither ${CMAKE_INSTALL_PREFIX}/lib64 found.")
+            message(WARNING "LIB_SUFFIX cannot be autodetected. No \"${CMAKE_INSTALL_PREFIX}/lib\" neither \"${CMAKE_INSTALL_PREFIX}/lib64\" found.")
             set(LIB_SUFFIX "")
         endif()
     else()
@@ -21,6 +21,6 @@ IF(NOT DEFINED LIB_SUFFIX AND LIB_SUFFIX_ALREADY_SET)
     
     set(LIB_SUFFIX_ALREADY_SET 1)
 
-    message(STATUS "LIB_SUFFIX autodetected as '${LIB_SUFFIX}', libraries will be installed into ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}")
+    message(STATUS "LIB_SUFFIX autodetected as '${LIB_SUFFIX}', libraries will be installed into \"${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}\"")
     MESSAGE(STATUS "*********************************************************************")
 ENDIF(NOT DEFINED LIB_SUFFIX AND LIB_SUFFIX_ALREADY_SET)

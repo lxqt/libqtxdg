@@ -42,7 +42,7 @@ public:
     explicit XdgMenuReader(XdgMenu* menu, XdgMenuReader*  parentReader = 0, QObject *parent = 0);
     virtual ~XdgMenuReader();
 
-    bool load(const QString& fileName, const QString& baseDir = "");
+    bool load(const QString& fileName, const QString& baseDir = QString());
     QString fileName() const { return mFileName; }
     QString errorString() const { return mErrorStr; }
     QDomDocument& xml() { return mXml; }

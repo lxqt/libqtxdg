@@ -69,7 +69,7 @@ XdgMenuRuleOr::XdgMenuRuleOr(const QDomElement& element, QObject* parent) :
     XdgMenuRule(element, parent)
 {
     //qDebug() << "Create OR rule";
-    DomElementIterator iter(element, "");
+    DomElementIterator iter(element, QString());
 
     while(iter.hasNext())
     {

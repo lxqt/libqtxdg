@@ -95,7 +95,7 @@ public:
      *
      * If the postfix is not empty it will append to end of each returned directory.
      */
-    static QStringList dataDirs(const QString &postfix = "");
+    static QStringList dataDirs(const QString &postfix = QString());
 
 
     /*! @brief Returns a list of all directories that corresponds to the $XDG_CONFIG_DIRS.
@@ -105,7 +105,7 @@ public:
      *
      * If the postfix is not empty it will append to end of each returned directory.
      */
-    static QStringList configDirs(const QString &postfix = "");
+    static QStringList configDirs(const QString &postfix = QString());
 
 
     /*! @brief Returns the path to the directory that corresponds to the $XDG_CACHE_HOME.
@@ -141,7 +141,7 @@ public:
       * Note: this does not include the user's autostart directory
       * @sa autostartHome()
       */
-     static QStringList autostartDirs(const QString &postfix = "");
+     static QStringList autostartDirs(const QString &postfix = QString());
 };
 
 #endif // QTXDG_XDGDIRS_H

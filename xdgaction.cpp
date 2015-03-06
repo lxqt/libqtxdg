@@ -127,8 +127,8 @@ void XdgAction::load(const XdgDesktopFile& desktopFile)
     }
     else
     {
-        setText("");
-        setToolTip("");
+        setText(QString());
+        setToolTip(QString());
         setIcon(QIcon());
     }
 }

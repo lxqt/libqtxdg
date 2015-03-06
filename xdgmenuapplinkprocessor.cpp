@@ -220,7 +220,7 @@ void XdgMenuApplinkProcessor::fillAppFileInfoList()
         while(i.hasPrevious())
         {
             QDomElement e = i.previous();
-            findDesktopFiles(e.text(), "");
+            findDesktopFiles(e.text(), QString());
             mElement.removeChild(e);
         }
     }
@@ -274,7 +274,7 @@ void XdgMenuApplinkProcessor::findDesktopFiles(const QString& dirName, const QSt
  ************************************************/
 void XdgMenuApplinkProcessor::createRules()
 {
-    MutableDomElementIterator i(mElement, "");
+    MutableDomElementIterator i(mElement, QString());
     while(i.hasNext())
     {
         QDomElement e = i.next();

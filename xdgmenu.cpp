@@ -584,7 +584,7 @@ void XdgMenuPrivate::processDirectoryEntries(QDomElement& element, const QString
 
     element.setAttribute("title", element.attribute("name"));
 
-    MutableDomElementIterator i(element, "");
+    MutableDomElementIterator i(element, QString());
     i.toBack();
     while(i.hasPrevious())
     {

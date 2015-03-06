@@ -160,7 +160,7 @@ public:
     bool startDetached(const QStringList& urls) const;
 
     //! This function is provided for convenience. It's equivalent to calling startDetached(QStringList(url)).
-    bool startDetached(const QString& url="") const;
+    bool startDetached(const QString& url = QString()) const;
 
     /*! A Exec value consists of an executable program optionally followed by one or more arguments.
         This function expands this arguments and returns command line string parts.

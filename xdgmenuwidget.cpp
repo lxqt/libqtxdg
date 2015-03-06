@@ -219,7 +219,7 @@ void XdgMenuWidgetPrivate::buildMenu()
         first = q->actions().last();
 
 
-    DomElementIterator it(mXml, "");
+    DomElementIterator it(mXml, QString());
     while(it.hasNext())
     {
         QDomElement xml = it.next();

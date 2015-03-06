@@ -49,7 +49,7 @@ class XdgMenuWidgetPrivate;
     bool res = xdgMenu.read();
     if (res)
     {
-        XdgMenuWidget menu(xdgMenu, "", this);
+        XdgMenuWidget menu(xdgMenu, QString(), this);
         menu.exec(QCursor::pos());
     }
     else
@@ -64,7 +64,7 @@ class QTXDG_API XdgMenuWidget : public QMenu
     Q_OBJECT
 public:
     /// Constructs a menu for root documentElement in xdgMenu with some text and parent.
-    XdgMenuWidget(const XdgMenu& xdgMenu, const QString& title="", QWidget* parent=0);
+    XdgMenuWidget(const XdgMenu& xdgMenu, const QString& title = QString(), QWidget* parent=0);
 
     /// Constructs a menu for menuElement with parent.
     explicit XdgMenuWidget(const QDomElement& menuElement, QWidget* parent=0);

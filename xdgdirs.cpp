@@ -29,6 +29,7 @@
 #include "xdgdirs.h"
 #include <stdlib.h>
 #include <QDir>
+#include <QStringBuilder> // for the % operator
 #include <QDebug>
 
 static const QString userDirectoryString[8] =
@@ -260,7 +261,7 @@ QStringList XdgDirs::configDirs(const QString &postfix)
     QStringList dirs = xdgDirList("XDG_CONFIG_DIRS", postfix);
     if (dirs.isEmpty())
     {
-        dirs << "/etc/xdg" << postfix;
+        dirs << QLatin1String("/etc/xdg") % postfix;
     }
 
     return dirs;

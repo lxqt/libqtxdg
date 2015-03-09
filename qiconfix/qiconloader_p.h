@@ -51,8 +51,8 @@
 #include <QtGui/QIcon>
 #include <QtGui/QIconEngine>
 #include <QtGui/QPixmapCache>
-//#include <private/qicon_p.h>
-//#include <private/qfactoryloader_p.h>
+#include <private/qicon_p.h>
+#include <private/qfactoryloader_p.h>
 #include <QtCore/QHash>
 #include <QtCore/QVector>
 #include <QtCore/QTypeInfo>

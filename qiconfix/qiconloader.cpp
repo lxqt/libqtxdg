@@ -33,12 +33,12 @@
 #ifndef QT_NO_ICON
 #include "qiconloader_p.h"
 
-//#include <private/qguiapplication_p.h>
-//#include <private/qicon_p.h>
+#include <private/qguiapplication_p.h>
+#include <private/qicon_p.h>
 
 #include <QtGui/QIconEnginePlugin>
 #include <QtGui/QPixmapCache>
-//#include <QtGui/qpa/qplatformtheme.h>
+#include <qpa/qplatformtheme.h>
 #include <QtGui/QIconEngine>
 #include <QtGui/QPalette>
 #include <QtCore/QList>
@@ -46,14 +46,12 @@
 #include <QtCore/QDir>
 #include <QtCore/QSettings>
 #include <QtGui/QPainter>
-#include <QApplication>
-#include <QLatin1Literal>
 
-//#ifdef Q_WS_MAC
-//#include <private/qt_cocoa_helpers_mac_p.h>
-//#endif
+#ifdef Q_WS_MAC
+#include <private/qt_cocoa_helpers_mac_p.h>
+#endif
 
-#include "qhexstring_p.h"
+#include <private/qhexstring_p.h>
 
 //QT_BEGIN_NAMESPACE
 
@@ -62,16 +60,13 @@ namespace QtXdg {
 Q_GLOBAL_STATIC(QIconLoader, iconLoaderInstance)
 
 /* Theme to use in last resort, if the theme does not have the icon, neither the parents  */
-
 static QString fallbackTheme()
 {
-#if 0
     if (const QPlatformTheme *theme = QGuiApplicationPrivate::platformTheme()) {
         const QVariant themeHint = theme->themeHint(QPlatformTheme::SystemIconFallbackThemeName);
         if (themeHint.isValid())
             return themeHint.toString();
     }
-#endif
     return QString("hicolor");
 }
 
@@ -85,25 +80,21 @@ QIconLoader::QIconLoader() :
 
 static inline QString systemThemeName()
 {
-#if 0
     if (const QPlatformTheme *theme = QGuiApplicationPrivate::platformTheme()) {
         const QVariant themeHint = theme->themeHint(QPlatformTheme::SystemIconThemeName);
         if (themeHint.isValid())
             return themeHint.toString();
     }
-#endif
     return QIcon::themeName();
 }
 
 static inline QStringList systemIconSearchPaths()
 {
-#if 0
     if (const QPlatformTheme *theme = QGuiApplicationPrivate::platformTheme()) {
         const QVariant themeHint = theme->themeHint(QPlatformTheme::IconThemeSearchPaths);
         if (themeHint.isValid())
             return themeHint.toStringList();
     }
-#endif
     return QIcon::themeSearchPaths();
 }
 
@@ -118,8 +109,7 @@ void QIconLoader::ensureInitialized()
 
         Q_ASSERT(qApp);
 
-//        m_systemTheme = systemThemeName();
-        m_systemTheme = QIcon::themeName();
+        m_systemTheme = systemThemeName();
 
         if (m_systemTheme.isEmpty())
             m_systemTheme = fallbackTheme();
@@ -615,10 +605,8 @@ QPixmap PixmapEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State st
             cachedPixmap = basePixmap.scaled(actualSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
         else
             cachedPixmap = basePixmap;
-#if 0
         if (QGuiApplication *guiApp = qobject_cast<QGuiApplication *>(qApp))
             cachedPixmap = static_cast<QGuiApplicationPrivate*>(QObjectPrivate::get(guiApp))->applyQIconStyleHelper(mode, cachedPixmap);
-#endif
         QPixmapCache::insert(key, cachedPixmap);
     }
     return cachedPixmap;

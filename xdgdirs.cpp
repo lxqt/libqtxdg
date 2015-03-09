@@ -245,8 +245,8 @@ QStringList XdgDirs::dataDirs(const QString &postfix)
     QStringList dirs = xdgDirList("XDG_DATA_DIRS", postfix);
     if (dirs.isEmpty())
     {
-        dirs << "/usr/local/share/" + postfix;
-        dirs << "/usr/share/" + postfix;
+        dirs << QLatin1String("/usr/local/share") % postfix;
+        dirs << QLatin1String("/usr/share") % postfix;
     }
 
     return dirs;

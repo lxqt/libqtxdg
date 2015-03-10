@@ -38,6 +38,8 @@
  * This specification defines where these files should be looked for by defining one or more base
  * directories relative to which files should be located.
  *
+ * All postfix parameters should start with an '/' slash.
+ *
  * @sa http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
  */
 
@@ -91,7 +93,7 @@ public:
     /*! @brief Returns a list of all directories that corresponds to the $XDG_DATA_DIRS.
      * $XDG_DATA_DIRS defines the preference-ordered set of base directories to search for data
      * files in addition to the $XDG_DATA_HOME base directory. If $XDG_DATA_DIRS is either not set
-     * or empty, a value equal to /usr/local/share/:/usr/share/ should be used.
+     * or empty, a value equal to /usr/local/share:/usr/share is used.
      *
      * If the postfix is not empty it will append to end of each returned directory.
      */

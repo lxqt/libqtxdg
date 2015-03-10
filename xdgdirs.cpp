@@ -46,6 +46,7 @@ static const QString userDirectoryString[8] =
 
 // Helper functions prototypes
 void fixBashShortcuts(QString &s);
+void removeEndigSlash(QString &s);
 QString xdgSingleDir(const QString &envVar, const QString &def, bool createDir);
 QStringList xdgDirList(const QString &envVar, const QString &postfix);
 
@@ -58,6 +59,14 @@ void fixBashShortcuts(QString &s)
         s = QString(getenv("HOME")) + (s).mid(1);
 }
 
+void removeEndingSlash(QString &s)
+{
+    // We don't check for empty strings. Caller must check it.
+
+    // Remove the ending slash, except for root dirs.
+    if (s.length() > 1 && s.endsWith(QLatin1Char('/')))
+        s.chop(1);
+}
 
 /************************************************
  Helper func.
@@ -96,13 +105,17 @@ QStringList xdgDirList(const QString &envVar, const QString &postfix)
 #else
     QStringList dirs = QString(getenv(envVar.toLatin1())).split(':', QString::SkipEmptyParts);
 #endif
-    for (QStringList::Iterator i=dirs.begin(); i!=dirs.end(); ++i)
-    {
-        fixBashShortcuts((*i));
-        if (!(*i).isEmpty()) {
-            if (!(*i).endsWith(QLatin1Char('/')))
-                *i += "/";
-            *i += postfix;
+
+    QMutableStringListIterator i(dirs);
+    while(i.hasNext()) {
+        i.next();
+        QString s = i.value();
+        if (s.isEmpty()) {
+            i.remove();
+        } else {
+            fixBashShortcuts(s);
+            removeEndingSlash(s);
+            i.setValue(s % postfix);
         }
     }
     return dirs;

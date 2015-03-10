@@ -91,7 +91,9 @@ QString xdgSingleDir(const QString &envVar, const QString &def, bool createDir)
             qWarning() << QString("Can't create %1 directory.").arg(d.absolutePath());
     }
 
-    return d.absolutePath();
+    QString r = d.absolutePath();
+    removeEndingSlash(r);
+    return r;
 }
 
 

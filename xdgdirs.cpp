@@ -161,8 +161,8 @@ QString XdgDirs::userDir(XdgDirs::UserDirectory dir)
             configFile.close();
 
             // get path between quotes
-            line = line.section('"', 1, 1);
-            line.replace("$HOME", "~");
+            line = line.section(QLatin1Char('"'), 1, 1);
+            line.replace(QLatin1String("$HOME"), QLatin1String("~"));
             fixBashShortcuts(line);
             return line;
         }
@@ -182,13 +182,15 @@ bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool 
     if (dir < 0 || dir > 7)
         return false;
 
-    if (!(value.startsWith("$HOME") || value.startsWith("~/") || value.startsWith(QString(getenv("HOME")))))
+    if (!(value.startsWith(QLatin1String("$HOME"))
+                           || value.startsWith(QLatin1String("~/"))
+                           || value.startsWith(QString(getenv("HOME")))))
         return false;
 
     QString folderName = userDirectoryString[dir];
 
     QString configDir(configHome());
-    QFile configFile(configDir + "/user-dirs.dirs");
+    QFile configFile(configDir % QLatin1String("/user-dirs.dirs"));
 
     // create the file if doesn't exist and opens it
     if (!configFile.open(QIODevice::ReadWrite | QIODevice::Text))
@@ -201,14 +203,14 @@ bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool 
     while (!stream.atEnd())
     {
         line = stream.readLine();
-        if (line.indexOf("XDG_" + folderName.toUpper() + "_DIR") == 0)
+        if (line.indexOf(QLatin1String("XDG_") + folderName.toUpper() + QLatin1String("_DIR")) == 0)
         {
             foundVar = true;
-            QString path = line.section('"', 1, 1);
+            QString path = line.section(QLatin1Char('"'), 1, 1);
             line.replace(path, value);
             lines.append(line);
         }
-        else if (line.indexOf("XDG_") == 0)
+        else if (line.indexOf(QLatin1String("XDG_")) == 0)
         {
             lines.append(line);
         }
@@ -225,7 +227,7 @@ bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool 
     configFile.close();
 
     if (createDir) {
-        QString path = QString(value).replace("$HOME", "~");
+        QString path = QString(value).replace(QLatin1String("$HOME"), QLatin1String("~"));
         fixBashShortcuts(path);
         QDir().mkpath(path);
     }
@@ -239,7 +241,7 @@ bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool 
  ************************************************/
 QString XdgDirs::dataHome(bool createDir)
 {
-    return xdgSingleDir("XDG_DATA_HOME", ".local/share", createDir);
+    return xdgSingleDir("XDG_DATA_HOME", QLatin1String(".local/share"), createDir);
 }
 
 
@@ -248,7 +250,7 @@ QString XdgDirs::dataHome(bool createDir)
  ************************************************/
 QString XdgDirs::configHome(bool createDir)
 {
-    return xdgSingleDir("XDG_CONFIG_HOME", ".config", createDir);
+    return xdgSingleDir("XDG_CONFIG_HOME", QLatin1String(".config"), createDir);
 }
 
 
@@ -288,7 +290,7 @@ QStringList XdgDirs::configDirs(const QString &postfix)
  ************************************************/
 QString XdgDirs::cacheHome(bool createDir)
 {
-    return xdgSingleDir("XDG_CACHE_HOME", ".cache", createDir);
+    return xdgSingleDir("XDG_CACHE_HOME", QLatin1String(".cache"), createDir);
 }
 
 
@@ -312,7 +314,7 @@ QString XdgDirs::autostartHome(bool createDir)
 
     if (createDir && !dir.exists())
     {
-        if (!dir.mkpath("."))
+        if (!dir.mkpath(QLatin1String(".")))
             qWarning() << QString("Can't create %1 directory.").arg(dir.absolutePath());
     }
 

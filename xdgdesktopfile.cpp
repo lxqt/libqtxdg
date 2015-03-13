@@ -394,7 +394,17 @@ bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const
     }
 
     QString cmd = args.takeFirst();
-    return QProcess::startDetached(cmd, args);
+    QScopedPointer<QProcess> p(new QProcess);
+    p->setStandardInputFile(QProcess::nullDevice());
+    p->setProcessChannelMode(QProcess::ForwardedChannels);
+    p->start(cmd, args);
+    bool started = p->waitForStarted();
+    if (started)
+    {
+        QProcess* proc = p.take(); //release the pointer(will be selfdestroyed upon finish)
+        QObject::connect(proc, SIGNAL(finished(int, QProcess::ExitStatus)), proc, SLOT(deleteLater()));
+    }
+    return started;
 }
 
 

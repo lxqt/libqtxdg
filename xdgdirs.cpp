@@ -31,6 +31,9 @@
 #include <QDir>
 #include <QStringBuilder> // for the % operator
 #include <QDebug>
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#include <QStandardPaths>
+#endif
 
 static const QString userDirectoryString[8] =
 {
@@ -46,16 +49,24 @@ static const QString userDirectoryString[8] =
 
 // Helper functions prototypes
 void fixBashShortcuts(QString &s);
-void removeEndigSlash(QString &s);
+void removeEndingSlash(QString &s);
+QString createDirectory(const QString &dir);
+
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+void cleanAndAddPostfix(QStringList &dirs, const QString& postfix);
+#endif
+
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 QString xdgSingleDir(const QString &envVar, const QString &def, bool createDir);
 QStringList xdgDirList(const QString &envVar, const QString &postfix);
+#endif
 
 /************************************************
  Helper func.
  ************************************************/
 void fixBashShortcuts(QString &s)
 {
-    if (s.startsWith('~'))
+    if (s.startsWith(QLatin1Char('~')))
         s = QString(getenv("HOME")) + (s).mid(1);
 }
 
@@ -68,45 +79,60 @@ void removeEndingSlash(QString &s)
         s.chop(1);
 }
 
+QString createDirectory(const QString &dir)
+{
+    QDir d(dir);
+    if (!d.exists())
+    {
+        if (!d.mkpath("."))
+        {
+            qWarning() << QString("Can't create %1 directory.").arg(d.absolutePath());
+        }
+    }
+    QString r = d.absolutePath();
+    removeEndingSlash(r);
+    return r;
+}
+
+void cleanAndAddPostfix(QStringList &dirs, const QString& postfix)
+{
+    const int N = dirs.count();
+    for(int i = 0; i < N; ++i)
+    {
+        fixBashShortcuts(dirs[i]);
+        removeEndingSlash(dirs[i]);
+        dirs[i].append(postfix);
+    }
+}
+
 /************************************************
  Helper func.
  ************************************************/
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 QString xdgSingleDir(const QString &envVar, const QString &def, bool createDir)
 {
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     QString s(getenv(envVar.toAscii()));
-#else
-    QString s(getenv(envVar.toLatin1()));
-#endif
 
     if (!s.isEmpty())
         fixBashShortcuts(s);
     else
         s = QString("%1/%2").arg(getenv("HOME"), def);
 
-    QDir d(s);
-    if (createDir && !d.exists())
-    {
-        if (!d.mkpath("."))
-            qWarning() << QString("Can't create %1 directory.").arg(d.absolutePath());
-    }
+    if (createDir)
+        return createDirectory(s);
 
-    QString r = d.absolutePath();
-    removeEndingSlash(r);
-    return r;
+    removeEndingSlash(s);
+    return s;
 }
-
+#endif
 
 /************************************************
  Helper func.
  ************************************************/
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 QStringList xdgDirList(const QString &envVar, const QString &postfix)
 {
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     QStringList dirs = QString(getenv(envVar.toAscii())).split(':', QString::SkipEmptyParts);
-#else
-    QStringList dirs = QString(getenv(envVar.toLatin1())).split(':', QString::SkipEmptyParts);
-#endif
 
     QMutableStringListIterator i(dirs);
     while(i.hasNext()) {
@@ -122,7 +148,7 @@ QStringList xdgDirList(const QString &envVar, const QString &postfix)
     }
     return dirs;
 }
-
+#endif
 /************************************************
 
  ************************************************/
@@ -241,7 +267,17 @@ bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool 
  ************************************************/
 QString XdgDirs::dataHome(bool createDir)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+    QString s = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+    fixBashShortcuts(s);
+    if (createDir)
+        return createDirectory(s);
+
+   removeEndingSlash(s);
+   return s;
+#else
     return xdgSingleDir("XDG_DATA_HOME", QLatin1String(".local/share"), createDir);
+#endif
 }
 
 
@@ -250,7 +286,17 @@ QString XdgDirs::dataHome(bool createDir)
  ************************************************/
 QString XdgDirs::configHome(bool createDir)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+    QString s = QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation);
+    fixBashShortcuts(s);
+    if (createDir)
+        return createDirectory(s);
+
+   removeEndingSlash(s);
+   return s;
+#else
     return xdgSingleDir("XDG_CONFIG_HOME", QLatin1String(".config"), createDir);
+#endif
 }
 
 
@@ -259,6 +305,21 @@ QString XdgDirs::configHome(bool createDir)
  ************************************************/
 QStringList XdgDirs::dataDirs(const QString &postfix)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+    QString d = QFile::decodeName(qgetenv("XDG_DATA_DIRS"));
+    QStringList dirs = d.split(QLatin1Char(':'), QString::SkipEmptyParts);
+
+    QMutableListIterator<QString> it(dirs);
+    while (it.hasNext()) {
+        const QString dir = it.next();
+        if (!dir.startsWith(QLatin1Char('/')))
+            it.remove();
+    }
+
+    dirs.removeDuplicates();
+    cleanAndAddPostfix(dirs, postfix);
+    return dirs;
+#else
     QStringList dirs = xdgDirList("XDG_DATA_DIRS", postfix);
     if (dirs.isEmpty())
     {
@@ -267,6 +328,8 @@ QStringList XdgDirs::dataDirs(const QString &postfix)
     }
 
     return dirs;
+#endif
+
 }
 
 
@@ -275,6 +338,17 @@ QStringList XdgDirs::dataDirs(const QString &postfix)
  ************************************************/
 QStringList XdgDirs::configDirs(const QString &postfix)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+    QStringList dirs;
+    const QString env = QFile::decodeName(qgetenv("XDG_CONFIG_DIRS"));
+    if (env.isEmpty())
+        dirs.append(QString::fromLatin1("/etc/xdg"));
+    else
+        dirs = env.split(QLatin1Char(':'), QString::SkipEmptyParts);
+
+    cleanAndAddPostfix(dirs, postfix);
+    return dirs;
+#else
     QStringList dirs = xdgDirList("XDG_CONFIG_DIRS", postfix);
     if (dirs.isEmpty())
     {
@@ -282,6 +356,7 @@ QStringList XdgDirs::configDirs(const QString &postfix)
     }
 
     return dirs;
+#endif
 }
 
 
@@ -290,7 +365,18 @@ QStringList XdgDirs::configDirs(const QString &postfix)
  ************************************************/
 QString XdgDirs::cacheHome(bool createDir)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+    QString s = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation);
+    fixBashShortcuts(s);
+    if (createDir)
+        return createDirectory(s);
+
+    removeEndingSlash(s);
+    return s;
+#else
     return xdgSingleDir("XDG_CACHE_HOME", QLatin1String(".cache"), createDir);
+#endif
+
 }
 
 
@@ -299,9 +385,16 @@ QString XdgDirs::cacheHome(bool createDir)
  ************************************************/
 QString XdgDirs::runtimeDir()
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+    QString result = QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation);
+    fixBashShortcuts(result);
+    removeEndingSlash(result);
+    return result;
+#else
     QString result(getenv("XDG_RUNTIME_DIR"));
     fixBashShortcuts(result);
     return result;
+#endif
 }
 
 
@@ -310,15 +403,16 @@ QString XdgDirs::runtimeDir()
  ************************************************/
 QString XdgDirs::autostartHome(bool createDir)
 {
-    QDir dir(QString("%1/autostart").arg(configHome(createDir)));
+    QString s = QString("%1/autostart").arg(configHome(createDir));
+    fixBashShortcuts(s);
 
-    if (createDir && !dir.exists())
-    {
-        if (!dir.mkpath(QLatin1String(".")))
-            qWarning() << QString("Can't create %1 directory.").arg(dir.absolutePath());
-    }
+    if (createDir)
+        return createDirectory(s);
 
-    return dir.absolutePath();
+     QDir d(s);
+     QString r = d.absolutePath();
+     removeEndingSlash(r);
+     return r;
 }
 
 
@@ -328,7 +422,8 @@ QString XdgDirs::autostartHome(bool createDir)
 QStringList XdgDirs::autostartDirs(const QString &postfix)
 {
     QStringList dirs;
-    foreach(QString dir, configDirs())
+    QStringList s = configDirs();
+    foreach(QString dir, s)
         dirs << QString("%1/autostart").arg(dir) + postfix;
 
     return dirs;

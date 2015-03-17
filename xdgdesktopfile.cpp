@@ -69,6 +69,7 @@
 #include <QSettings>
 #include <QTextStream>
 #include <QFile>
+#include <QDBusInterface>
 
 
 // Helper functions prototypes
@@ -283,6 +284,7 @@ public:
     XdgDesktopFile::Type detectType(XdgDesktopFile *q) const;
     bool startApplicationDetached(const XdgDesktopFile *q, const QStringList& urls) const;
     bool startLinkDetached(const XdgDesktopFile *q) const;
+    bool startByDBus(const QStringList& urls) const;
 
     QString mFileName;
     bool mIsValid;
@@ -378,6 +380,10 @@ XdgDesktopFile::Type XdgDesktopFileData::detectType(XdgDesktopFile *q) const
  ************************************************/
 bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const QStringList& urls) const
 {
+    //DBusActivatable handling
+    if (q->value(QStringLiteral("DBusActivatable"), false).toBool())
+        return startByDBus(urls);
+
     QStringList args = q->expandExecString(urls);
 
     if (args.isEmpty())
@@ -440,6 +446,18 @@ bool XdgDesktopFileData::startLinkDetached(const XdgDesktopFile *q) const
 }
 
 
+bool XdgDesktopFileData::startByDBus(const QStringList& urls) const
+{
+    QFileInfo f(mFileName);
+    QString path(f.completeBaseName());
+    QDBusInterface app(f.completeBaseName(), path.replace('.', '/').prepend('/'), QStringLiteral("org.freedesktop.Application"));
+    QDBusMessage reply;
+    if (urls.isEmpty())
+        reply = app.call(QStringLiteral("Activate"), QMap<QString, QVariant>()/*TODO: platform_data?!?*/);
+    else
+        reply = app.call(QStringLiteral("Open"), urls, QMap<QString, QVariant>()/*TODO: platform_data?!?*/);
+    return QDBusMessage::ErrorMessage != reply.type();
+}
 
 
 

@@ -70,6 +70,10 @@
 #include <QTextStream>
 #include <QFile>
 
+// A list of executables that can't be run with QProcess::startDetached(). They
+// will be run with QProcess::start()
+static const QStringList nonDetachExecs = QStringList()
+    << QLatin1String("pkexec");
 
 // Helper functions prototypes
 bool checkTryExec(const QString& progName);
@@ -393,18 +397,38 @@ bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const
         args.prepend(term);
     }
 
-    QString cmd = args.takeFirst();
-    QScopedPointer<QProcess> p(new QProcess);
-    p->setStandardInputFile(QProcess::nullDevice());
-    p->setProcessChannelMode(QProcess::ForwardedChannels);
-    p->start(cmd, args);
-    bool started = p->waitForStarted();
-    if (started)
+    bool nonDetach = false;
+    foreach(const QString &s, nonDetachExecs)
     {
-        QProcess* proc = p.take(); //release the pointer(will be selfdestroyed upon finish)
-        QObject::connect(proc, SIGNAL(finished(int, QProcess::ExitStatus)), proc, SLOT(deleteLater()));
+        foreach(const QString &a, args)
+        {
+            if (a.contains(s))
+            {
+                nonDetach = true;
+            }
+        }
     }
-    return started;
+
+    QString cmd = args.takeFirst();
+
+    if (nonDetach)
+    {
+        QScopedPointer<QProcess> p(new QProcess);
+        p->setStandardInputFile(QProcess::nullDevice());
+        p->setProcessChannelMode(QProcess::ForwardedChannels);
+        p->start(cmd, args);
+        bool started = p->waitForStarted();
+        if (started)
+        {
+            QProcess* proc = p.take(); //release the pointer(will be selfdestroyed upon finish)
+            QObject::connect(proc, SIGNAL(finished(int, QProcess::ExitStatus)), proc, SLOT(deleteLater()));
+        }
+        return started;
+    }
+    else
+    {
+        return QProcess::startDetached(cmd, args);
+    }
 }
 
 

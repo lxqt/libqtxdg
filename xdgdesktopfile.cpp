@@ -445,17 +445,22 @@ bool XdgDesktopFileData::startLinkDetached(const XdgDesktopFile *q) const
     return false;
 }
 
-
+// TODO: Handle ActivateAction
 bool XdgDesktopFileData::startByDBus(const QStringList& urls) const
 {
     QFileInfo f(mFileName);
     QString path(f.completeBaseName());
+
+    QVariantMap platformData;
+    platformData.insert(QLatin1String("desktop-startup-id"), QString::fromUtf8(qgetenv("DESKTOP_STARTUP_ID")));
+
     QDBusInterface app(f.completeBaseName(), path.replace('.', '/').prepend('/'), QLatin1String("org.freedesktop.Application"));
     QDBusMessage reply;
     if (urls.isEmpty())
-        reply = app.call(QLatin1String("Activate"), QMap<QString, QVariant>()/*TODO: platform_data?!?*/);
+        reply = app.call(QLatin1String("Activate"), platformData);
     else
-        reply = app.call(QLatin1String("Open"), urls, QMap<QString, QVariant>()/*TODO: platform_data?!?*/);
+        reply = app.call(QLatin1String("Open"), urls, platformData);
+
     return QDBusMessage::ErrorMessage != reply.type();
 }
 

@@ -488,7 +488,8 @@ bool XdgDesktopFileData::startByDBus(const QStringList& urls) const
     QVariantMap platformData;
     platformData.insert(QLatin1String("desktop-startup-id"), QString::fromUtf8(qgetenv("DESKTOP_STARTUP_ID")));
 
-    QDBusInterface app(f.completeBaseName(), path.replace('.', '/').prepend('/'), QLatin1String("org.freedesktop.Application"));
+    path = path.replace(QLatin1Char('.'), QLatin1Char('/')).prepend(QLatin1Char('/'));
+    QDBusInterface app(f.completeBaseName(), path, QLatin1String("org.freedesktop.Application"));
     QDBusMessage reply;
     if (urls.isEmpty())
         reply = app.call(QLatin1String("Activate"), platformData);

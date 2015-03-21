@@ -69,6 +69,7 @@
 #include <QSettings>
 #include <QTextStream>
 #include <QFile>
+#include <QDBusInterface>
 
 // A list of executables that can't be run with QProcess::startDetached(). They
 // will be run with QProcess::start()
@@ -287,6 +288,7 @@ public:
     XdgDesktopFile::Type detectType(XdgDesktopFile *q) const;
     bool startApplicationDetached(const XdgDesktopFile *q, const QStringList& urls) const;
     bool startLinkDetached(const XdgDesktopFile *q) const;
+    bool startByDBus(const QStringList& urls) const;
 
     QString mFileName;
     bool mIsValid;
@@ -382,6 +384,10 @@ XdgDesktopFile::Type XdgDesktopFileData::detectType(XdgDesktopFile *q) const
  ************************************************/
 bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const QStringList& urls) const
 {
+    //DBusActivatable handling
+    if (q->value(QLatin1String("DBusActivatable"), false).toBool())
+        return startByDBus(urls);
+
     QStringList args = q->expandExecString(urls);
 
     if (args.isEmpty())
@@ -473,7 +479,25 @@ bool XdgDesktopFileData::startLinkDetached(const XdgDesktopFile *q) const
     return false;
 }
 
+// TODO: Handle ActivateAction
+bool XdgDesktopFileData::startByDBus(const QStringList& urls) const
+{
+    QFileInfo f(mFileName);
+    QString path(f.completeBaseName());
 
+    QVariantMap platformData;
+    platformData.insert(QLatin1String("desktop-startup-id"), QString::fromUtf8(qgetenv("DESKTOP_STARTUP_ID")));
+
+    path = path.replace(QLatin1Char('.'), QLatin1Char('/')).prepend(QLatin1Char('/'));
+    QDBusInterface app(f.completeBaseName(), path, QLatin1String("org.freedesktop.Application"));
+    QDBusMessage reply;
+    if (urls.isEmpty())
+        reply = app.call(QLatin1String("Activate"), platformData);
+    else
+        reply = app.call(QLatin1String("Open"), urls, platformData);
+
+    return QDBusMessage::ErrorMessage != reply.type();
+}
 
 
 

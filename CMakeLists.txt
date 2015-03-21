@@ -47,6 +47,7 @@ if (USE_QT5)
     cmake_minimum_required(VERSION 2.8.11)
     find_package(Qt5Widgets REQUIRED QUIET)
     find_package(Qt5Xml REQUIRED QUIET)
+    find_package(Qt5DBus REQUIRED QUIET)
     if (BUILD_TESTS)
         find_package(Qt5Test REQUIRED QUIET)
     endif()
@@ -79,10 +80,10 @@ if (USE_QT5)
     set(MIMETYPES_PROVIDER_LIBRARY "")
     add_definitions("-DHAVE_QTMIMETYPES")
 
-    set(QTX_LIBRARIES ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES})
+    set(QTX_LIBRARIES ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5DBus_LIBRARIES})
     message(STATUS "Building with Qt ${Qt5Core_VERSION_STRING}")
 else()
-    find_package(Qt4 REQUIRED QtCore QtGui QtXml QUIET)
+    find_package(Qt4 REQUIRED QtCore QtGui QtXml QtDBus QUIET)
     if (BUILD_TESTS)
         find_package(Qt4 REQUIRED QtTest QUIET)
     endif()
@@ -102,6 +103,7 @@ else()
         ${QT_QTCORE_LIBRARY}
         ${QT_QTGUI_LIBRARY}
         ${QT_QTXML_LIBRARY}
+        ${QT_QTDBUS_LIBRARY}
     )
     message(STATUS "Building with Qt ${QTVERSION}")
 endif()

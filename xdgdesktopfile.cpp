@@ -420,7 +420,11 @@ bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const
     if (nonDetach)
     {
         QScopedPointer<QProcess> p(new QProcess);
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
         p->setStandardInputFile(QProcess::nullDevice());
+#else
+        p->setStandardInputFile(QLatin1String("/dev/null"));
+#endif
         p->setProcessChannelMode(QProcess::ForwardedChannels);
         p->start(cmd, args);
         bool started = p->waitForStarted();

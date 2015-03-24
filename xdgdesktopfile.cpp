@@ -76,6 +76,10 @@
 static const QStringList nonDetachExecs = QStringList()
     << QLatin1String("pkexec");
 
+static const char onlyShowInKey[] = "OnlyShowIn";
+static const char notShowInKey[] = "NotShowIn";
+static const char extendPrefixKey[] = "X-";
+
 // Helper functions prototypes
 bool checkTryExec(const QString& progName);
 QString &doEscape(QString& str, const QHash<QChar,QChar> &repl);
@@ -1233,18 +1237,43 @@ bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) 
         env = environment.toUpper();
     }
 
-    if (contains("OnlyShowIn"))
+    QString key;
+    bool keyFound = false;
+    if (contains(QLatin1String(onlyShowInKey)))
     {
-        QStringList s = value("OnlyShowIn").toString().toUpper().split(';');
+        key = QLatin1String(onlyShowInKey);
+        keyFound = true;
+    }
+    else
+    {
+        key = QLatin1String(extendPrefixKey) % QLatin1String(onlyShowInKey);
+        keyFound = contains(key) ? true : false;
+    }
+
+    if (keyFound)
+    {
+        QStringList s = value(key).toString().toUpper().split(QLatin1Char(';'));
         if (!s.contains(env))
             return false;
     }
 
     // NotShowIn .........
-    if (contains("NotShowIn"))
+    keyFound = false;
+    if (contains(QLatin1String(notShowInKey)))
     {
-        QStringList s = value("NotShowIn").toString().toUpper().split(';');
-        if (s.contains(env))
+        key = QLatin1String(notShowInKey);
+        keyFound = true;
+    }
+    else
+    {
+        key = QLatin1String(extendPrefixKey) % QLatin1String(notShowInKey);
+        keyFound = contains(key) ? true : false;
+    }
+
+    if (keyFound)
+    {
+        QStringList s = value(key).toString().toUpper().split(QLatin1Char(';'));
+        if (!s.contains(env))
             return false;
     }
 

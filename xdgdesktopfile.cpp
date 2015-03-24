@@ -78,6 +78,7 @@ static const QStringList nonDetachExecs = QStringList()
 
 static const char onlyShowInKey[] = "OnlyShowIn";
 static const char notShowInKey[] = "NotShowIn";
+static const char categoriesKey[] = "Categories";
 static const char extendPrefixKey[] = "X-";
 
 // Helper functions prototypes
@@ -777,6 +778,24 @@ QVariant XdgDesktopFile::localizedValue(const QString& key, const QVariant& defa
     return value(localizedKey(key), defaultValue);
 }
 
+
+QStringList XdgDesktopFile::categories() const
+{
+    QString key;
+    if (contains(QLatin1String(categoriesKey)))
+    {
+        key = QLatin1String(categoriesKey);
+    }
+    else
+    {
+        key = QLatin1String(extendPrefixKey) % QLatin1String(categoriesKey);
+        if (!contains(key))
+            return QStringList();
+    }
+
+    QStringList cats = value(key).toString().split(QLatin1Char(';'));
+    return cats;
+}
 
 /************************************************
 

@@ -201,7 +201,8 @@ XdgMenuRuleCategory::XdgMenuRuleCategory(const QDomElement& element, QObject *pa
 bool XdgMenuRuleCategory::check(const QString& desktopFileId, const XdgDesktopFile& desktopFile)
 {
     Q_UNUSED(desktopFileId)
-    return desktopFile.value("Categories").toString().split(';').contains(mCategory);
+    QStringList cats = desktopFile.categories();
+    return cats.contains(mCategory);
 }
 
 

@@ -124,6 +124,9 @@ public:
     //! Removes the entry with the specified key, if it exists.
     void removeEntry(const QString& key);
 
+    //! Returns the entry Categories. It supports X-Categories extensions.
+    QStringList categories() const;
+
     //! Returns true if there exists a setting called key; returns false otherwise.
     bool contains(const QString& key) const;
 

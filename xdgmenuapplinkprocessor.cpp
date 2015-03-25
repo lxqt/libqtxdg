@@ -123,60 +123,20 @@ void XdgMenuApplinkProcessor::step2()
 
         XdgDesktopFile* file = fileInfo->desktopFile();
 
-        // Means "this application exists, but don't display it in the menus".
-        if (file->value("NoDisplay").toBool())
-            continue;
-
-        // Hidden should have been called Deleted. It means the user deleted
-        // (at his level) something that was present
-        if (file->value("Hidden").toBool())
-            continue;
-
-        // File name of a binary on disk used to determine if the program is
-        // actually installed. If not, entry may not show in menus, etc.
-        QString s = file->value("TryExec").toString();
-        if (!s.isEmpty() && !checkTryExec(s))
-            continue;
-
-        // A list of strings identifying the environments that should display/not
-        // display a given desktop entry.
-        // OnlyShowIn ........
-        if (file->contains("OnlyShowIn"))
+        bool show = false;
+        QStringList envs = mMenu->environments();
+        const int N = envs.size();
+        for (int i = 0; i < N; ++i)
         {
-            QString s = ";" + file->value("OnlyShowIn").toString() + ";";
-            bool show = false;
-            foreach (QString env, mMenu->environments())
+            if (file->isShown(envs.at(i)))
             {
-                if (s.contains(env, Qt::CaseInsensitive))
-                {
-                    show = true;
-                    break;
-                }
+                show = true;
+                break;
             }
-
-            if (!show)
-                continue;
         }
 
-        // NotShowIn .........
-        if (file->contains("NotShowIn"))
-        {
-            QString s = ";" + file->value("NotShowIn").toString() + ";";
-            bool show = true;
-            foreach (QString env, mMenu->environments())
-            {
-                if (s.contains(env, Qt::CaseInsensitive))
-                {
-                    show = false;
-                    break;
-                }
-            }
-
-            if (!show)
-                continue;
-        }
-
-
+        if (!show)
+            continue;
 
         QDomElement appLink = doc.createElement("AppLink");
 

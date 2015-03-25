@@ -1,13 +1,8 @@
 project(use-qtxdg)
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.11)
 
-option(USE_QT5 "Build using Qt5. Default off" OFF)
 
-if (USE_QT5)
-    find_package(QT5XDG)
-else()
-    find_package(QTXDG)
-endif()
+find_package(QT5XDG)
 
 include(${QTXDG_USE_FILE})
 

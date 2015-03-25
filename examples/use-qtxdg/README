@@ -1,9 +1,4 @@
-An example of how to write an CMakeLists.txt to use libqtxdg in a portable
-way.
+An example of how to write an CMakeLists.txt to use libqtxdg.
 
-Building with Qt4 is the default. Ex:
-cmake..
-
-To build with Qt5 just pass to set the USE_QT5 to Yes. Ex:
-
-cmake -DUSE_QT5=On ..
+To build this example just use:
+    cmake ..

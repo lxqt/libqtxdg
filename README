@@ -1,20 +1,11 @@
 Overview
 ========
 libqtxdg is An Qt implementation of freedesktop.org xdg specifications.
-It can be built with Qt4 and Qt5
+It's built with Qt5.
 
 
 Dependencies
 ============
-Qt4 build:
-    Qt4
-    libmagic OR QtMimeTypes
-
-QtMimeTypes the preffered. libmagic is deprecated and may be dropped in future
-releases.
-QtMimeTypes can be found at: https://qt.gitorious.org/qtplayground/mimetypes
-
-Qt5 build:
     Qt5
 
 
@@ -24,20 +15,11 @@ libqtxdg uses the CMake build system. Everything that applies to CMake also
 applies here.
 
 Configuration options:
-    USE_QT5     	Builds with Qt5, defaults to then environment variable
-                        with the same name.
-
-    USE_QTMIMETYPES	It only affects the Qt4 build. Builds using QtMimeTypes.
-			Defaults to On. If set to OFF libmagic will be used.
-
     BUILD_TESTS         Builds tests, defaults to OFF
 
 Configuration Examples:
-    Build with Qt5 and build self tests:
-        cmake -DUSE_QT5=ON -DBUILD_TESTS=ON ..
+    Build library  and build self tests:
+        cmake -DBUILD_TESTS=ON ..
 
-    Build with Qt4 and no tests using QtMimeTypes
-        cmake -DUSE_QT5=OFF ..
-
-    Build with Qt4, no tests and using libmagic
-        cmake -DUSE_QT5=OFF -DUSE_QTMIMETYPES=OFF ..
+    Build the library without building self tests
+        cmake ..

@@ -49,12 +49,6 @@ add_definitions(${Qt5Core_DEFINITIONS})
 #        "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}"
 #    )
 
-# QMimeDatabase and QMimeType are part of Qt5Core
-# We just use that as an mimetype provider.
-# An empty MIMETYPES_PROVIDER_LIBRARY means we are using Qt internal
-# mimetypes support
-set(MIMETYPES_PROVIDER_LIBRARY "")
-add_definitions("-DHAVE_QTMIMETYPES")
 
 set(QTX_LIBRARIES ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5DBus_LIBRARIES})
 message(STATUS "Building with Qt ${Qt5Core_VERSION_STRING}")
@@ -186,7 +180,6 @@ add_library(${QTXDGX_LIBRARY_NAME} SHARED
 
 target_link_libraries(${QTXDGX_LIBRARY_NAME}
     ${QTX_LIBRARIES}
-    ${MIMETYPES_PROVIDER_LIBRARY}
 )
 
 set_target_properties(${QTXDGX_LIBRARY_NAME} PROPERTIES

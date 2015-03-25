@@ -61,7 +61,7 @@ if (USE_QT5)
     set(QTXDGX_FILE_NAME "qt5xdg")
 
     set(QTXDGX_PKG_CONFIG_DESCRIPTION "Qt5Xdg, a Qt5 implementation of XDG standards")
-    set(QTXDGX_PKG_CONFIG_REQUIRES "Qt5Core, Qt5Xml, Qt5Widgets")
+    set(QTXDGX_PKG_CONFIG_REQUIRES "Qt5Core, Qt5Xml, Qt5Widgets, Qt5DBus")
 
     include_directories(
         "${Qt5Widgets_INCLUDE_DIRS}"
@@ -182,7 +182,7 @@ if (NOT USE_QT5)
             QtMimeTypes
         )
         include_directories("${QTMIMETYPES_INCLUDE_DIRS}")
-        set(QTXDGX_PKG_CONFIG_REQUIRES "QtCore, QtXml, QtMimeTypes")
+        set(QTXDGX_PKG_CONFIG_REQUIRES "QtCore, QtXml, QtDbus, QtMimeTypes")
         set(MIMETYPES_PROVIDER_LIBRARY ${QTMIMETYPES_LIBRARIES})
         link_directories("${QTMIMETYPES_LIBRARY_DIRS}")
         add_definitions("-DHAVE_QTMIMETYPES")
@@ -190,7 +190,7 @@ if (NOT USE_QT5)
         # Use libmagic
         find_package(LibMagic REQUIRED QUIET)
         set(MIMETYPES_PROVIDER_LIBRARY ${LIBMAGIC_LIBRARY})
-        set(QTXDGX_PKG_CONFIG_REQUIRES "QtCore, QtXml")
+        set(QTXDGX_PKG_CONFIG_REQUIRES "QtCore, QtXml, QtDBus")
 
         list(APPEND libqtxdg_PUBLIC_H_FILES xdgmime.h)
         list(APPEND libqtxdg_PUBLIC_CLASSES XdgMime)

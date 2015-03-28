@@ -280,12 +280,6 @@ QString &unEscapeExec(QString& str)
     return doUnEscape(str, repl);
 }
 
-enum Triple {
-    Undef,
-    True,
-    False
-};
-
 class XdgDesktopFileData: public QSharedData {
 public:
     XdgDesktopFileData();
@@ -298,7 +292,7 @@ public:
     QString mFileName;
     bool mIsValid;
     mutable bool mValidIsChecked;
-    mutable Triple mIsShow;
+    mutable QHash<QString, bool> mIsShow;
     QMap<QString, QVariant> mItems;
 
     XdgDesktopFile::Type mType;
@@ -310,8 +304,7 @@ public:
  ************************************************/
 XdgDesktopFileData::XdgDesktopFileData():
     mIsValid(false),
-    mValidIsChecked(false),
-    mIsShow(Undef)
+    mValidIsChecked(false)
 {
 }
 
@@ -1168,37 +1161,43 @@ bool checkTryExec(const QString& progName)
  ************************************************/
 bool XdgDesktopFile::isShow(const QString& environment) const
 {
-    if (d->mIsShow != Undef)
-        return d->mIsShow == True;
+    const QString env = environment.toUpper();
 
-    d->mIsShow = False;
+    if (d->mIsShow.contains(env))
+        return d->mIsShow.value(env);
+
+    d->mIsShow.insert(env, false);
     // Means "this application exists, but don't display it in the menus".
     if (value("NoDisplay").toBool())
         return false;
 
     // The file is inapplicable to the current environment
-    if (!isSuitable(true, environment))
+    if (!isSuitable(true, env))
         return false;
 
-    d->mIsShow = True;
+
+    d->mIsShow.insert(env, true);
     return true;
 }
 
 bool XdgDesktopFile::isShown(const QString &environment) const
 {
-    if (d->mIsShow != Undef)
-        return d->mIsShow == True;
+    const QString env = environment.toUpper();
 
-    d->mIsShow = False;
+    if (d->mIsShow.contains(env))
+        return d->mIsShow.value(env);
+
+    d->mIsShow.insert(env, false);
+
     // Means "this application exists, but don't display it in the menus".
     if (value("NoDisplay").toBool())
         return false;
 
     // The file is not suitable to the current environment
-    if (!isSuitable(true, environment))
+    if (!isSuitable(true, env))
         return false;
 
-    d->mIsShow = True;
+    d->mIsShow.insert(env, true);
     return true;
 }
 

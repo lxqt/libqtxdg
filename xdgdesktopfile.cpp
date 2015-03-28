@@ -280,12 +280,6 @@ QString &unEscapeExec(QString& str)
     return doUnEscape(str, repl);
 }
 
-enum Triple {
-    Undef,
-    True,
-    False
-};
-
 class XdgDesktopFileData: public QSharedData {
 public:
     XdgDesktopFileData();

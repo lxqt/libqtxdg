@@ -121,9 +121,6 @@ protected:
 
 
 };
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-#else
 Q_DECLARE_SHARED(XdgMimeType)
-#endif
 
 #endif // QTXDG_MIMETYPE_H

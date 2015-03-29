@@ -36,12 +36,8 @@
 #include "xdgdesktopfile.h"
 #include "xdgdesktopfile_p.h"
 
-#ifdef HAVE_QTMIMETYPES
 #include <QMimeDatabase>
 #include <QMimeType>
-#else
-#include "xdgmime.h"
-#endif
 
 #include "xdgicon.h"
 #include "xdgdirs.h"
@@ -58,10 +54,7 @@
 #include <QUrl>
 #include <QDesktopServices>
 #include <QStringBuilder> // for the % operator
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-#else
 #include <QStandardPaths>
-#endif
 
 #include <QList>
 #include <QtAlgorithms>
@@ -418,11 +411,7 @@ bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const
     if (nonDetach)
     {
         QScopedPointer<QProcess> p(new QProcess);
-#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
         p->setStandardInputFile(QProcess::nullDevice());
-#else
-        p->setStandardInputFile(QLatin1String("/dev/null"));
-#endif
         p->setProcessChannelMode(QProcess::ForwardedChannels);
         p->start(cmd, args);
         bool started = p->waitForStarted();
@@ -460,14 +449,9 @@ bool XdgDesktopFileData::startLinkDetached(const XdgDesktopFile *q) const
         // Local file
         QFileInfo fi(url);
 
-#ifdef HAVE_QTMIMETYPES
         QMimeDatabase db;
         QMimeType mimeInfo = db.mimeTypeForFile(fi);
         XdgDesktopFile* desktopFile = XdgDesktopFileCache::getDefaultApp(mimeInfo.name());
-#else
-        XdgMimeInfo mimeInfo(fi);
-        XdgDesktopFile* desktopFile = XdgDesktopFileCache::getDefaultApp(mimeInfo.mimeType());
-#endif
 
         if (desktopFile)
             return desktopFile->startDetached(url);
@@ -981,16 +965,6 @@ QString expandEnvVariables(const QString str)
     replaceVar(res, "HOME", getenv("HOME"));
     replaceVar(res, "USER", getenv("USER"));
 
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-    replaceVar(res, "XDG_DESKTOP_DIR",   QDesktopServices::storageLocation(QDesktopServices::DesktopLocation));
-    replaceVar(res, "XDG_TEMPLATES_DIR", QDesktopServices::storageLocation(QDesktopServices::TempLocation));
-    replaceVar(res, "XDG_DOCUMENTS_DIR", QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation));
-    replaceVar(res, "XDG_MUSIC_DIR",     QDesktopServices::storageLocation(QDesktopServices::MusicLocation));
-    replaceVar(res, "XDG_PICTURES_DIR",  QDesktopServices::storageLocation(QDesktopServices::PicturesLocation));
-    replaceVar(res, "XDG_VIDEOS_DIR",    QDesktopServices::storageLocation(QDesktopServices::MoviesLocation));
-    replaceVar(res, "XDG_PHOTOS_DIR",    QDesktopServices::storageLocation(QDesktopServices::PicturesLocation));
-    replaceVar(res, "XDG_MOVIES_DIR",    QDesktopServices::storageLocation(QDesktopServices::MoviesLocation));
-#else
     replaceVar(res, "XDG_DESKTOP_DIR",   QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
     replaceVar(res, "XDG_TEMPLATES_DIR", QStandardPaths::writableLocation(QStandardPaths::TempLocation));
     replaceVar(res, "XDG_DOCUMENTS_DIR", QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
@@ -999,7 +973,6 @@ QString expandEnvVariables(const QString str)
     replaceVar(res, "XDG_VIDEOS_DIR",    QStandardPaths::writableLocation(QStandardPaths::MoviesLocation));
     replaceVar(res, "XDG_PHOTOS_DIR",    QStandardPaths::writableLocation(QStandardPaths::PicturesLocation));
     replaceVar(res, "XDG_MOVIES_DIR",    QStandardPaths::writableLocation(QStandardPaths::MoviesLocation));
-#endif // QT_VERSION < QT_VERSION_CHECK(5,0,0)
 
     return res;
 }

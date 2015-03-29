@@ -2,10 +2,6 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Xml REQUIRED)
 find_package(Qt5DBus REQUIRED)
 
-if (QTXDG_QTMIMETYPES)
-    add_definitions("-DQT_MIMETYPES")
-endif()
-
 add_definitions(${Qt5Core_DEFINITIONS})
 set(CMAKE_CXX_FLAGS
     "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}"

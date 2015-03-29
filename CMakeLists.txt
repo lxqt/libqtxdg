@@ -1,23 +1,7 @@
-cmake_minimum_required( VERSION 2.8.5 )
-
+cmake_minimum_required(VERSION 2.8.11)
 project(libqtxdg)
 
-# Support different versions of Qt
-option(USE_QT4 "Build with Qt4." $ENV{USE_QT4})
 option(BUILD_TESTS "Builds tests" OFF)
-
-if (USE_QT4)
-    set(USE_QT5 FALSE)
-else()
-    set(USE_QT5 TRUE)
-endif()
-
-# The Qt4 version can be compiled with libmagic or with QtMimeTypes
-# QtMimeTypes is the preferred way and also the default. libmagic will be
-# dropped in future releases.
-if (NOT USE_QT5)
-    option(USE_QTMIMETYPES "Use QtMimeTypes library" ON)
-endif()
 
 # Standard directories for installation
 include(GNUInstallDirs)
@@ -41,73 +25,33 @@ if (CMAKE_COMPILER_IS_GNUCXX OR QTXDG_COMPILER_IS_CLANGCXX)
     set(CMAKE_CXX_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden -fno-exceptions ${CMAKE_CXX_FLAGS}")
 endif()
 
-find_package(PkgConfig)
+find_package(Qt5Widgets REQUIRED QUIET)
+find_package(Qt5Xml REQUIRED QUIET)
+find_package(Qt5DBus REQUIRED QUIET)
+if (BUILD_TESTS)
+    find_package(Qt5Test REQUIRED QUIET)
+endif()
 
-if (USE_QT5)
-    cmake_minimum_required(VERSION 2.8.11)
-    find_package(Qt5Widgets REQUIRED QUIET)
-    find_package(Qt5Xml REQUIRED QUIET)
-    find_package(Qt5DBus REQUIRED QUIET)
-    if (BUILD_TESTS)
-        find_package(Qt5Test REQUIRED QUIET)
-    endif()
 
-    # if both Qt4 and Qt5 are installed we must check what version was found
-    if (NOT ${Qt5Core_VERSION_MAJOR} EQUAL 5)
-        message(FATAL_ERROR "Qt was found, but NOT Qt5.")
-    endif()
+set(QTXDGX_LIBRARY_NAME "Qt5Xdg")
+set(QTXDGX_FILE_NAME "qt5xdg")
 
-    set(QTXDGX_LIBRARY_NAME "Qt5Xdg")
-    set(QTXDGX_FILE_NAME "qt5xdg")
+set(QTXDGX_PKG_CONFIG_DESCRIPTION "Qt5Xdg, a Qt5 implementation of XDG standards")
+set(QTXDGX_PKG_CONFIG_REQUIRES "Qt5Core, Qt5Xml, Qt5Widgets, Qt5DBus")
 
-    set(QTXDGX_PKG_CONFIG_DESCRIPTION "Qt5Xdg, a Qt5 implementation of XDG standards")
-    set(QTXDGX_PKG_CONFIG_REQUIRES "Qt5Core, Qt5Xml, Qt5Widgets, Qt5DBus")
-
-    include_directories(
-        "${Qt5Widgets_INCLUDE_DIRS}"
-        "${Qt5Gui_PRIVATE_INCLUDE_DIRS}"
-        "${Qt5Xml_INCLUDE_DIRS}"
-    )
-    add_definitions(${Qt5Core_DEFINITIONS})
+include_directories(
+    "${Qt5Widgets_INCLUDE_DIRS}"
+    "${Qt5Gui_PRIVATE_INCLUDE_DIRS}"
+    "${Qt5Xml_INCLUDE_DIRS}"
+)
+add_definitions(${Qt5Core_DEFINITIONS})
 #    set(CMAKE_CXX_FLAGS
 #        "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}"
 #    )
 
-    # QMimeDatabase and QMimeType are part of Qt5Core
-    # We just use that as an mimetype provider.
-    # An empty MIMETYPES_PROVIDER_LIBRARY means we are using Qt internal
-    # mimetypes support
-    set(MIMETYPES_PROVIDER_LIBRARY "")
-    add_definitions("-DHAVE_QTMIMETYPES")
 
-    set(QTX_LIBRARIES ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5DBus_LIBRARIES})
-    message(STATUS "Building with Qt ${Qt5Core_VERSION_STRING}")
-else()
-    find_package(Qt4 REQUIRED QtCore QtGui QtXml QtDBus QUIET)
-    if (BUILD_TESTS)
-        find_package(Qt4 REQUIRED QtTest QUIET)
-    endif()
-
-    # if both Qt4 and Qt5 are installed we must check what version was found
-    if (NOT ${QT_VERSION_MAJOR} EQUAL 4)
-        message(FATAL_ERROR "Qt was found, but NOT Qt4")
-    endif()
-
-    set(QTXDGX_LIBRARY_NAME "qtxdg")
-    set(QTXDGX_FILE_NAME "qtxdg")
-
-    set(QTXDGX_PKG_CONFIG_DESCRIPTION "QtXdg, a Qt4 implementation of XDG standards")
-
-    include(${QT_USE_FILE})
-    set(QTX_LIBRARIES
-        ${QT_QTCORE_LIBRARY}
-        ${QT_QTGUI_LIBRARY}
-        ${QT_QTXML_LIBRARY}
-        ${QT_QTDBUS_LIBRARY}
-    )
-    message(STATUS "Building with Qt ${QTVERSION}")
-endif()
-
+set(QTX_LIBRARIES ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5DBus_LIBRARIES})
+message(STATUS "Building with Qt ${Qt5Core_VERSION_STRING}")
 
 set(libqtxdg_PUBLIC_H_FILES
     xdgaction.h
@@ -119,6 +63,7 @@ set(libqtxdg_PUBLIC_H_FILES
     xmlhelper.h
     xdgautostart.h
     xdgmacros.h
+    xdgmimetype.h
 )
 
 set(libqtxdg_PUBLIC_CLASSES
@@ -130,6 +75,7 @@ set(libqtxdg_PUBLIC_CLASSES
     XdgMenuWidget
     XmlHelper
     XdgAutoStart
+    XdgMimeType
 )
 
 set(libqtxdg_PRIVATE_H_FILES
@@ -154,6 +100,8 @@ set(libqtxdg_CPP_FILES
     xdgmenuwidget.cpp
     xmlhelper.cpp
     xdgautostart.cpp
+    xdgmimetype.cpp
+    qiconfix/qiconloader.cpp
 )
 
 set(libqtxdg_MOCS
@@ -166,44 +114,9 @@ set(libqtxdg_MOCS
     xdgmenuwidget.h
 )
 
-if (USE_QT5)
-    list(APPEND libqtxdg_PRIVATE_INSTALLABLE_H_FILES qiconfix/qiconloader_p.h)
-    list(APPEND libqtxdg_CPP_FILES qiconfix/qiconloader.cpp)
-else()
-    list(APPEND libqtxdg_PRIVATE_H_FILES qiconfix/qiconloader_p_qt4.h)
-    list(APPEND libqtxdg_CPP_FILES qiconfix/qiconloader_qt4.cpp)
-endif()
-
-if (NOT USE_QT5)
-    if (USE_QTMIMETYPES)
-        # Using QtMimeTypes to provide a better mimetype support on Qt4
-        # Project repo: https://qt.gitorious.org/qtplayground/mimetypes
-        pkg_check_modules(QTMIMETYPES REQUIRED
-            QtMimeTypes
-        )
-        include_directories("${QTMIMETYPES_INCLUDE_DIRS}")
-        set(QTXDGX_PKG_CONFIG_REQUIRES "QtCore, QtXml, QtDbus, QtMimeTypes")
-        set(MIMETYPES_PROVIDER_LIBRARY ${QTMIMETYPES_LIBRARIES})
-        link_directories("${QTMIMETYPES_LIBRARY_DIRS}")
-        add_definitions("-DHAVE_QTMIMETYPES")
-    else()
-        # Use libmagic
-        find_package(LibMagic REQUIRED QUIET)
-        set(MIMETYPES_PROVIDER_LIBRARY ${LIBMAGIC_LIBRARY})
-        set(QTXDGX_PKG_CONFIG_REQUIRES "QtCore, QtXml, QtDBus")
-
-        list(APPEND libqtxdg_PUBLIC_H_FILES xdgmime.h)
-        list(APPEND libqtxdg_PUBLIC_CLASSES XdgMime)
-        list(APPEND libqtxdg_CPP_FILES xdgmime.cpp)
-    endif()
-endif()
-
-if (USE_QTMIMETYPES OR USE_QT5)
-    list(APPEND libqtxdg_PUBLIC_H_FILES xdgmimetype.h)
-    list(APPEND libqtxdg_PUBLIC_CLASSES XdgMimeType)
-    list(APPEND libqtxdg_CPP_FILES xdgmimetype.cpp)
-endif()
-
+set(libqtxdg_PRIVATE_INSTALLABLE_H_FILES
+    qiconfix/qiconloader_p.h
+)
 
 set(APP_SHARE_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/lib${QTXDGX_FILE_NAME}")
 add_definitions(-DTRANSLATIONS_DIR=\"${APP_SHARE_DIR}\")
@@ -220,20 +133,12 @@ set(QTXDG_PATCH_VERSION ${PATCH_VERSION})
 # In tree compilation ......................
 set(QTXDG_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR};${CMAKE_CURRENT_BINARY_DIR}")
 
-if (USE_QT5)
-    set(QTXDG_PRIVATE_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/qiconfix")
-    configure_file(
-        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/qt5xdg-config.cmake.in"
-        "${CMAKE_CURRENT_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}-config.cmake"
-        @ONLY
-    )
-else()
-    configure_file(
-        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/qtxdg-config.cmake.in"
-        "${CMAKE_CURRENT_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}-config.cmake"
-        @ONLY
-    )
-endif()
+set(QTXDG_PRIVATE_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/qiconfix")
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/qt5xdg-config.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}-config.cmake"
+    @ONLY
+)
 
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${QTXDGX_FILE_NAME}_use.cmake"
@@ -244,30 +149,18 @@ configure_file(
 # Instalable ...............................
 set(QTXDG_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}")
 
-if (USE_QT5)
-    set(QTXDG_PRIVATE_INCLUDE_DIR "${QTXDG_INCLUDE_DIR}/${QTXDG_VERSION_STRING}")
-    configure_file(
-        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/qt5xdg-config.cmake.in"
-        "${CMAKE_CURRENT_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake"
-        @ONLY
-    )
-else()
-    configure_file(
-        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/qtxdg-config.cmake.in"
-        "${CMAKE_CURRENT_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake"
-        @ONLY
-    )
-endif()
+set(QTXDG_PRIVATE_INCLUDE_DIR "${QTXDG_INCLUDE_DIR}/${QTXDG_VERSION_STRING}")
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/qt5xdg-config.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake"
+    @ONLY
+)
 
 #**********************************************************
 
 include(FindLibSuffix)
 
-if(USE_QT5)
-    QT5_WRAP_CPP(libqtxdg_CXX_FILES ${libqtxdg_MOCS})
-else()
-    QT4_WRAP_CPP(libqtxdg_CXX_FILES ${libqtxdg_MOCS})
-endif()
+QT5_WRAP_CPP(libqtxdg_CXX_FILES ${libqtxdg_MOCS})
 
 
 if (NOT CMAKE_BUILD_TYPE)
@@ -287,7 +180,6 @@ add_library(${QTXDGX_LIBRARY_NAME} SHARED
 
 target_link_libraries(${QTXDGX_LIBRARY_NAME}
     ${QTX_LIBRARIES}
-    ${MIMETYPES_PROVIDER_LIBRARY}
 )
 
 set_target_properties(${QTXDGX_LIBRARY_NAME} PROPERTIES
@@ -302,13 +194,11 @@ create_portable_headers(libqtxdg_PORTABLE_HEADERS ${libqtxdg_PUBLIC_CLASSES})
 install(TARGETS ${QTXDGX_LIBRARY_NAME} DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 install(FILES ${libqtxdg_PUBLIC_H_FILES} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}")
 
-if (USE_QT5)
-    install(FILES
-            ${libqtxdg_PRIVATE_INSTALLABLE_H_FILES}
-        DESTINATION
-            "${QTXDG_PRIVATE_INCLUDE_DIR}/private/qtxdg"
-    )
-endif()
+install(FILES
+        ${libqtxdg_PRIVATE_INSTALLABLE_H_FILES}
+    DESTINATION
+        "${QTXDG_PRIVATE_INCLUDE_DIR}/private/qtxdg"
+)
 
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake" DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_FILE_NAME}")
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}_use.cmake" DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_FILE_NAME}")

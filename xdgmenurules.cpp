@@ -25,7 +25,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-
 /*********************************************************************
   See: http://standards.freedesktop.org/desktop-entry-spec
 
@@ -38,10 +37,6 @@
 #include <QDebug>
 
 
-
-/************************************************
-
- ************************************************/
 XdgMenuRule::XdgMenuRule(const QDomElement& element, QObject* parent) :
     QObject(parent)
 {
@@ -49,15 +44,9 @@ XdgMenuRule::XdgMenuRule(const QDomElement& element, QObject* parent) :
 }
 
 
-/************************************************
-
- ************************************************/
 XdgMenuRule::~XdgMenuRule()
 {
 }
-
-
-
 
 
 /************************************************
@@ -100,9 +89,6 @@ XdgMenuRuleOr::XdgMenuRuleOr(const QDomElement& element, QObject* parent) :
 }
 
 
-/************************************************
-
- ************************************************/
 bool XdgMenuRuleOr::check(const QString& desktopFileId, const XdgDesktopFile& desktopFile)
 {
     for (QLinkedList<XdgMenuRule*>::Iterator i=mChilds.begin(); i!=mChilds.end(); ++i)
@@ -124,9 +110,6 @@ XdgMenuRuleAnd::XdgMenuRuleAnd(const QDomElement& element, QObject *parent) :
 }
 
 
-/************************************************
-
- ************************************************/
 bool XdgMenuRuleAnd::check(const QString& desktopFileId, const XdgDesktopFile& desktopFile)
 {
     for (QLinkedList<XdgMenuRule*>::Iterator i=mChilds.begin(); i!=mChilds.end(); ++i)
@@ -134,7 +117,6 @@ bool XdgMenuRuleAnd::check(const QString& desktopFileId, const XdgDesktopFile& d
 
     return mChilds.count();
 }
-
 
 
 /************************************************
@@ -150,14 +132,10 @@ XdgMenuRuleNot::XdgMenuRuleNot(const QDomElement& element, QObject *parent) :
 }
 
 
-/************************************************
-
- ************************************************/
 bool XdgMenuRuleNot::check(const QString& desktopFileId, const XdgDesktopFile& desktopFile)
 {
     return ! XdgMenuRuleOr::check(desktopFileId, desktopFile);
 }
-
 
 
 /************************************************
@@ -172,16 +150,12 @@ XdgMenuRuleFileName::XdgMenuRuleFileName(const QDomElement& element, QObject *pa
 }
 
 
-/************************************************
-
- ************************************************/
 bool XdgMenuRuleFileName::check(const QString& desktopFileId, const XdgDesktopFile& desktopFile)
 {
     Q_UNUSED(desktopFile)
     //qDebug() << "XdgMenuRuleFileName:" << desktopFileId << mId;
     return desktopFileId == mId;
 }
-
 
 
 /************************************************
@@ -195,9 +169,6 @@ XdgMenuRuleCategory::XdgMenuRuleCategory(const QDomElement& element, QObject *pa
 }
 
 
-/************************************************
-
- ************************************************/
 bool XdgMenuRuleCategory::check(const QString& desktopFileId, const XdgDesktopFile& desktopFile)
 {
     Q_UNUSED(desktopFileId)
@@ -215,9 +186,6 @@ XdgMenuRuleAll::XdgMenuRuleAll(const QDomElement& element, QObject *parent) :
 }
 
 
-/************************************************
-
- ************************************************/
 bool XdgMenuRuleAll::check(const QString& desktopFileId, const XdgDesktopFile& desktopFile)
 {
     Q_UNUSED(desktopFileId)
@@ -226,46 +194,29 @@ bool XdgMenuRuleAll::check(const QString& desktopFileId, const XdgDesktopFile& d
 }
 
 
-
-
-/************************************************
-
- ************************************************/
 XdgMenuRules::XdgMenuRules(QObject* parent) :
     QObject(parent)
 {
 }
 
 
-/************************************************
-
- ************************************************/
 XdgMenuRules::~XdgMenuRules()
 {
 }
 
 
-/************************************************
-
- ************************************************/
 void XdgMenuRules::addInclude(const QDomElement& element)
 {
     mIncludeRules.append(new XdgMenuRuleOr(element, this));
 }
 
 
-/************************************************
-
- ************************************************/
 void XdgMenuRules::addExclude(const QDomElement& element)
 {
     mExcludeRules.append(new XdgMenuRuleOr(element, this));
 }
 
 
-/************************************************
-
- ************************************************/
 bool XdgMenuRules::checkInclude(const QString& desktopFileId, const XdgDesktopFile& desktopFile)
 {
     for (QLinkedList<XdgMenuRule*>::Iterator i=mIncludeRules.begin(); i!=mIncludeRules.end(); ++i)
@@ -275,9 +226,6 @@ bool XdgMenuRules::checkInclude(const QString& desktopFileId, const XdgDesktopFi
 }
 
 
-/************************************************
-
- ************************************************/
 bool XdgMenuRules::checkExclude(const QString& desktopFileId, const XdgDesktopFile& desktopFile)
 {
     for (QLinkedList<XdgMenuRule*>::Iterator i=mExcludeRules.begin(); i!=mExcludeRules.end(); ++i)
@@ -285,5 +233,3 @@ bool XdgMenuRules::checkExclude(const QString& desktopFileId, const XdgDesktopFi
 
     return false;
 }
-
-

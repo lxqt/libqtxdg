@@ -33,7 +33,6 @@
 #include "xdgmacros.h"
 
 #include <QSharedDataPointer>
-//#include <QObject>
 #include <QString>
 #include <QVariant>
 #include <QStringList>

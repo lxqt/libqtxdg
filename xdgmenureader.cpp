@@ -25,7 +25,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-
 #include "xdgmenureader.h"
 #include "xdgmenu.h"
 #include "xdgdirs.h"
@@ -41,10 +40,6 @@
 #include <QtXml/QDomNode>
 
 
-
-/************************************************
-
- ************************************************/
 XdgMenuReader::XdgMenuReader(XdgMenu* menu, XdgMenuReader*  parentReader, QObject *parent) :
     QObject(parent),
     mMenu(menu)
@@ -55,18 +50,12 @@ XdgMenuReader::XdgMenuReader(XdgMenu* menu, XdgMenuReader*  parentReader, QObjec
 }
 
 
-/************************************************
-
- ************************************************/
 XdgMenuReader::~XdgMenuReader()
 {
 
 }
 
 
-/************************************************
-
- ************************************************/
 bool XdgMenuReader::load(const QString& fileName, const QString& baseDir)
 {
     if (fileName.isEmpty())
@@ -433,9 +422,6 @@ void XdgMenuReader::mergeFile(const QString& fileName, QDomElement& element, QSt
 }
 
 
-/************************************************
-
- ************************************************/
 void XdgMenuReader::mergeDir(const QString& dirName, QDomElement& element, QStringList* mergedFiles)
 {
     QFileInfo dirInfo(mDirName, dirName);
@@ -450,7 +436,3 @@ void XdgMenuReader::mergeDir(const QString& dirName, QDomElement& element, QStri
             mergeFile(file.canonicalFilePath(), element, mergedFiles);
     }
 }
-
-
-
-

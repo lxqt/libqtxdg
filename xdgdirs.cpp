@@ -25,7 +25,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-
 #include "xdgdirs.h"
 #include <stdlib.h>
 #include <QDir>
@@ -62,6 +61,7 @@ void fixBashShortcuts(QString &s)
         s = QString(getenv("HOME")) + (s).mid(1);
 }
 
+
 void removeEndingSlash(QString &s)
 {
     // We don't check for empty strings. Caller must check it.
@@ -70,6 +70,7 @@ void removeEndingSlash(QString &s)
     if (s.length() > 1 && s.endsWith(QLatin1Char('/')))
         s.chop(1);
 }
+
 
 QString createDirectory(const QString &dir)
 {
@@ -86,6 +87,7 @@ QString createDirectory(const QString &dir)
     return r;
 }
 
+
 void cleanAndAddPostfix(QStringList &dirs, const QString& postfix)
 {
     const int N = dirs.count();
@@ -96,6 +98,7 @@ void cleanAndAddPostfix(QStringList &dirs, const QString& postfix)
         dirs[i].append(postfix);
     }
 }
+
 
 QString XdgDirs::userDir(XdgDirs::UserDirectory dir)
 {
@@ -144,9 +147,6 @@ QString XdgDirs::userDir(XdgDirs::UserDirectory dir)
 }
 
 
-/************************************************
-
- ************************************************/
 bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool createDir)
 {
     // possible values for UserDirectory
@@ -207,9 +207,6 @@ bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool 
 }
 
 
-/************************************************
-
- ************************************************/
 QString XdgDirs::dataHome(bool createDir)
 {
     QString s = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
@@ -222,9 +219,6 @@ QString XdgDirs::dataHome(bool createDir)
 }
 
 
-/************************************************
-
- ************************************************/
 QString XdgDirs::configHome(bool createDir)
 {
     QString s = QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation);
@@ -237,9 +231,6 @@ QString XdgDirs::configHome(bool createDir)
 }
 
 
-/************************************************
-
- ************************************************/
 QStringList XdgDirs::dataDirs(const QString &postfix)
 {
     QString d = QFile::decodeName(qgetenv("XDG_DATA_DIRS"));
@@ -259,9 +250,6 @@ QStringList XdgDirs::dataDirs(const QString &postfix)
 }
 
 
-/************************************************
-
- ************************************************/
 QStringList XdgDirs::configDirs(const QString &postfix)
 {
     QStringList dirs;
@@ -276,9 +264,6 @@ QStringList XdgDirs::configDirs(const QString &postfix)
 }
 
 
-/************************************************
-
- ************************************************/
 QString XdgDirs::cacheHome(bool createDir)
 {
     QString s = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation);
@@ -291,9 +276,6 @@ QString XdgDirs::cacheHome(bool createDir)
 }
 
 
-/************************************************
-
- ************************************************/
 QString XdgDirs::runtimeDir()
 {
     QString result = QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation);
@@ -303,9 +285,6 @@ QString XdgDirs::runtimeDir()
 }
 
 
-/************************************************
-
- ************************************************/
 QString XdgDirs::autostartHome(bool createDir)
 {
     QString s = QString("%1/autostart").arg(configHome(createDir));
@@ -321,9 +300,6 @@ QString XdgDirs::autostartHome(bool createDir)
 }
 
 
-/************************************************
-
- ************************************************/
 QStringList XdgDirs::autostartDirs(const QString &postfix)
 {
     QStringList dirs;

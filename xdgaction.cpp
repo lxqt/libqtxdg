@@ -32,18 +32,12 @@
 #include <QCoreApplication>
 
 
-/************************************************
-
- ************************************************/
 XdgAction::XdgAction(QObject *parent):
     QAction(parent)
 {
 }
 
 
-/************************************************
-
- ************************************************/
 XdgAction::XdgAction(const XdgDesktopFile& desktopFile, QObject *parent):
     QAction(parent)
 {
@@ -51,9 +45,6 @@ XdgAction::XdgAction(const XdgDesktopFile& desktopFile, QObject *parent):
 }
 
 
-/************************************************
-
- ************************************************/
 XdgAction::XdgAction(const XdgDesktopFile* desktopFile, QObject *parent):
     QAction(parent)
 {
@@ -61,9 +52,6 @@ XdgAction::XdgAction(const XdgDesktopFile* desktopFile, QObject *parent):
 }
 
 
-/************************************************
-
- ************************************************/
 XdgAction::XdgAction(const QString& desktopFileName, QObject *parent):
     QAction(parent)
 {
@@ -73,9 +61,6 @@ XdgAction::XdgAction(const QString& desktopFileName, QObject *parent):
 }
 
 
-/************************************************
-
- ************************************************/
 XdgAction::XdgAction(const XdgAction& other, QObject *parent):
     QAction(parent)
 {
@@ -83,17 +68,11 @@ XdgAction::XdgAction(const XdgAction& other, QObject *parent):
 }
 
 
-/************************************************
-
- ************************************************/
 XdgAction::~XdgAction()
 {
 }
 
 
-/************************************************
-
- ************************************************/
 XdgAction& XdgAction::operator=(const XdgAction& other)
 {
     load(other.mDesktopFile);
@@ -101,18 +80,12 @@ XdgAction& XdgAction::operator=(const XdgAction& other)
 }
 
 
-/************************************************
-
- ************************************************/
 bool XdgAction::isValid() const
 {
     return mDesktopFile.isValid();
 }
 
 
-/************************************************
-
- ************************************************/
 void XdgAction::load(const XdgDesktopFile& desktopFile)
 {
     mDesktopFile = desktopFile;
@@ -134,9 +107,6 @@ void XdgAction::load(const XdgDesktopFile& desktopFile)
 }
 
 
-/************************************************
-
- ************************************************/
 void XdgAction::runConmmand() const
 {
     if (mDesktopFile.isValid())
@@ -144,9 +114,6 @@ void XdgAction::runConmmand() const
 }
 
 
-/************************************************
-
- ************************************************/
 void XdgAction::updateIcon()
 {
     setIcon(mDesktopFile.icon());

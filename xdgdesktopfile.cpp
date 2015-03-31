@@ -91,9 +91,8 @@ void replaceVar(QString &str, const QString &varName, const QString &after);
 QString &unEscape(QString& str);
 QString &unEscapeExec(QString& str);
 void loadMimeCacheDir(const QString& dirName, QHash<QString, QList<XdgDesktopFile*> > & cache);
-/************************************************
 
- ************************************************/
+
 QString &doEscape(QString& str, const QHash<QChar,QChar> &repl)
 {
     // First we replace slash.
@@ -159,10 +158,6 @@ QString &escapeExec(QString& str)
 }
 
 
-
-/************************************************
-
- ************************************************/
 QString &doUnEscape(QString& str, const QHash<QChar,QChar> &repl)
 {
     int n = 0;
@@ -200,7 +195,6 @@ QString &unEscape(QString& str)
 
     return doUnEscape(str, repl);
 }
-
 
 
 /************************************************
@@ -292,9 +286,6 @@ public:
 };
 
 
-/************************************************
-
- ************************************************/
 XdgDesktopFileData::XdgDesktopFileData():
     mIsValid(false),
     mValidIsChecked(false)
@@ -302,9 +293,6 @@ XdgDesktopFileData::XdgDesktopFileData():
 }
 
 
-/************************************************
-
- ************************************************/
 bool XdgDesktopFileData::read(const QString &prefix)
 {
     QFile file(mFileName);
@@ -348,9 +336,6 @@ bool XdgDesktopFileData::read(const QString &prefix)
     return mIsValid;
 }
 
-/************************************************
-
- ************************************************/
 XdgDesktopFile::Type XdgDesktopFileData::detectType(XdgDesktopFile *q) const
 {
     QString typeStr = q->value("Type").toString();
@@ -370,9 +355,6 @@ XdgDesktopFile::Type XdgDesktopFileData::detectType(XdgDesktopFile *q) const
 }
 
 
-/************************************************
-
- ************************************************/
 bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const QStringList& urls) const
 {
     //DBusActivatable handling
@@ -429,9 +411,6 @@ bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const
 }
 
 
-/************************************************
-
- ************************************************/
 bool XdgDesktopFileData::startLinkDetached(const XdgDesktopFile *q) const
 {
     QString url = q->url();
@@ -486,27 +465,18 @@ bool XdgDesktopFileData::startByDBus(const QStringList& urls) const
 }
 
 
-
-/************************************************
-
- ************************************************/
 XdgDesktopFile::XdgDesktopFile():
     d(new XdgDesktopFileData)
 {
 }
 
 
-/************************************************
-
- ************************************************/
 XdgDesktopFile::XdgDesktopFile(const XdgDesktopFile& other):
     d(other.d)
 {
 }
 
-/************************************************
 
- ************************************************/
 XdgDesktopFile::XdgDesktopFile(Type type, const QString& name, const QString &value):
     d(new XdgDesktopFileData)
 {
@@ -532,17 +502,11 @@ XdgDesktopFile::XdgDesktopFile(Type type, const QString& name, const QString &va
 }
 
 
-/************************************************
-
- ************************************************/
 XdgDesktopFile::~XdgDesktopFile()
 {
 }
 
 
-/************************************************
-
- ************************************************/
 XdgDesktopFile& XdgDesktopFile::operator=(const XdgDesktopFile& other)
 {
     d = other.d;
@@ -550,18 +514,12 @@ XdgDesktopFile& XdgDesktopFile::operator=(const XdgDesktopFile& other)
 }
 
 
-/************************************************
-
- ************************************************/
 bool XdgDesktopFile::operator==(const XdgDesktopFile &other) const
 {
     return d->mItems == other.d->mItems;
 }
 
 
-/************************************************
-
- ************************************************/
 bool XdgDesktopFile::load(const QString& fileName)
 {
     if (fileName.startsWith(QDir::separator())) { // absolute path
@@ -580,9 +538,6 @@ bool XdgDesktopFile::load(const QString& fileName)
 }
 
 
-/************************************************
-
- ************************************************/
 bool XdgDesktopFile::save(QIODevice *device) const
 {
     QTextStream stream(device);
@@ -606,9 +561,6 @@ bool XdgDesktopFile::save(QIODevice *device) const
 }
 
 
-/************************************************
-
- ************************************************/
 bool XdgDesktopFile::save(const QString &fileName) const
 {
     QFile file(fileName);
@@ -619,9 +571,6 @@ bool XdgDesktopFile::save(const QString &fileName) const
 }
 
 
-/************************************************
-
- ************************************************/
 QVariant XdgDesktopFile::value(const QString& key, const QVariant& defaultValue) const
 {
     QString path = (!prefix().isEmpty()) ? prefix() + "/" + key : key;
@@ -636,9 +585,6 @@ QVariant XdgDesktopFile::value(const QString& key, const QVariant& defaultValue)
 }
 
 
-/************************************************
-
- ************************************************/
 void XdgDesktopFile::setValue(const QString &key, const QVariant &value)
 {
     QString path = (!prefix().isEmpty()) ? prefix() + "/" + key : key;
@@ -663,9 +609,6 @@ void XdgDesktopFile::setValue(const QString &key, const QVariant &value)
 }
 
 
-/************************************************
-
- ************************************************/
 void XdgDesktopFile::setLocalizedValue(const QString &key, const QVariant &value)
 {
     setValue(localizedKey(key), value);
@@ -747,9 +690,7 @@ QString XdgDesktopFile::localizedKey(const QString& key) const
     return key;
 }
 
-/************************************************
 
- ************************************************/
 QVariant XdgDesktopFile::localizedValue(const QString& key, const QVariant& defaultValue) const
 {
     return value(localizedKey(key), defaultValue);
@@ -774,9 +715,7 @@ QStringList XdgDesktopFile::categories() const
     return cats;
 }
 
-/************************************************
 
- ************************************************/
 void XdgDesktopFile::removeEntry(const QString& key)
 {
     QString path = (!prefix().isEmpty()) ? prefix() + "/" + key : key;
@@ -784,9 +723,6 @@ void XdgDesktopFile::removeEntry(const QString& key)
 }
 
 
-/************************************************
-
- ************************************************/
 bool XdgDesktopFile::contains(const QString& key) const
 {
     QString path = (!prefix().isEmpty()) ? prefix() + "/" + key : key;
@@ -794,27 +730,18 @@ bool XdgDesktopFile::contains(const QString& key) const
 }
 
 
-/************************************************
-
- ************************************************/
 bool XdgDesktopFile::isValid() const
 {
     return d->mIsValid;
 }
 
 
-/************************************************
-
- ************************************************/
 QString XdgDesktopFile::fileName() const
 {
     return d->mFileName;
 }
 
 
-/************************************************
-
- ************************************************/
 QIcon const XdgDesktopFile::icon(const QIcon& fallback) const
 {
     QIcon result = XdgIcon::fromTheme(value("Icon").toString(), fallback);
@@ -828,18 +755,12 @@ QIcon const XdgDesktopFile::icon(const QIcon& fallback) const
 }
 
 
-/************************************************
-
- ************************************************/
 QString const XdgDesktopFile::iconName() const
 {
     return value("Icon").toString();
 }
 
 
-/************************************************
-
- ************************************************/
 XdgDesktopFile::Type XdgDesktopFile::type() const
 {
     return d->mType;
@@ -884,9 +805,6 @@ bool XdgDesktopFile::startDetached(const QString& url) const
 }
 
 
-/************************************************
-
- ************************************************/
 static QStringList parseCombinedArgString(const QString &program)
 {
     QStringList args;
@@ -928,9 +846,6 @@ static QStringList parseCombinedArgString(const QString &program)
 }
 
 
-/************************************************
-
- ************************************************/
 void replaceVar(QString &str, const QString &varName, const QString &after)
 {
     str.replace(QRegExp(QString("\\$%1(?!\\w)").arg(varName)), after);
@@ -938,9 +853,6 @@ void replaceVar(QString &str, const QString &varName, const QString &after)
 }
 
 
-/************************************************
-
- ************************************************/
 QString expandEnvVariables(const QString str)
 {
     QString scheme = QUrl(str).scheme();
@@ -978,9 +890,6 @@ QString expandEnvVariables(const QString str)
 }
 
 
-/************************************************
-
- ************************************************/
 QStringList expandEnvVariables(const QStringList strs)
 {
     QStringList res;
@@ -991,9 +900,6 @@ QStringList expandEnvVariables(const QStringList strs)
 }
 
 
-/************************************************
-
- ************************************************/
 QStringList XdgDesktopFile::expandExecString(const QStringList& urls) const
 {
     if (d->mType != ApplicationType)
@@ -1108,10 +1014,6 @@ QStringList XdgDesktopFile::expandExecString(const QStringList& urls) const
 }
 
 
-
-/************************************************
- Check if the program is actually installed.
- ************************************************/
 bool checkTryExec(const QString& progName)
 {
     if (progName.startsWith(QDir::separator()))
@@ -1129,9 +1031,6 @@ bool checkTryExec(const QString& progName)
 }
 
 
-/************************************************
-
- ************************************************/
 bool XdgDesktopFile::isShow(const QString& environment) const
 {
     const QString env = environment.toUpper();
@@ -1152,6 +1051,7 @@ bool XdgDesktopFile::isShow(const QString& environment) const
     d->mIsShow.insert(env, true);
     return true;
 }
+
 
 bool XdgDesktopFile::isShown(const QString &environment) const
 {
@@ -1175,9 +1075,6 @@ bool XdgDesktopFile::isShown(const QString &environment) const
 }
 
 
-/************************************************
-
- ************************************************/
 bool XdgDesktopFile::isApplicable(bool excludeHidden, const QString& environment) const
 {
     // Hidden should have been called Deleted. It means the user deleted
@@ -1210,6 +1107,7 @@ bool XdgDesktopFile::isApplicable(bool excludeHidden, const QString& environment
 
     return true;
 }
+
 
 bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) const
 {
@@ -1276,9 +1174,7 @@ bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) 
     return true;
 }
 
-/************************************************
 
- ************************************************/
 QString expandDynamicUrl(QString url)
 {
     foreach(QString line, QProcess::systemEnvironment())
@@ -1293,9 +1189,6 @@ QString expandDynamicUrl(QString url)
 }
 
 
-/************************************************
-
- ************************************************/
 QString XdgDesktopFile::url() const
 {
     if (type() != LinkType)
@@ -1316,10 +1209,6 @@ QString XdgDesktopFile::url() const
 }
 
 
-
-/************************************************
-
- ************************************************/
 QString findDesktopFile(const QString& dirName, const QString& desktopName)
 {
     QDir dir(dirName);
@@ -1345,9 +1234,6 @@ QString findDesktopFile(const QString& dirName, const QString& desktopName)
 }
 
 
-/************************************************
-
- ************************************************/
 QString findDesktopFile(const QString& desktopName)
 {
     QStringList dataDirs = XdgDirs::dataDirs();
@@ -1364,11 +1250,6 @@ QString findDesktopFile(const QString& desktopName)
 }
 
 
-
-
-/************************************************
-
- ************************************************/
 XdgDesktopFile* XdgDesktopFileCache::getFile(const QString& fileName)
 {
     if (instance().m_fileCache.contains(fileName))
@@ -1432,7 +1313,6 @@ XdgDesktopFileCache & XdgDesktopFileCache::instance()
 }
 
 
-
 /*! 
  * Handles files with a syntax similar to desktopfiles as QSettings files.
  * The differences between ini-files and desktopfiles are:
@@ -1487,6 +1367,7 @@ bool readDesktopFile(QIODevice & device, QSettings::SettingsMap & map)
     return true;
 }
 
+
 /*! See readDesktopFile
  */
 bool writeDesktopFile(QIODevice & device, const QSettings::SettingsMap & map)
@@ -1530,9 +1411,6 @@ bool writeDesktopFile(QIODevice & device, const QSettings::SettingsMap & map)
 }
 
 
-/************************************************
-
- ************************************************/
 void XdgDesktopFileCache::initialize(const QString& dirName)
 {
     QDir dir(dirName);
@@ -1580,12 +1458,14 @@ void XdgDesktopFileCache::initialize(const QString& dirName)
 
 }
 
+
 XdgDesktopFile* XdgDesktopFileCache::load(const QString& fileName)
 {
     XdgDesktopFile* desktopFile = new XdgDesktopFile();
     desktopFile->load(fileName);
     return desktopFile;
 }
+
 
 void loadMimeCacheDir(const QString& dirName, QHash<QString, QList<XdgDesktopFile*> > & cache)
 {
@@ -1649,10 +1529,10 @@ XdgDesktopFileCache::XdgDesktopFileCache() :
 {
 }
 
+
 XdgDesktopFileCache::~XdgDesktopFileCache()
 {
 }
-
 
 
 void XdgDesktopFileCache::initialize()
@@ -1686,9 +1566,6 @@ QList<XdgDesktopFile*>  XdgDesktopFileCache::getApps(const QString& mimetype)
 }
 
 
-/************************************************
-
- ************************************************/
 XdgDesktopFile* XdgDesktopFileCache::getDefaultApp(const QString& mimetype)
 {
     // First, we look in ~/.local/share/applications/mimeapps.list, /usr/local/share/applications/mimeapps.list and
@@ -1733,4 +1610,3 @@ XdgDesktopFile* XdgDesktopFileCache::getDefaultApp(const QString& mimetype)
     XdgDesktopFile* desktopFile = apps.isEmpty() ? 0 : apps[0];
     return desktopFile;
 }
-

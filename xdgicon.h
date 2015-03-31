@@ -25,8 +25,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-
-
 #ifndef QTXDG_XDGICON_H
 #define QTXDG_XDGICON_H
 

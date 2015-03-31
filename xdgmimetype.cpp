@@ -22,6 +22,7 @@
 
 #include "xdgicon.h"
 
+
 class XdgMimeTypePrivate : public QSharedData {
 public:
     XdgMimeTypePrivate();
@@ -33,10 +34,12 @@ public:
     bool computed;
 };
 
+
 XdgMimeTypePrivate::XdgMimeTypePrivate()
     : computed(false)
 {
 }
+
 
 XdgMimeTypePrivate::XdgMimeTypePrivate(const XdgMimeType& other)
     : iconName(other.dx->iconName),
@@ -44,11 +47,13 @@ XdgMimeTypePrivate::XdgMimeTypePrivate(const XdgMimeType& other)
 {
 }
 
+
 XdgMimeType::XdgMimeType()
     : QMimeType(),
       dx(new XdgMimeTypePrivate())
 {
 }
+
 
 XdgMimeType::XdgMimeType(const QMimeType& mime)
     : QMimeType(mime),
@@ -56,11 +61,13 @@ XdgMimeType::XdgMimeType(const QMimeType& mime)
 {
 }
 
+
 XdgMimeType::XdgMimeType(const XdgMimeType& mime)
     : QMimeType(mime),
       dx(mime.dx)
 {
 }
+
 
 XdgMimeType &XdgMimeType::operator=(const XdgMimeType &other)
 {
@@ -72,9 +79,11 @@ XdgMimeType &XdgMimeType::operator=(const XdgMimeType &other)
     return *this;
 }
 
+
 XdgMimeType::~XdgMimeType()
 {
 }
+
 
 QString XdgMimeType::iconName() const
 {
@@ -97,6 +106,7 @@ QString XdgMimeType::iconName() const
         return dx->iconName;
     }
 }
+
 
 QIcon XdgMimeType::icon() const
 {

@@ -40,6 +40,7 @@
 
 #include "xdgdesktopfile.h"
 
+
 class XdgMenuRule : public QObject
 {
     Q_OBJECT

@@ -25,7 +25,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-
 #ifndef QTXDG_XDGMENUREADER_H
 #define QTXDG_XDGMENUREADER_H
 
@@ -34,6 +33,7 @@
 #include <QStringList>
 #include <QtXml/QDomDocument>
 #include <QtXml/QDomElement>
+
 class XdgMenu;
 class XdgMenuReader : public QObject
 {

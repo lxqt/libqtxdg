@@ -25,7 +25,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-
 #include "xdgmenu.h"
 #include <QObject>
 #include <QFileSystemWatcher>
@@ -85,4 +84,3 @@ private:
     XdgMenu* const q_ptr;
     Q_DECLARE_PUBLIC(XdgMenu)
 };
-

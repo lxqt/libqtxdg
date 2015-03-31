@@ -25,7 +25,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-
 #include "xdgmenulayoutprocessor.h"
 #include "xmlhelper.h"
 #include <QDebug>
@@ -36,9 +35,7 @@
 QDomElement findLastElementByTag(const QDomElement element, const QString tagName);
 int childsCount(const QDomElement& element);
 
-/************************************************
 
- ************************************************/
 QDomElement findLastElementByTag(const QDomElement element, const QString tagName)
 {
     QDomNodeList l = element.elementsByTagName(tagName);
@@ -100,9 +97,6 @@ XdgMenuLayoutProcessor::XdgMenuLayoutProcessor(QDomElement& element):
 }
 
 
-/************************************************
-
- ************************************************/
 XdgMenuLayoutProcessor::XdgMenuLayoutProcessor(QDomElement& element, XdgMenuLayoutProcessor *parent):
     mElement(element)
 {
@@ -127,9 +121,6 @@ XdgMenuLayoutProcessor::XdgMenuLayoutProcessor(QDomElement& element, XdgMenuLayo
 }
 
 
-/************************************************
-
- ************************************************/
 void XdgMenuLayoutProcessor::setParams(QDomElement defaultLayout, LayoutParams *result)
 {
     if (defaultLayout.hasAttribute("show_empty"))
@@ -149,9 +140,6 @@ void XdgMenuLayoutProcessor::setParams(QDomElement defaultLayout, LayoutParams *
 }
 
 
-/************************************************
-
- ************************************************/
 QDomElement XdgMenuLayoutProcessor::searchElement(const QString &tagName, const QString &attributeName, const QString &attributeValue) const
 {
     DomElementIterator it(mElement, tagName);
@@ -168,9 +156,6 @@ QDomElement XdgMenuLayoutProcessor::searchElement(const QString &tagName, const 
 }
 
 
-/************************************************
-
- ************************************************/
 int childsCount(const QDomElement& element)
 {
     int count = 0;
@@ -186,9 +171,6 @@ int childsCount(const QDomElement& element)
 }
 
 
-/************************************************
-
- ************************************************/
 void XdgMenuLayoutProcessor::run()
 {
     QDomDocument doc = mLayout.ownerDocument();
@@ -427,4 +409,3 @@ void XdgMenuLayoutProcessor::processMergeTag(const QDomElement &element)
 
     mResult.removeChild(element);
 }
-

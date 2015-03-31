@@ -25,8 +25,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-
-
 #ifndef QTXDG_XDGMENU_H
 #define QTXDG_XDGMENU_H
 
@@ -35,7 +33,6 @@
 #include <QString>
 #include <QStringList>
 #include <QtXml/QDomDocument>
-
 
 class QDomDocument;
 class QDomElement;

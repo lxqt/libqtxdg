@@ -25,7 +25,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-
 #include "xdgmenuwidget.h"
 #include "xdgicon.h"
 #include "xmlhelper.h"
@@ -39,6 +38,7 @@
 #include <QtGui/QDrag>
 #include <QtGui/QMouseEvent>
 #include <QApplication>
+
 
 class XdgMenuWidgetPrivate
 {
@@ -66,10 +66,6 @@ private:
 };
 
 
-
-/************************************************
-
- ************************************************/
 XdgMenuWidget::XdgMenuWidget(const XdgMenu& xdgMenu, const QString& title, QWidget* parent):
     QMenu(parent),
     d_ptr(new XdgMenuWidgetPrivate(this))
@@ -78,9 +74,7 @@ XdgMenuWidget::XdgMenuWidget(const XdgMenu& xdgMenu, const QString& title, QWidg
     setTitle(XdgMenuWidgetPrivate::escape(title));
 }
 
-/************************************************
 
- ************************************************/
 XdgMenuWidget::XdgMenuWidget(const QDomElement& menuElement, QWidget* parent):
     QMenu(parent),
     d_ptr(new XdgMenuWidgetPrivate(this))
@@ -89,9 +83,6 @@ XdgMenuWidget::XdgMenuWidget(const QDomElement& menuElement, QWidget* parent):
 }
 
 
-/************************************************
-
- ************************************************/
 XdgMenuWidget::XdgMenuWidget(const XdgMenuWidget& other, QWidget* parent):
     QMenu(parent),
     d_ptr(new XdgMenuWidgetPrivate(this))
@@ -100,9 +91,6 @@ XdgMenuWidget::XdgMenuWidget(const XdgMenuWidget& other, QWidget* parent):
 }
 
 
-/************************************************
-
- ************************************************/
 void XdgMenuWidgetPrivate::init(const QDomElement& xml)
 {
     Q_Q(XdgMenuWidget);
@@ -131,18 +119,12 @@ void XdgMenuWidgetPrivate::init(const QDomElement& xml)
 }
 
 
-/************************************************
-
- ************************************************/
 XdgMenuWidget::~XdgMenuWidget()
 {
     delete d_ptr;
 }
 
 
-/************************************************
-
- ************************************************/
 XdgMenuWidget& XdgMenuWidget::operator=(const XdgMenuWidget& other)
 {
     Q_D(XdgMenuWidget);
@@ -152,9 +134,6 @@ XdgMenuWidget& XdgMenuWidget::operator=(const XdgMenuWidget& other)
 }
 
 
-/************************************************
-
- ************************************************/
 bool XdgMenuWidget::event(QEvent* event)
 {
     Q_D(XdgMenuWidget);
@@ -176,9 +155,6 @@ bool XdgMenuWidget::event(QEvent* event)
 }
 
 
-/************************************************
-
- ************************************************/
 void XdgMenuWidgetPrivate::mouseMoveEvent(QMouseEvent *event)
 {
     if (!(event->buttons() & Qt::LeftButton))
@@ -204,9 +180,6 @@ void XdgMenuWidgetPrivate::mouseMoveEvent(QMouseEvent *event)
 }
 
 
-/************************************************
-
- ************************************************/
 void XdgMenuWidgetPrivate::buildMenu()
 {
     Q_Q(XdgMenuWidget);
@@ -237,9 +210,6 @@ void XdgMenuWidgetPrivate::buildMenu()
 }
 
 
-/************************************************
-
- ************************************************/
 XdgAction* XdgMenuWidgetPrivate::createAction(const QDomElement& xml)
 {
     Q_Q(XdgMenuWidget);
@@ -269,4 +239,3 @@ QString XdgMenuWidgetPrivate::escape(QString string)
 {
     return string.replace("&", "&&");
 }
-

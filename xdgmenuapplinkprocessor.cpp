@@ -25,7 +25,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-
 #include "xdgmenu.h"
 #include "xdgmenuapplinkprocessor.h"
 #include "xmlhelper.h"
@@ -34,9 +33,6 @@
 #include <QDir>
 
 
-/************************************************
-
- ************************************************/
 XdgMenuApplinkProcessor::XdgMenuApplinkProcessor(QDomElement& element,  XdgMenu* menu, XdgMenuApplinkProcessor *parent) :
     QObject(parent)
 {
@@ -56,17 +52,11 @@ XdgMenuApplinkProcessor::XdgMenuApplinkProcessor(QDomElement& element,  XdgMenu*
 }
 
 
-/************************************************
-
- ************************************************/
 XdgMenuApplinkProcessor::~XdgMenuApplinkProcessor()
 {
 }
 
 
-/************************************************
-
- ************************************************/
 void XdgMenuApplinkProcessor::run()
 {
     step1();
@@ -74,9 +64,6 @@ void XdgMenuApplinkProcessor::run()
 }
 
 
-/************************************************
-
- ************************************************/
 void XdgMenuApplinkProcessor::step1()
 {
     fillAppFileInfoList();
@@ -108,9 +95,6 @@ void XdgMenuApplinkProcessor::step1()
 }
 
 
-/************************************************
-
- ************************************************/
 void XdgMenuApplinkProcessor::step2()
 {
     // Create AppLinks elements ...........................
@@ -199,9 +183,6 @@ void XdgMenuApplinkProcessor::fillAppFileInfoList()
 }
 
 
-/************************************************
-
- ************************************************/
 void XdgMenuApplinkProcessor::findDesktopFiles(const QString& dirName, const QString& prefix)
 {
     QDir dir(dirName);
@@ -229,9 +210,6 @@ void XdgMenuApplinkProcessor::findDesktopFiles(const QString& dirName, const QSt
 }
 
 
-/************************************************
- Create rules
- ************************************************/
 void XdgMenuApplinkProcessor::createRules()
 {
     MutableDomElementIterator i(mElement, QString());

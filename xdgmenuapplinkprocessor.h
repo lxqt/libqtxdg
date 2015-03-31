@@ -25,7 +25,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-
 #ifndef QTXDG_XDGMENUAPPLINKPROCESSOR_H
 #define QTXDG_XDGMENUAPPLINKPROCESSOR_H
 
@@ -44,6 +43,7 @@ typedef QLinkedList<XdgMenuAppFileInfo*> XdgMenuAppFileInfoList;
 
 typedef QHash<QString, XdgMenuAppFileInfo*> XdgMenuAppFileInfoHash;
 typedef QHashIterator<QString, XdgMenuAppFileInfo*> XdgMenuAppFileInfoHashIterator;
+
 
 class XdgMenuApplinkProcessor : public QObject
 {
@@ -97,6 +97,5 @@ private:
     bool mAllocated;
     QString mId;
 };
-
 
 #endif // QTXDG_XDGMENUAPPLINKPROCESSOR_H

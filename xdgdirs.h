@@ -25,8 +25,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-
-
 #ifndef QTXDG_XDGDIRS_H
 #define QTXDG_XDGDIRS_H
 

@@ -54,27 +54,11 @@
 void installTranslation(const QString &name);
 bool isParent(const QDomElement& parent, const QDomElement& child);
 
-void installTranslation(const QString &name)
-{
-    static bool alreadyLoaded = false;
-
-    if (alreadyLoaded)
-        return;
-
-    QString locale = QLocale::system().name();
-    QTranslator *translator = new QTranslator(qApp);
-    translator->load(QString("%1/%2_%3.qm").arg(TRANSLATIONS_DIR, name, locale));
-
-    QCoreApplication::installTranslator(translator);
-    alreadyLoaded = true;
-}
-
 
 XdgMenu::XdgMenu(QObject *parent) :
     QObject(parent),
     d_ptr(new XdgMenuPrivate(this))
 {
-    installTranslation("libqtxdg");
 }
 
 

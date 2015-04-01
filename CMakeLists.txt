@@ -118,10 +118,6 @@ set(libqtxdg_PRIVATE_INSTALLABLE_H_FILES
     qiconfix/qiconloader_p.h
 )
 
-set(APP_SHARE_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/lib${QTXDGX_FILE_NAME}")
-add_definitions(-DTRANSLATIONS_DIR=\"${APP_SHARE_DIR}\")
-
-
 #************************************************
 # Build 2 config.cmake files
 # One for in-tree build and second for normal one.

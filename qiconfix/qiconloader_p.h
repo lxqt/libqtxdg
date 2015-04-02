@@ -107,6 +107,12 @@ struct PixmapEntry : public QIconLoaderEngineEntry
 
 typedef QList<QIconLoaderEngineEntry*> QThemeIconEntries;
 
+struct QThemeIconInfo
+{
+    QThemeIconEntries entries;
+    QString iconName;
+};
+
 //class QIconLoaderEngine : public QIconEngine
 class QIconLoaderEngineFixed : public QIconEngine
 {
@@ -128,7 +134,7 @@ private:
     void virtual_hook(int id, void *data);
     QIconLoaderEngineEntry *entryForSize(const QSize &size);
     QIconLoaderEngineFixed(const QIconLoaderEngineFixed &other);
-    QThemeIconEntries m_entries;
+    QThemeIconInfo m_info;
     QString m_iconName;
     uint m_key;
 
@@ -142,12 +148,10 @@ public:
     QIconTheme() : m_valid(false) {}
     QStringList parents() { return m_parents; }
     QVector <QIconDirInfo> keyList() { return m_keyList; }
-    QString contentDir() { return m_contentDir; }
     QStringList contentDirs() { return m_contentDirs; }
     bool isValid() { return m_valid; }
 
 private:
-    QString m_contentDir;
     QStringList m_contentDirs;
     QVector <QIconDirInfo> m_keyList;
     QStringList m_parents;
@@ -158,7 +162,7 @@ class Q_GUI_EXPORT QIconLoader
 {
 public:
     QIconLoader();
-    QThemeIconEntries loadIcon(const QString &iconName) const;
+    QThemeIconInfo loadIcon(const QString &iconName) const;
     uint themeKey() const { return m_themeKey; }
 
     QString themeName() const { return m_userTheme.isEmpty() ? m_systemTheme : m_userTheme; }
@@ -173,9 +177,9 @@ public:
     void ensureInitialized();
 
 private:
-    QThemeIconEntries findIconHelper(const QString &themeName,
-                                     const QString &iconName,
-                                     QStringList &visited) const;
+    QThemeIconInfo findIconHelper(const QString &themeName,
+                                  const QString &iconName,
+                                  QStringList &visited) const;
     uint m_themeKey;
     bool m_supportsSvg;
     bool m_initialized;

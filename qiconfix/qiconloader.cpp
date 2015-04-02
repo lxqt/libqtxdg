@@ -176,7 +176,7 @@ QIconTheme::QIconTheme(const QString &themeName)
         QString themeDir = iconDir.path() + QLatin1Char('/') + themeName;
         themeIndex.setFileName(themeDir + QLatin1String("/index.theme"));
         if (themeIndex.exists()) {
-            m_contentDir = themeDir;
+            m_contentDirs << themeDir;
             m_valid = true;
 
             QStringList themeSearchPaths = QIcon::themeSearchPaths();
@@ -249,11 +249,11 @@ QIconTheme::QIconTheme(const QString &themeName)
 #endif //QT_NO_SETTINGS
 }
 
-QThemeIconEntries QIconLoader::findIconHelper(const QString &themeName,
+QThemeIconInfo QIconLoader::findIconHelper(const QString &themeName,
                                  const QString &iconName,
                                  QStringList &visited) const
 {
-    QThemeIconEntries entries;
+    QThemeIconInfo info;
     Q_ASSERT(!themeName.isEmpty());
 
     QPixmap pixmap;
@@ -270,48 +270,68 @@ QThemeIconEntries QIconLoader::findIconHelper(const QString &themeName,
         themeList.insert(themeName, theme);
     }
 
-    QStringList contentDirs = theme.contentDirs();
+    const QStringList contentDirs = theme.contentDirs();
     const QVector<QIconDirInfo> subDirs = theme.keyList();
 
     const QString svgext(QLatin1String(".svg"));
     const QString pngext(QLatin1String(".png"));
     const QString xpmext(QLatin1String(".xpm"));
 
-    // Add all relevant files
-    for (int i = 0; i < subDirs.size() ; ++i) {
-        const QIconDirInfo &dirInfo = subDirs.at(i);
-        QString subdir = dirInfo.path;
 
-        foreach (QString contentDir, contentDirs)  {
-            QDir currentDir(contentDir + '/' + subdir);
+    QString iconNameFallback = iconName;
 
-            if (currentDir.exists(iconName + pngext)) {
-                PixmapEntry *iconEntry = new PixmapEntry;
-                iconEntry->dir = dirInfo;
-                iconEntry->filename = currentDir.filePath(iconName + pngext);
-                // Notice we ensure that pixmap entries always come before
-                // scalable to preserve search order afterwards
-                entries.prepend(iconEntry);
-            } else if (m_supportsSvg &&
-                currentDir.exists(iconName + svgext)) {
-                ScalableEntry *iconEntry = new ScalableEntry;
-                iconEntry->dir = dirInfo;
-                iconEntry->filename = currentDir.filePath(iconName + svgext);
-                entries.append(iconEntry);
-                break;
-            } else if (currentDir.exists(iconName + xpmext)) {
-                PixmapEntry *iconEntry = new PixmapEntry;
-                iconEntry->dir = dirInfo;
-                iconEntry->filename = currentDir.filePath(iconName + xpmext);
-                // Notice we ensure that pixmap entries always come before
-                // scalable to preserve search order afterwards
-                entries.append(iconEntry);
-                break;
+    // Iterate through all icon's fallbacks in current theme
+    while (info.entries.isEmpty()) {
+        const QString svgIconName = iconNameFallback + svgext;
+        const QString pngIconName = iconNameFallback + pngext;
+        const QString xpmIconName = iconNameFallback + xpmext;
+
+        // Add all relevant files
+        for (int i = 0; i < contentDirs.size(); ++i) {
+            QString contentDir = contentDirs.at(i) + QLatin1Char('/');
+            for (int j = 0; j < subDirs.size() ; ++j) {
+                const QIconDirInfo &dirInfo = subDirs.at(j);
+                QString subdir = dirInfo.path;
+                QDir currentDir(contentDir + subdir);
+                if (currentDir.exists(pngIconName)) {
+                    PixmapEntry *iconEntry = new PixmapEntry;
+                    iconEntry->dir = dirInfo;
+                    iconEntry->filename = currentDir.filePath(pngIconName);
+                    // Notice we ensure that pixmap entries always come before
+                    // scalable to preserve search order afterwards
+                    info.entries.prepend(iconEntry);
+                } else if (m_supportsSvg &&
+                    currentDir.exists(svgIconName)) {
+                    ScalableEntry *iconEntry = new ScalableEntry;
+                    iconEntry->dir = dirInfo;
+                    iconEntry->filename = currentDir.filePath(svgIconName);
+                    info.entries.append(iconEntry);
+                } else if(currentDir.exists(iconName + xpmext)) {
+                    PixmapEntry *iconEntry = new PixmapEntry;
+                    iconEntry->dir = dirInfo;
+                    iconEntry->filename = currentDir.filePath(iconName + xpmext);
+                    // Notice we ensure that pixmap entries always come before
+                    // scalable to preserve search order afterwards
+                    info.entries.append(iconEntry);
+                    break;
+                }
             }
         }
+
+        if (!info.entries.isEmpty()) {
+            info.iconName = iconNameFallback;
+            break;
+        }
+
+        // If it's possible - find next fallback for the icon
+        const int indexOfDash = iconNameFallback.lastIndexOf(QLatin1Char('-'));
+        if (indexOfDash == -1)
+            break;
+
+        iconNameFallback.truncate(indexOfDash);
     }
 
-    if (entries.isEmpty()) {
+    if (info.entries.isEmpty()) {
         const QStringList parents = theme.parents();
         // Search recursively through inherited themes
         for (int i = 0 ; i < parents.size() ; ++i) {
@@ -319,14 +339,14 @@ QThemeIconEntries QIconLoader::findIconHelper(const QString &themeName,
             const QString parentTheme = parents.at(i).trimmed();
 
             if (!visited.contains(parentTheme)) // guard against recursion
-                entries = findIconHelper(parentTheme, iconName, visited);
+                info = findIconHelper(parentTheme, iconName, visited);
 
-            if (!entries.isEmpty()) // success
+            if (!info.entries.isEmpty()) // success
                 break;
         }
     }
 
-    if (entries.isEmpty()) {
+    if (info.entries.isEmpty()) {
        // Search for unthemed icons in main dir of search paths
        QStringList themeSearchPaths = QIcon::themeSearchPaths();
         foreach (QString contentDir, themeSearchPaths)  {
@@ -337,19 +357,19 @@ QThemeIconEntries QIconLoader::findIconHelper(const QString &themeName,
                 iconEntry->filename = currentDir.filePath(iconName + pngext);
                 // Notice we ensure that pixmap entries always come before
                 // scalable to preserve search order afterwards
-                entries.prepend(iconEntry);
+                info.entries.prepend(iconEntry);
             } else if (m_supportsSvg &&
                 currentDir.exists(iconName + svgext)) {
                 ScalableEntry *iconEntry = new ScalableEntry;
                 iconEntry->filename = currentDir.filePath(iconName + svgext);
-                entries.append(iconEntry);
+                info.entries.append(iconEntry);
                 break;
             } else if (currentDir.exists(iconName + xpmext)) {
                 PixmapEntry *iconEntry = new PixmapEntry;
                 iconEntry->filename = currentDir.filePath(iconName + xpmext);
                 // Notice we ensure that pixmap entries always come before
                 // scalable to preserve search order afterwards
-                entries.append(iconEntry);
+                info.entries.append(iconEntry);
                 break;
             }
         }
@@ -366,47 +386,46 @@ QThemeIconEntries QIconLoader::findIconHelper(const QString &themeName,
      *********************************************************************/
 #ifdef Q_OS_LINUX
     /* Freedesktop standard says to look in /usr/share/pixmaps last */
-    if (entries.isEmpty()) {
+    if (info.entries.isEmpty()) {
         const QString pixmaps(QLatin1String("/usr/share/pixmaps"));
 
-        QDir currentDir(pixmaps);
-        QIconDirInfo dirInfo(pixmaps);
+        const QDir currentDir(pixmaps);
+        const QIconDirInfo dirInfo(pixmaps);
         if (currentDir.exists(iconName + pngext)) {
             PixmapEntry *iconEntry = new PixmapEntry;
             iconEntry->dir = dirInfo;
             iconEntry->filename = currentDir.filePath(iconName + pngext);
             // Notice we ensure that pixmap entries always come before
             // scalable to preserve search order afterwards
-            entries.prepend(iconEntry);
+            info.entries.prepend(iconEntry);
         } else if (m_supportsSvg &&
                    currentDir.exists(iconName + svgext)) {
             ScalableEntry *iconEntry = new ScalableEntry;
             iconEntry->dir = dirInfo;
             iconEntry->filename = currentDir.filePath(iconName + svgext);
-            entries.append(iconEntry);
+            info.entries.append(iconEntry);
         } else if (currentDir.exists(iconName + xpmext)) {
             PixmapEntry *iconEntry = new PixmapEntry;
             iconEntry->dir = dirInfo;
             iconEntry->filename = currentDir.filePath(iconName + xpmext);
             // Notice we ensure that pixmap entries always come before
             // scalable to preserve search order afterwards
-            entries.append(iconEntry);
+            info.entries.append(iconEntry);
         }
-
     }
 #endif
 
-    return entries;
+    return info;
 }
 
-QThemeIconEntries QIconLoader::loadIcon(const QString &name) const
+QThemeIconInfo QIconLoader::loadIcon(const QString &name) const
 {
     if (!themeName().isEmpty()) {
         QStringList visited;
         return findIconHelper(themeName(), name, visited);
     }
 
-    return QThemeIconEntries();
+    return QThemeIconInfo();
 }
 
 
@@ -420,7 +439,7 @@ QIconLoaderEngineFixed::QIconLoaderEngineFixed(const QString& iconName)
 
 QIconLoaderEngineFixed::~QIconLoaderEngineFixed()
 {
-    qDeleteAll(m_entries);
+    qDeleteAll(m_info.entries);
 }
 
 QIconLoaderEngineFixed::QIconLoaderEngineFixed(const QIconLoaderEngineFixed &other)
@@ -448,17 +467,19 @@ bool QIconLoaderEngineFixed::write(QDataStream &out) const
 
 bool QIconLoaderEngineFixed::hasIcon() const
 {
-    return !(m_entries.isEmpty());
+    return !(m_info.entries.isEmpty());
 }
 
 // Lazily load the icon
 void QIconLoaderEngineFixed::ensureLoaded()
 {
     if (!(QIconLoader::instance()->themeKey() == m_key)) {
+        qDeleteAll(m_info.entries);
+        m_info.entries.clear();
+        m_info.iconName.clear();
 
-        qDeleteAll(m_entries);
-
-        m_entries = QIconLoader::instance()->loadIcon(m_iconName);
+        Q_ASSERT(m_info.entries.size() == 0);
+        m_info = QIconLoader::instance()->loadIcon(m_iconName);
         m_key = QIconLoader::instance()->themeKey();
     }
 }
@@ -528,14 +549,14 @@ QIconLoaderEngineEntry *QIconLoaderEngineFixed::entryForSize(const QSize &size)
 {
     int iconsize = qMin(size.width(), size.height());
 
-    // Note that m_entries are sorted so that png-files
+    // Note that m_info.entries are sorted so that png-files
     // come first
 
-    const int numEntries = m_entries.size();
+    const int numEntries = m_info.entries.size();
 
     // Search for exact matches first
     for (int i = 0; i < numEntries; ++i) {
-        QIconLoaderEngineEntry *entry = m_entries.at(i);
+        QIconLoaderEngineEntry *entry = m_info.entries.at(i);
         if (directoryMatchesSize(entry->dir, iconsize)) {
             return entry;
         }
@@ -545,7 +566,7 @@ QIconLoaderEngineEntry *QIconLoaderEngineFixed::entryForSize(const QSize &size)
     int minimalSize = INT_MAX;
     QIconLoaderEngineEntry *closestMatch = 0;
     for (int i = 0; i < numEntries; ++i) {
-        QIconLoaderEngineEntry *entry = m_entries.at(i);
+        QIconLoaderEngineEntry *entry = m_info.entries.at(i);
         int distance = directorySizeDistance(entry->dir, iconsize);
         if (distance < minimalSize) {
             minimalSize  = distance;
@@ -649,13 +670,13 @@ void QIconLoaderEngineFixed::virtual_hook(int id, void *data)
         {
             QIconEngine::AvailableSizesArgument &arg
                     = *reinterpret_cast<QIconEngine::AvailableSizesArgument*>(data);
-            const int N = m_entries.size();
+            const int N = m_info.entries.size();
             QList<QSize> sizes;
             sizes.reserve(N);
 
             // Gets all sizes from the DirectoryInfo entries
             for (int i = 0; i < N; ++i) {
-                int size = m_entries.at(i)->dir.size;
+                int size = m_info.entries.at(i)->dir.size;
                 sizes.append(QSize(size, size));
             }
             arg.sizes.swap(sizes); // commit

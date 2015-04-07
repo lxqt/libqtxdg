@@ -209,7 +209,7 @@ bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool 
 
 QString XdgDirs::dataHome(bool createDir)
 {
-    QString s = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+    QString s = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
     fixBashShortcuts(s);
     if (createDir)
         return createDirectory(s);

@@ -236,11 +236,16 @@ QStringList XdgDirs::dataDirs(const QString &postfix)
     QString d = QFile::decodeName(qgetenv("XDG_DATA_DIRS"));
     QStringList dirs = d.split(QLatin1Char(':'), QString::SkipEmptyParts);
 
-    QMutableListIterator<QString> it(dirs);
-    while (it.hasNext()) {
-        const QString dir = it.next();
-        if (!dir.startsWith(QLatin1Char('/')))
-            it.remove();
+    if (dirs.isEmpty()) {
+        dirs.append(QString::fromLatin1("/usr/local/share"));
+        dirs.append(QString::fromLatin1("/usr/share"));
+    } else {
+        QMutableListIterator<QString> it(dirs);
+        while (it.hasNext()) {
+            const QString dir = it.next();
+            if (!dir.startsWith(QLatin1Char('/')))
+                it.remove();
+        }
     }
 
     dirs.removeDuplicates();

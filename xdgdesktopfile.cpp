@@ -1162,7 +1162,7 @@ bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) 
     if (keyFound)
     {
         QStringList s = value(key).toString().toUpper().split(QLatin1Char(';'));
-        if (!s.contains(env))
+        if (s.contains(env))
             return false;
     }
 

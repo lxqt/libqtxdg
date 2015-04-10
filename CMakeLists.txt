@@ -154,8 +154,6 @@ configure_file(
 
 #**********************************************************
 
-include(FindLibSuffix)
-
 QT5_WRAP_CPP(libqtxdg_CXX_FILES ${libqtxdg_MOCS})
 
 

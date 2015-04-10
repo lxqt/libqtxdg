@@ -40,9 +40,7 @@ set(QTXDGX_PKG_CONFIG_DESCRIPTION "Qt5Xdg, a Qt5 implementation of XDG standards
 set(QTXDGX_PKG_CONFIG_REQUIRES "Qt5Core, Qt5Xml, Qt5Widgets, Qt5DBus")
 
 include_directories(
-    "${Qt5Widgets_INCLUDE_DIRS}"
     "${Qt5Gui_PRIVATE_INCLUDE_DIRS}"
-    "${Qt5Xml_INCLUDE_DIRS}"
 )
 add_definitions(${Qt5Core_DEFINITIONS})
 #    set(CMAKE_CXX_FLAGS

@@ -42,11 +42,6 @@ set(QTXDGX_PKG_CONFIG_REQUIRES "Qt5Core, Qt5Xml, Qt5Widgets, Qt5DBus")
 include_directories(
     "${Qt5Gui_PRIVATE_INCLUDE_DIRS}"
 )
-add_definitions(${Qt5Core_DEFINITIONS})
-#    set(CMAKE_CXX_FLAGS
-#        "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}"
-#    )
-
 
 set(QTX_LIBRARIES ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5DBus_LIBRARIES})
 message(STATUS "Building with Qt ${Qt5Core_VERSION_STRING}")

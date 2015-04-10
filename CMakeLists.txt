@@ -3,9 +3,6 @@ project(libqtxdg)
 
 option(BUILD_TESTS "Builds tests" OFF)
 
-# Standard directories for installation
-include(GNUInstallDirs)
-
 # additional cmake files
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -13,6 +10,11 @@ set(QTXDG_MAJOR_VERSION 1)
 set(QTXDG_MINOR_VERSION 2)
 set(QTXDG_PATCH_VERSION 0)
 set(QTXDG_VERSION_STRING ${QTXDG_MAJOR_VERSION}.${QTXDG_MINOR_VERSION}.${QTXDG_PATCH_VERSION})
+
+
+include(GNUInstallDirs)             # Standard directories for installation
+include(create_portable_headers)
+include(create_pkgconfig_file)
 
 add_definitions(-Wall -DQTXDG_COMPILATION=1)
 
@@ -44,6 +46,10 @@ include_directories(
 )
 
 set(QTX_LIBRARIES Qt5::Widgets Qt5::Xml Qt5::DBus)
+
+if (NOT CMAKE_BUILD_TYPE)
+    set ( CMAKE_BUILD_TYPE Release )
+endif (NOT CMAKE_BUILD_TYPE)
 
 message(STATUS "Building with Qt ${Qt5Core_VERSION_STRING}")
 
@@ -147,12 +153,6 @@ configure_file(
 
 QT5_WRAP_CPP(libqtxdg_CXX_FILES ${libqtxdg_MOCS})
 
-
-if (NOT CMAKE_BUILD_TYPE)
-    set ( CMAKE_BUILD_TYPE Release )
-endif (NOT CMAKE_BUILD_TYPE)
-
-
 add_library(${QTXDGX_LIBRARY_NAME} SHARED
     ${libqtxdg_PUBLIC_H_FILES}
     ${libqtxdg_PRIVATE_H_FILES}
@@ -173,7 +173,6 @@ set_target_properties(${QTXDGX_LIBRARY_NAME} PROPERTIES
 )
 
 # create the portable headers
-include(create_portable_headers)
 create_portable_headers(libqtxdg_PORTABLE_HEADERS ${libqtxdg_PUBLIC_CLASSES})
 
 install(TARGETS ${QTXDGX_LIBRARY_NAME} DESTINATION "${CMAKE_INSTALL_LIBDIR}")
@@ -189,7 +188,6 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake" DES
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}_use.cmake" DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_FILE_NAME}")
 install(FILES ${libqtxdg_PORTABLE_HEADERS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}")
 
-include(create_pkgconfig_file)
 create_pkgconfig_file(${QTXDGX_LIBRARY_NAME}
     ${QTXDGX_PKG_CONFIG_DESCRIPTION}
     ${QTXDGX_PKG_CONFIG_REQUIRES}

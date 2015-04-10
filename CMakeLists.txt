@@ -43,7 +43,8 @@ include_directories(
     "${Qt5Gui_PRIVATE_INCLUDE_DIRS}"
 )
 
-set(QTX_LIBRARIES ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5DBus_LIBRARIES})
+set(QTX_LIBRARIES Qt5::Widgets Qt5::Xml Qt5::DBus)
+
 message(STATUS "Building with Qt ${Qt5Core_VERSION_STRING}")
 
 set(libqtxdg_PUBLIC_H_FILES

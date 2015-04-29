@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
 project(libqtxdg)
 
 option(BUILD_TESTS "Builds tests" OFF)
@@ -13,6 +13,7 @@ set(QTXDG_VERSION_STRING ${QTXDG_MAJOR_VERSION}.${QTXDG_MINOR_VERSION}.${QTXDG_P
 
 
 include(GNUInstallDirs)             # Standard directories for installation
+include(CMakePackageConfigHelpers)
 include(create_portable_headers)
 include(create_pkgconfig_file)
 
@@ -172,6 +173,13 @@ set_target_properties(${QTXDGX_LIBRARY_NAME} PROPERTIES
   SOVERSION ${QTXDG_MAJOR_VERSION}
 )
 
+write_basic_package_version_file(
+    "${CMAKE_BINARY_DIR}/${QTXDGX_FILE_NAME}-config-version.cmake"
+    VERSION ${QTXDG_VERSION_STRING}
+    COMPATIBILITY AnyNewerVersion
+)
+
+
 # create the portable headers
 create_portable_headers(libqtxdg_PORTABLE_HEADERS ${libqtxdg_PUBLIC_CLASSES})
 
@@ -184,7 +192,13 @@ install(FILES
         "${QTXDG_PRIVATE_INCLUDE_DIR}/private/qtxdg"
 )
 
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake" DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_FILE_NAME}")
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake"
+    "${CMAKE_BINARY_DIR}/${QTXDGX_FILE_NAME}-config-version.cmake"
+    DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_FILE_NAME}"
+    COMPONENT Devel
+)
+
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}_use.cmake" DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_FILE_NAME}")
 install(FILES ${libqtxdg_PORTABLE_HEADERS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}")
 

@@ -17,7 +17,7 @@ include(CMakePackageConfigHelpers)
 include(create_portable_headers)
 include(create_pkgconfig_file)
 
-add_definitions(-Wall -DQTXDG_COMPILATION=1)
+add_definitions(-Wall)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(QTXDG_COMPILER_IS_CLANGCXX 1)
@@ -164,6 +164,10 @@ create_pkgconfig_file(
     INSTALL
 )
 
+target_compile_definitions(${QTXDGX_LIBRARY_NAME}
+    PRIVATE "QTXDG_COMPILATION=\"1\""
+)
+
 target_include_directories(${QTXDGX_LIBRARY_NAME}
     INTERFACE "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}>"
     INTERFACE "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
@@ -222,7 +226,9 @@ install(FILES
 
 if(BUILD_TESTS)
     enable_testing()
-    add_definitions(-DQTXDG_TESTS=1)
+    target_compile_definitions(${QTXDGX_LIBRARY_NAME}
+        PRIVATE "QTXDG_TESTS=\"1\""
+    )
     add_subdirectory(test)
 else()
     message(STATUS "")

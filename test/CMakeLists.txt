@@ -15,9 +15,9 @@ include_directories (
     ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-if (BUILD_TESTS)
-    add_definitions(-DQTXDG_BUILDING_TESTS=1)
-endif()
+set_property(DIRECTORY APPEND
+    PROPERTY COMPILE_DEFINITIONS "QTXDG_BUILDING_TESTS=\"1\""
+)
 
 qtxdg_add_test(
     qtxdg_test

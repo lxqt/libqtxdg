@@ -41,6 +41,7 @@ set(QTXDGX_FILE_NAME "qt5xdg")
 
 set(QTXDGX_PKG_CONFIG_DESCRIPTION "Qt5Xdg, a Qt5 implementation of XDG standards")
 set(QTXDGX_PKG_CONFIG_REQUIRES "Qt5Core, Qt5Xml, Qt5Widgets, Qt5DBus")
+set(QTXDGX_INTREE_INCLUDEDIR "${CMAKE_CURRENT_BINARY_DIR}/InTreeBuild/include")
 
 include_directories(
     "${Qt5Gui_PRIVATE_INCLUDE_DIRS}"
@@ -176,17 +177,31 @@ target_include_directories(${QTXDGX_LIBRARY_NAME}
 
 # include directories and targets for the in tree build
 target_include_directories(${QTXDGX_LIBRARY_NAME}
-    INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
-    INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
-    INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/qiconfix>"
+    INTERFACE "$<BUILD_INTERFACE:${QTXDGX_INTREE_INCLUDEDIR}/${QTXDGX_FILE_NAME}>"
+    INTERFACE "$<BUILD_INTERFACE:${QTXDGX_INTREE_INCLUDEDIR}>"
+    INTERFACE "$<BUILD_INTERFACE:${QTXDGX_INTREE_INCLUDEDIR}/${QTXDGX_FILE_NAME}/${QTXDG_VERSION_STRING}>"
 )
 
 export(TARGETS ${QTXDGX_LIBRARY_NAME} FILE "${CMAKE_BINARY_DIR}/${QTXDGX_FILE_NAME}-targets.cmake")
 # end of in tree build stuff
 
-# create the portable headers
-create_portable_headers(libqtxdg_PORTABLE_HEADERS ${libqtxdg_PUBLIC_CLASSES})
+# create the portble headers
+create_portable_headers(libqtxdg_PORTABLE_HEADERS
+    HEADER_NAMES ${libqtxdg_PUBLIC_CLASSES}
+    OUTPUT_DIR "${QTXDGX_INTREE_INCLUDEDIR}/${QTXDGX_FILE_NAME}"
+)
 
+# Copy public headers (in tree building)
+foreach(h ${libqtxdg_PUBLIC_H_FILES})
+    get_filename_component(bh ${h} NAME)
+    configure_file(${h} "${QTXDGX_INTREE_INCLUDEDIR}/${QTXDGX_FILE_NAME}/${bh}" COPYONLY)
+endforeach()
+
+# Copy private headers (in tree building)
+foreach(h ${libqtxdg_PRIVATE_INSTALLABLE_H_FILES})
+    get_filename_component(bh ${h} NAME)
+    configure_file(${h} "${QTXDGX_INTREE_INCLUDEDIR}/${QTXDGX_FILE_NAME}/${QTXDG_VERSION_STRING}/private/qtxdg/${bh}" COPYONLY)
+endforeach()
 
 install(TARGETS
     ${QTXDGX_LIBRARY_NAME} DESTINATION "${CMAKE_INSTALL_LIBDIR}"

@@ -133,7 +133,8 @@ add_library(${QTXDGX_LIBRARY_NAME} SHARED
 
 
 target_link_libraries(${QTXDGX_LIBRARY_NAME}
-    ${QTX_LIBRARIES}
+    PUBLIC
+        ${QTX_LIBRARIES}
 )
 
 set_target_properties(${QTXDGX_LIBRARY_NAME} PROPERTIES

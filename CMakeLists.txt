@@ -119,39 +119,6 @@ set(libqtxdg_PRIVATE_INSTALLABLE_H_FILES
     qiconfix/qiconloader_p.h
 )
 
-#************************************************
-# Build 2 config.cmake files
-# One for in-tree build and second for normal one.
-#************************************************
-
-# In tree compilation ......................
-set(QTXDG_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR};${CMAKE_CURRENT_BINARY_DIR}")
-
-set(QTXDG_PRIVATE_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/qiconfix")
-configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/qt5xdg-config.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}-config.cmake"
-    @ONLY
-)
-
-configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${QTXDGX_FILE_NAME}_use.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}_use.cmake"
-    @ONLY
-)
-
-# Instalable ...............................
-set(QTXDG_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}")
-
-set(QTXDG_PRIVATE_INCLUDE_DIR "${QTXDG_INCLUDE_DIR}/${QTXDG_VERSION_STRING}")
-configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/qt5xdg-config.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake"
-    @ONLY
-)
-
-#**********************************************************
-
 QT5_WRAP_CPP(libqtxdg_CXX_FILES ${libqtxdg_MOCS})
 
 add_library(${QTXDGX_LIBRARY_NAME} SHARED
@@ -173,6 +140,13 @@ set_target_properties(${QTXDGX_LIBRARY_NAME} PROPERTIES
   SOVERSION ${QTXDG_MAJOR_VERSION}
 )
 
+
+configure_package_config_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${QTXDGX_FILE_NAME}-config.cmake.in"
+    "${CMAKE_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake"
+    INSTALL_DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_FILE_NAME}"
+)
+
 write_basic_package_version_file(
     "${CMAKE_BINARY_DIR}/${QTXDGX_FILE_NAME}-config-version.cmake"
     VERSION ${QTXDG_VERSION_STRING}
@@ -180,27 +154,61 @@ write_basic_package_version_file(
 )
 
 
+target_include_directories(${QTXDGX_LIBRARY_NAME}
+    INTERFACE "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}>"
+    INTERFACE "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+    INTERFACE "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}/${QTXDG_VERSION_STRING}>"
+)
+
+# include directories and targets for the in tree build
+target_include_directories(${QTXDGX_LIBRARY_NAME}
+    INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
+    INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+    INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/qiconfix>"
+)
+
+export(TARGETS ${QTXDGX_LIBRARY_NAME} FILE "${CMAKE_BINARY_DIR}/${QTXDGX_FILE_NAME}-targets.cmake")
+# end of in tree build stuff
+
 # create the portable headers
 create_portable_headers(libqtxdg_PORTABLE_HEADERS ${libqtxdg_PUBLIC_CLASSES})
 
-install(TARGETS ${QTXDGX_LIBRARY_NAME} DESTINATION "${CMAKE_INSTALL_LIBDIR}")
-install(FILES ${libqtxdg_PUBLIC_H_FILES} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}")
 
-install(FILES
-        ${libqtxdg_PRIVATE_INSTALLABLE_H_FILES}
-    DESTINATION
-        "${QTXDG_PRIVATE_INCLUDE_DIR}/private/qtxdg"
+install(TARGETS
+    ${QTXDGX_LIBRARY_NAME} DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    EXPORT "${QTXDGX_FILE_NAME}-targets"
+)
+
+install(EXPORT
+    "${QTXDGX_FILE_NAME}-targets"
+    DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_FILE_NAME}"
+    COMPONENT Devel
 )
 
 install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake"
+    ${libqtxdg_PUBLIC_H_FILES}
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}"
+    COMPONENT Devel
+)
+
+install(FILES
+    ${libqtxdg_PRIVATE_INSTALLABLE_H_FILES}
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}/${QTXDG_VERSION_STRING}/private/qtxdg"
+    COMPONENT Devel
+)
+
+install(FILES
+    "${CMAKE_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake"
     "${CMAKE_BINARY_DIR}/${QTXDGX_FILE_NAME}-config-version.cmake"
     DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_FILE_NAME}"
     COMPONENT Devel
 )
 
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}_use.cmake" DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_FILE_NAME}")
-install(FILES ${libqtxdg_PORTABLE_HEADERS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}")
+install(FILES
+    ${libqtxdg_PORTABLE_HEADERS}
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}"
+    COMPONENT Devel
+)
 
 create_pkgconfig_file(${QTXDGX_LIBRARY_NAME}
     ${QTXDGX_PKG_CONFIG_DESCRIPTION}

@@ -1256,7 +1256,7 @@ XdgDesktopFile* XdgDesktopFileCache::getFile(const QString& fileName)
     {
         return instance().m_fileCache.value(fileName);
     }
-    
+
     if (fileName.startsWith(QDir::separator()))
     {
         // Absolute path ........................
@@ -1305,7 +1305,7 @@ XdgDesktopFileCache & XdgDesktopFileCache::instance()
     static XdgDesktopFileCache cache;
     if (!cache.m_IsInitialized)
     {
-       cache.initialize(); 
+       cache.initialize();
        cache.m_IsInitialized = true;
     }
 
@@ -1313,7 +1313,7 @@ XdgDesktopFileCache & XdgDesktopFileCache::instance()
 }
 
 
-/*! 
+/*!
  * Handles files with a syntax similar to desktopfiles as QSettings files.
  * The differences between ini-files and desktopfiles are:
  * desktopfiles uses '#' as comment marker, and ';' as list-separator.
@@ -1323,7 +1323,7 @@ bool readDesktopFile(QIODevice & device, QSettings::SettingsMap & map)
 {
     QString section;
     QTextStream stream(&device);
-    
+
     while (!stream.atEnd()) {
         QString line = stream.readLine().trimmed();
 
@@ -1343,7 +1343,7 @@ bool readDesktopFile(QIODevice & device, QSettings::SettingsMap & map)
 
         if (key.isEmpty())
             continue;
-   
+
         if (section.isEmpty())
         {
             qWarning() << "key=value outside section";
@@ -1353,7 +1353,7 @@ bool readDesktopFile(QIODevice & device, QSettings::SettingsMap & map)
         key.prepend("/");
         key.prepend(section);
 
-        if (value.contains(";")) 
+        if (value.contains(";"))
         {
             map.insert(key, value.split(";"));
         }
@@ -1363,7 +1363,7 @@ bool readDesktopFile(QIODevice & device, QSettings::SettingsMap & map)
         }
 
     }
-    
+
     return true;
 }
 
@@ -1373,7 +1373,7 @@ bool readDesktopFile(QIODevice & device, QSettings::SettingsMap & map)
 bool writeDesktopFile(QIODevice & device, const QSettings::SettingsMap & map)
 {
     QTextStream stream(&device);
-    QString section; 
+    QString section;
 
     foreach (QString key, map.keys())
     {
@@ -1396,7 +1396,7 @@ bool writeDesktopFile(QIODevice & device, const QSettings::SettingsMap & map)
         }
 
         QString remainingKey = key.section("/", 1, -1);
-        
+
         if (remainingKey.isEmpty())
         {
             qWarning() << "Only one level in key..." ;
@@ -1406,7 +1406,7 @@ bool writeDesktopFile(QIODevice & device, const QSettings::SettingsMap & map)
         stream << remainingKey << "=" << map.value(key).toString() << "\n";
 
     }
-        
+
     return true;
 }
 
@@ -1439,13 +1439,13 @@ void XdgDesktopFileCache::initialize(const QString& dirName)
         {
             m_fileCache.insert(f.absoluteFilePath(), df);
         }
-        
-        QStringList mimes = df->value("MimeType").toString().split(';', QString::SkipEmptyParts); 
+
+        QStringList mimes = df->value("MimeType").toString().split(';', QString::SkipEmptyParts);
 
         foreach (QString mime, mimes)
         {
             int pref = df->value("InitialPreference", 0).toInt();
-            // We move the desktopFile forward in the list for this mime, so that 
+            // We move the desktopFile forward in the list for this mime, so that
             // no desktopfile in front of it have a lower initialPreference.
             int position = m_defaultAppsCache[mime].length();
             while (position > 0 && m_defaultAppsCache[mime][position - 1]->value("InitialPreference, 0").toInt() < pref)
@@ -1496,7 +1496,7 @@ void loadMimeCacheDir(const QString& dirName, QHash<QString, QList<XdgDesktopFil
         foreach (QString mime, mimes)
         {
             int pref = df->value("InitialPreference", 0).toInt();
-            // We move the desktopFile forward in the list for this mime, so that 
+            // We move the desktopFile forward in the list for this mime, so that
             // no desktopfile in front of it have a lower initialPreference.
             int position = cache[mime].length();
             while (position > 0 && cache[mime][position - 1]->value("InitialPreference, 0").toInt() < pref)
@@ -1540,7 +1540,7 @@ void XdgDesktopFileCache::initialize()
     QStringList dataDirs = XdgDirs::dataDirs();
     dataDirs.prepend(XdgDirs::dataHome(false));
 
-    foreach (const QString dirname, dataDirs) 
+    foreach (const QString dirname, dataDirs)
     {
         initialize(dirname + "/applications");
 //        loadMimeCacheDir(dirname + "/applications", m_defaultAppsCache);
@@ -1578,7 +1578,7 @@ XdgDesktopFile* XdgDesktopFileCache::getDefaultApp(const QString& mimetype)
         if (QFileInfo(defaultsListPath).exists())
         {
             QSettings defaults(defaultsListPath, desktopFileSettingsFormat());
-            
+
 
             defaults.beginGroup("Default Applications");
             if (defaults.contains(mimetype))
@@ -1593,7 +1593,7 @@ XdgDesktopFile* XdgDesktopFileCache::getDefaultApp(const QString& mimetype)
                         {
                             return desktopFile;
                         }
-                        else 
+                        else
                         {
                             qWarning() << desktopFileName << "not a valid desktopfile";
                         }

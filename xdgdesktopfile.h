@@ -40,7 +40,7 @@
 #include <QSettings>
 
 class XdgDesktopFileData;
-	
+
 /**
  \brief Desktop files handling.
  XdgDesktopFile class gives the interface for reading the values from the XDG .desktop file.
@@ -248,7 +248,7 @@ private:
     XdgDesktopFileCache();
     ~XdgDesktopFileCache();
 
-    void initialize();    
+    void initialize();
     void initialize(const QString & dirName);
     bool m_IsInitialized;
     QHash<QString, QList<XdgDesktopFile*> > m_defaultAppsCache;

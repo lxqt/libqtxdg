@@ -1,8 +1,10 @@
 @PACKAGE_INIT@
 
-find_package(Qt5Widgets REQUIRED QUIET)
-find_package(Qt5Xml REQUIRED QUIET)
-find_package(Qt5DBus REQUIRED QUIET)
+include(CMakeFindDependencyMacro)
+
+find_dependency(Qt5Widgets)
+find_dependency(Qt5Xml)
+find_dependency(Qt5DBus)
 
 if (CMAKE_VERSION VERSION_GREATER 2.8.12)
     cmake_policy(SET CMP0024 OLD)

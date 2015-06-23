@@ -142,7 +142,6 @@ set_target_properties(${QTXDGX_LIBRARY_NAME} PROPERTIES
   SOVERSION ${QTXDG_MAJOR_VERSION}
 )
 
-
 configure_package_config_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${QTXDGX_FILE_NAME}-config.cmake.in"
     "${CMAKE_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake"

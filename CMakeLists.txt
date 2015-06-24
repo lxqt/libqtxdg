@@ -9,10 +9,10 @@ include(GNUInstallDirs)
 # additional cmake files
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-set (MAJOR_VERSION 1)
-set (MINOR_VERSION 2)
-set (PATCH_VERSION 0)
-set(QTXDG_VERSION_STRING ${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION})
+set(QTXDG_MAJOR_VERSION 1)
+set(QTXDG_MINOR_VERSION 2)
+set(QTXDG_PATCH_VERSION 0)
+set(QTXDG_VERSION_STRING ${QTXDG_MAJOR_VERSION}.${QTXDG_MINOR_VERSION}.${QTXDG_PATCH_VERSION})
 
 add_definitions(-Wall -DQTXDG_COMPILATION=1)
 
@@ -120,9 +120,6 @@ set(libqtxdg_PRIVATE_INSTALLABLE_H_FILES
 # Build 2 config.cmake files
 # One for in-tree build and second for normal one.
 #************************************************
-set(QTXDG_MAJOR_VERSION ${MAJOR_VERSION})
-set(QTXDG_MINOR_VERSION ${MINOR_VERSION})
-set(QTXDG_PATCH_VERSION ${PATCH_VERSION})
 
 # In tree compilation ......................
 set(QTXDG_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR};${CMAKE_CURRENT_BINARY_DIR}")
@@ -175,8 +172,8 @@ target_link_libraries(${QTXDGX_LIBRARY_NAME}
 )
 
 set_target_properties(${QTXDGX_LIBRARY_NAME} PROPERTIES
-  VERSION ${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}
-  SOVERSION ${MAJOR_VERSION}
+  VERSION ${QTXDG_VERSION_STRING}
+  SOVERSION ${QTXDG_MAJOR_VERSION}
 )
 
 # create the portable headers
@@ -227,9 +224,9 @@ add_custom_target(uninstall
 
 # building tarball with CPack -------------------------------------------------
 include (InstallRequiredSystemLibraries)
-set (CPACK_PACKAGE_VERSION_MAJOR ${MAJOR_VERSION})
-set (CPACK_PACKAGE_VERSION_MINOR ${MINOR_VERSION})
-set (CPACK_PACKAGE_VERSION_PATCH ${PATCH_VERSION})
+set (CPACK_PACKAGE_VERSION_MAJOR ${QTXDG_MAJOR_VERSION})
+set (CPACK_PACKAGE_VERSION_MINOR ${QTXDG_MINOR_VERSION})
+set (CPACK_PACKAGE_VERSION_PATCH ${QTXDG_PATCH_VERSION})
 set (CPACK_GENERATOR TBZ2)
 set (CPACK_SOURCE_GENERATOR TBZ2)
 set (CPACK_SOURCE_IGNORE_FILES /build/;.gitignore;.*~;.git;.kdev4;temp)

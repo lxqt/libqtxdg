@@ -34,12 +34,12 @@
     #define QTXDG_API    Q_DECL_IMPORT
 #endif
 
-#if defined(QTXDG_COMPILATION) && defined(QTXDG_BUILDING_TESTS)
+#if defined(QTXDG_COMPILATION) && defined(QTXDG_TESTS)
+#    define QTXDG_AUTOTEST Q_DECL_EXPORT /* Build library,tests enabled */
+#elif defined(QTXDG_BUILDING_TESTS)      /* Build the tests */
 #    define QTXDG_AUTOTEST Q_DECL_IMPORT
-#elif defined(QTXDG_COMPILATION) && defined(QTXDG_TESTS)
-#    define QTXDG_AUTOTEST Q_DECL_EXPORT
 #else
-#    define QTXDG_AUTOTEST
+#    define QTXDG_AUTOTEST               /* Building library, tests disabled */
 #endif
 
 #endif // QTXDG_MACROS_H

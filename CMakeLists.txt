@@ -1,20 +1,23 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
 project(libqtxdg)
 
 option(BUILD_TESTS "Builds tests" OFF)
 
-# Standard directories for installation
-include(GNUInstallDirs)
-
 # additional cmake files
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-set (MAJOR_VERSION 1)
-set (MINOR_VERSION 2)
-set (PATCH_VERSION 0)
-set(QTXDG_VERSION_STRING ${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION})
+set(QTXDG_MAJOR_VERSION 1)
+set(QTXDG_MINOR_VERSION 2)
+set(QTXDG_PATCH_VERSION 0)
+set(QTXDG_VERSION_STRING ${QTXDG_MAJOR_VERSION}.${QTXDG_MINOR_VERSION}.${QTXDG_PATCH_VERSION})
 
-add_definitions(-Wall -DQTXDG_COMPILATION=1)
+
+include(GNUInstallDirs)             # Standard directories for installation
+include(CMakePackageConfigHelpers)
+include(create_portable_headers)
+include(create_pkgconfig_file)
+
+add_definitions(-Wall)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(QTXDG_COMPILER_IS_CLANGCXX 1)
@@ -38,19 +41,18 @@ set(QTXDGX_FILE_NAME "qt5xdg")
 
 set(QTXDGX_PKG_CONFIG_DESCRIPTION "Qt5Xdg, a Qt5 implementation of XDG standards")
 set(QTXDGX_PKG_CONFIG_REQUIRES "Qt5Core, Qt5Xml, Qt5Widgets, Qt5DBus")
+set(QTXDGX_INTREE_INCLUDEDIR "${CMAKE_CURRENT_BINARY_DIR}/InTreeBuild/include")
 
 include_directories(
-    "${Qt5Widgets_INCLUDE_DIRS}"
     "${Qt5Gui_PRIVATE_INCLUDE_DIRS}"
-    "${Qt5Xml_INCLUDE_DIRS}"
 )
-add_definitions(${Qt5Core_DEFINITIONS})
-#    set(CMAKE_CXX_FLAGS
-#        "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}"
-#    )
 
+set(QTX_LIBRARIES Qt5::Widgets Qt5::Xml Qt5::DBus)
 
-set(QTX_LIBRARIES ${Qt5Widgets_LIBRARIES} ${Qt5Xml_LIBRARIES} ${Qt5DBus_LIBRARIES})
+if (NOT CMAKE_BUILD_TYPE)
+    set ( CMAKE_BUILD_TYPE Release )
+endif (NOT CMAKE_BUILD_TYPE)
+
 message(STATUS "Building with Qt ${Qt5Core_VERSION_STRING}")
 
 set(libqtxdg_PUBLIC_H_FILES
@@ -118,51 +120,7 @@ set(libqtxdg_PRIVATE_INSTALLABLE_H_FILES
     qiconfix/qiconloader_p.h
 )
 
-#************************************************
-# Build 2 config.cmake files
-# One for in-tree build and second for normal one.
-#************************************************
-set(QTXDG_MAJOR_VERSION ${MAJOR_VERSION})
-set(QTXDG_MINOR_VERSION ${MINOR_VERSION})
-set(QTXDG_PATCH_VERSION ${PATCH_VERSION})
-
-# In tree compilation ......................
-set(QTXDG_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR};${CMAKE_CURRENT_BINARY_DIR}")
-
-set(QTXDG_PRIVATE_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/qiconfix")
-configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/qt5xdg-config.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}-config.cmake"
-    @ONLY
-)
-
-configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${QTXDGX_FILE_NAME}_use.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}_use.cmake"
-    @ONLY
-)
-
-# Instalable ...............................
-set(QTXDG_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}")
-
-set(QTXDG_PRIVATE_INCLUDE_DIR "${QTXDG_INCLUDE_DIR}/${QTXDG_VERSION_STRING}")
-configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/qt5xdg-config.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake"
-    @ONLY
-)
-
-#**********************************************************
-
-include(FindLibSuffix)
-
 QT5_WRAP_CPP(libqtxdg_CXX_FILES ${libqtxdg_MOCS})
-
-
-if (NOT CMAKE_BUILD_TYPE)
-    set ( CMAKE_BUILD_TYPE Release )
-endif (NOT CMAKE_BUILD_TYPE)
-
 
 add_library(${QTXDGX_LIBRARY_NAME} SHARED
     ${libqtxdg_PUBLIC_H_FILES}
@@ -175,43 +133,117 @@ add_library(${QTXDGX_LIBRARY_NAME} SHARED
 
 
 target_link_libraries(${QTXDGX_LIBRARY_NAME}
-    ${QTX_LIBRARIES}
+    PUBLIC
+        ${QTX_LIBRARIES}
 )
 
 set_target_properties(${QTXDGX_LIBRARY_NAME} PROPERTIES
-  VERSION ${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}
-  SOVERSION ${MAJOR_VERSION}
+  VERSION ${QTXDG_VERSION_STRING}
+  SOVERSION ${QTXDG_MAJOR_VERSION}
 )
 
-# create the portable headers
-include(create_portable_headers)
-create_portable_headers(libqtxdg_PORTABLE_HEADERS ${libqtxdg_PUBLIC_CLASSES})
+configure_package_config_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${QTXDGX_FILE_NAME}-config.cmake.in"
+    "${CMAKE_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake"
+    INSTALL_DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_FILE_NAME}"
+)
 
-install(TARGETS ${QTXDGX_LIBRARY_NAME} DESTINATION "${CMAKE_INSTALL_LIBDIR}")
-install(FILES ${libqtxdg_PUBLIC_H_FILES} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}")
+write_basic_package_version_file(
+    "${CMAKE_BINARY_DIR}/${QTXDGX_FILE_NAME}-config-version.cmake"
+    VERSION ${QTXDG_VERSION_STRING}
+    COMPATIBILITY AnyNewerVersion
+)
+
+create_pkgconfig_file(
+    PACKAGE_NAME ${QTXDGX_LIBRARY_NAME}
+    DESCRIPTIVE_NAME ${QTXDGX_LIBRARY_NAME}
+    DESCRIPTION ${QTXDGX_PKG_CONFIG_DESCRIPTION}
+    INCLUDEDIRS ${QTXDGX_FILE_NAME}
+    LIBS ${QTXDGX_LIBRARY_NAME}
+    REQUIRES ${QTXDGX_PKG_CONFIG_REQUIRES}
+    VERSION ${QTXDG_VERSION_STRING}
+    INSTALL
+)
+
+target_compile_definitions(${QTXDGX_LIBRARY_NAME}
+    PRIVATE "QTXDG_COMPILATION=\"1\""
+)
+
+target_include_directories(${QTXDGX_LIBRARY_NAME}
+    INTERFACE "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}>"
+    INTERFACE "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+    INTERFACE "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}/${QTXDG_VERSION_STRING}>"
+)
+
+# include directories and targets for the in tree build
+target_include_directories(${QTXDGX_LIBRARY_NAME}
+    INTERFACE "$<BUILD_INTERFACE:${QTXDGX_INTREE_INCLUDEDIR}/${QTXDGX_FILE_NAME}>"
+    INTERFACE "$<BUILD_INTERFACE:${QTXDGX_INTREE_INCLUDEDIR}>"
+    INTERFACE "$<BUILD_INTERFACE:${QTXDGX_INTREE_INCLUDEDIR}/${QTXDGX_FILE_NAME}/${QTXDG_VERSION_STRING}>"
+)
+
+export(TARGETS ${QTXDGX_LIBRARY_NAME} FILE "${CMAKE_BINARY_DIR}/${QTXDGX_FILE_NAME}-targets.cmake")
+# end of in tree build stuff
+
+# create the portble headers
+create_portable_headers(libqtxdg_PORTABLE_HEADERS
+    HEADER_NAMES ${libqtxdg_PUBLIC_CLASSES}
+    OUTPUT_DIR "${QTXDGX_INTREE_INCLUDEDIR}/${QTXDGX_FILE_NAME}"
+)
+
+# Copy public headers (in tree building)
+foreach(h ${libqtxdg_PUBLIC_H_FILES})
+    get_filename_component(bh ${h} NAME)
+    configure_file(${h} "${QTXDGX_INTREE_INCLUDEDIR}/${QTXDGX_FILE_NAME}/${bh}" COPYONLY)
+endforeach()
+
+# Copy private headers (in tree building)
+foreach(h ${libqtxdg_PRIVATE_INSTALLABLE_H_FILES})
+    get_filename_component(bh ${h} NAME)
+    configure_file(${h} "${QTXDGX_INTREE_INCLUDEDIR}/${QTXDGX_FILE_NAME}/${QTXDG_VERSION_STRING}/private/qtxdg/${bh}" COPYONLY)
+endforeach()
+
+install(TARGETS
+    ${QTXDGX_LIBRARY_NAME} DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    EXPORT "${QTXDGX_FILE_NAME}-targets"
+)
+
+install(EXPORT
+    "${QTXDGX_FILE_NAME}-targets"
+    DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_FILE_NAME}"
+    COMPONENT Devel
+)
 
 install(FILES
-        ${libqtxdg_PRIVATE_INSTALLABLE_H_FILES}
-    DESTINATION
-        "${QTXDG_PRIVATE_INCLUDE_DIR}/private/qtxdg"
+    ${libqtxdg_PUBLIC_H_FILES}
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}"
+    COMPONENT Devel
 )
 
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake" DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_FILE_NAME}")
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cmake/${QTXDGX_FILE_NAME}_use.cmake" DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_FILE_NAME}")
-install(FILES ${libqtxdg_PORTABLE_HEADERS} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}")
-
-include(create_pkgconfig_file)
-create_pkgconfig_file(${QTXDGX_LIBRARY_NAME}
-    ${QTXDGX_PKG_CONFIG_DESCRIPTION}
-    ${QTXDGX_PKG_CONFIG_REQUIRES}
-    ${QTXDGX_FILE_NAME}
-    ${QTXDG_VERSION_STRING}
+install(FILES
+    ${libqtxdg_PRIVATE_INSTALLABLE_H_FILES}
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}/${QTXDG_VERSION_STRING}/private/qtxdg"
+    COMPONENT Devel
 )
 
+install(FILES
+    "${CMAKE_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake"
+    "${CMAKE_BINARY_DIR}/${QTXDGX_FILE_NAME}-config-version.cmake"
+    DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_FILE_NAME}"
+    COMPONENT Devel
+)
+
+install(FILES
+    ${libqtxdg_PORTABLE_HEADERS}
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}"
+    COMPONENT Devel
+)
 
 if(BUILD_TESTS)
     enable_testing()
-    add_definitions(-DQTXDG_TESTS=1)
+    target_compile_definitions(${QTXDGX_LIBRARY_NAME}
+        PRIVATE "QTXDG_TESTS=\"1\""
+    )
     add_subdirectory(test)
 else()
     message(STATUS "")
@@ -231,9 +263,9 @@ add_custom_target(uninstall
 
 # building tarball with CPack -------------------------------------------------
 include (InstallRequiredSystemLibraries)
-set (CPACK_PACKAGE_VERSION_MAJOR ${MAJOR_VERSION})
-set (CPACK_PACKAGE_VERSION_MINOR ${MINOR_VERSION})
-set (CPACK_PACKAGE_VERSION_PATCH ${PATCH_VERSION})
+set (CPACK_PACKAGE_VERSION_MAJOR ${QTXDG_MAJOR_VERSION})
+set (CPACK_PACKAGE_VERSION_MINOR ${QTXDG_MINOR_VERSION})
+set (CPACK_PACKAGE_VERSION_PATCH ${QTXDG_PATCH_VERSION})
 set (CPACK_GENERATOR TBZ2)
 set (CPACK_SOURCE_GENERATOR TBZ2)
 set (CPACK_SOURCE_IGNORE_FILES /build/;.gitignore;.*~;.git;.kdev4;temp)

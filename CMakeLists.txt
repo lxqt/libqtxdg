@@ -206,6 +206,7 @@ endforeach()
 install(TARGETS
     ${QTXDGX_LIBRARY_NAME} DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     EXPORT "${QTXDGX_FILE_NAME}-targets"
+    COMPONENT Runtime
 )
 
 install(EXPORT

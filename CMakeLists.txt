@@ -11,22 +11,11 @@ set(QTXDG_MINOR_VERSION 2)
 set(QTXDG_PATCH_VERSION 0)
 set(QTXDG_VERSION_STRING ${QTXDG_MAJOR_VERSION}.${QTXDG_MINOR_VERSION}.${QTXDG_PATCH_VERSION})
 
-
 include(GNUInstallDirs)             # Standard directories for installation
 include(CMakePackageConfigHelpers)
 include(create_portable_headers)
 include(create_pkgconfig_file)
-
-add_definitions(-Wall)
-
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(QTXDG_COMPILER_IS_CLANGCXX 1)
-endif()
-
-if (CMAKE_COMPILER_IS_GNUCXX OR QTXDG_COMPILER_IS_CLANGCXX)
-    # set visibility to hidden to hide symbols, unless they're exported manually in the code
-    set(CMAKE_CXX_FLAGS "-fvisibility=hidden -fvisibility-inlines-hidden -fno-exceptions ${CMAKE_CXX_FLAGS}")
-endif()
+include(compiler_settings)
 
 find_package(Qt5Widgets REQUIRED QUIET)
 find_package(Qt5Xml REQUIRED QUIET)

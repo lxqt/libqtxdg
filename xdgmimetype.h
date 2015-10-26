@@ -77,7 +77,7 @@ public:
 
     inline bool operator!=(const XdgMimeType &other) const
     {
-        return QMimeType::operator==(other);
+        return !QMimeType::operator==(other);
     }
 
     void swap(XdgMimeType &other)

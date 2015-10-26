@@ -92,6 +92,12 @@ public:
     //! Returns true if both files contain the identical key-value pairs
     bool operator==(const XdgDesktopFile &other) const;
 
+    //! Returns false if both files contain the identical key-value pairs
+    inline bool operator!=(const XdgDesktopFile &other) const
+    {
+        return !operator==(other);
+    }
+
     //! Loads an DesktopFile from the file with the given fileName.
     virtual bool load(const QString& fileName);
 

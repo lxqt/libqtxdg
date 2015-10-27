@@ -875,7 +875,6 @@ QString expandEnvVariables(const QString str)
     replaceVar(res, "XDG_PICTURES_DIR",  QStandardPaths::writableLocation(QStandardPaths::PicturesLocation));
     replaceVar(res, "XDG_VIDEOS_DIR",    QStandardPaths::writableLocation(QStandardPaths::MoviesLocation));
     replaceVar(res, "XDG_PHOTOS_DIR",    QStandardPaths::writableLocation(QStandardPaths::PicturesLocation));
-    replaceVar(res, "XDG_MOVIES_DIR",    QStandardPaths::writableLocation(QStandardPaths::MoviesLocation));
 
     return res;
 }

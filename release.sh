@@ -1,3 +1,5 @@
+#!/bin/bash
+
 PROJECT="libqtxdg"
 version="$1"
 prefix=$PROJECT-$version

@@ -25,23 +25,24 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-
 #include "xdgautostart.h"
 #include "xdgdirs.h"
 #include <QDebug>
 #include <QSet>
 #include <QDir>
 
-/************************************************
-The Autostart Directories are $XDG_CONFIG_DIRS/autostart. If the same filename is
-located under multiple Autostart Directories only the file under the most
-important directory should be used.
 
-When multiple .desktop files with the same name exists in multiple directories
-then only the Hidden key in the most important .desktop file must be considered:
-If it is set to true all .desktop files with the same name in the other
-directories MUST be ignored as well.
- ************************************************/
+/**
+ * The Autostart Directories are $XDG_CONFIG_DIRS/autostart. If the same filename is
+ * located under multiple Autostart Directories only the file under the most
+ * important directory should be used.
+ *
+ * When multiple .desktop files with the same name exists in multiple directories
+ * then only the Hidden key in the most important .desktop file must be considered:
+ * If it is set to true all .desktop files with the same name in the other
+ * directories MUST be ignored as well.
+ */
+
 XdgDesktopFileList XdgAutoStart::desktopFileList(bool excludeHidden)
 {
     QStringList dirs;

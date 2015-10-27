@@ -32,6 +32,7 @@
 #include <QDebug>
 #include <QStandardPaths>
 
+
 static const QString userDirectoryString[8] =
 {
     "Desktop",

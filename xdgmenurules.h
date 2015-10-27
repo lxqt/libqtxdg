@@ -25,12 +25,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-
-/*********************************************************************
-  See: http://standards.freedesktop.org/desktop-entry-spec
-
-*********************************************************************/
-
 #ifndef QTXDG_XDGMENURULES_H
 #define QTXDG_XDGMENURULES_H
 
@@ -40,6 +34,10 @@
 
 #include "xdgdesktopfile.h"
 
+
+/**
+ * See: http://standards.freedesktop.org/desktop-entry-spec
+ */
 
 class XdgMenuRule : public QObject
 {

@@ -30,12 +30,11 @@
 #include "xdgdirs.h"
 #include "xmlhelper.h"
 
+#include <QDebug>
+#include <QDir>
 #include <QFile>
 #include <QFileInfo>
-#include <QDebug>
 #include <QString>
-#include <QDir>
-#include <QDebug>
 #include <QtXml/QDomNamedNodeMap>
 #include <QtXml/QDomNode>
 

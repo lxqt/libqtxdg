@@ -25,44 +25,38 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-
-
-/*********************************************************************
-  See: http://standards.freedesktop.org/desktop-entry-spec
-
-*********************************************************************/
-#include <stdlib.h>
-
+#include "desktopenvironment_p.cpp"
 #include "xdgdesktopfile.h"
 #include "xdgdesktopfile_p.h"
-
-#include <QMimeDatabase>
-#include <QMimeType>
-
-#include "xdgicon.h"
 #include "xdgdirs.h"
-#include "desktopenvironment_p.cpp"
+#include "xdgicon.h"
 
 #include <stdlib.h>
+#include <unistd.h>
+
+#include <QDebug>
+#include <QDBusInterface>
+#include <QDesktopServices>
+#include <QDir>
 #include <QSharedData>
 #include <QFile>
-#include <QDir>
 #include <QFileInfo>
-#include <QDebug>
 #include <QHash>
-#include <QProcess>
-#include <QUrl>
-#include <QDesktopServices>
-#include <QStringBuilder> // for the % operator
-#include <QStandardPaths>
-
 #include <QList>
-#include <QtAlgorithms>
-#include <unistd.h>
+#include <QMimeDatabase>
+#include <QMimeType>
+#include <QProcess>
 #include <QSettings>
+#include <QStandardPaths>
+#include <QStringBuilder> // for the % operator
 #include <QTextStream>
-#include <QFile>
-#include <QDBusInterface>
+#include <QUrl>
+#include <QtAlgorithms>
+
+
+/**
+ *  See: http://standards.freedesktop.org/desktop-entry-spec
+ */
 
 // A list of executables that can't be run with QProcess::startDetached(). They
 // will be run with QProcess::start()
@@ -616,12 +610,12 @@ void XdgDesktopFile::setLocalizedValue(const QString &key, const QVariant &value
 
 
 /************************************************
- LC_MESSAGES value	Possible keys in order of matching
- lang_COUNTRY@MODIFIER	lang_COUNTRY@MODIFIER, lang_COUNTRY, lang@MODIFIER, lang,
+ LC_MESSAGES value      Possible keys in order of matching
+ lang_COUNTRY@MODIFIER  lang_COUNTRY@MODIFIER, lang_COUNTRY, lang@MODIFIER, lang,
                         default value
- lang_COUNTRY	        lang_COUNTRY, lang, default value
- lang@MODIFIER	        lang@MODIFIER, lang, default value
- lang	                lang, default value
+ lang_COUNTRY           lang_COUNTRY, lang, default value
+ lang@MODIFIER          lang@MODIFIER, lang, default value
+ lang                   lang, default value
  ************************************************/
 QString XdgDesktopFile::localizedKey(const QString& key) const
 {
@@ -632,7 +626,6 @@ QString XdgDesktopFile::localizedKey(const QString& key) const
 
     if (lang.isEmpty())
          lang = getenv("LANG");
-
 
     QString modifier = lang.section('@', 1);
     if (!modifier.isEmpty())
@@ -646,8 +639,6 @@ QString XdgDesktopFile::localizedKey(const QString& key) const
     QString country = lang.section('_', 1);
     if (!country.isEmpty())
         lang.truncate(lang.length() - country.length() - 1);
-
-
 
     //qDebug() << "LC_MESSAGES: " << getenv("LC_MESSAGES");
     //qDebug() << "Lang:" << lang;

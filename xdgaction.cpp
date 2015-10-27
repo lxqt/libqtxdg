@@ -25,7 +25,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-
 #include "xdgaction.h"
 #include "xdgicon.h"
 #include <QDebug>

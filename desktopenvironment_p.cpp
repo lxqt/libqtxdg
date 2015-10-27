@@ -25,7 +25,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-
 #include <QtCore/QByteArray>
 
 static inline QByteArray detectDesktopEnvironment()

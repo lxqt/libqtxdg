@@ -33,9 +33,6 @@
 #include <QtXml/QDomNode>
 
 
-/************************************************
-
- ************************************************/
 QDebug operator<<(QDebug dbg, const QDomElement &el)
 {
     QDomNamedNodeMap map = el.attributes();

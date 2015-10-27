@@ -25,17 +25,16 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-/*********************************************************************
-  See: http://standards.freedesktop.org/desktop-entry-spec
-
-*********************************************************************/
-
 #include "xdgmenurules.h"
 #include "xmlhelper.h"
 
-#include <QStringList>
 #include <QDebug>
+#include <QStringList>
 
+
+/**
+ * See: http://standards.freedesktop.org/desktop-entry-spec
+ */
 
 XdgMenuRule::XdgMenuRule(const QDomElement& element, QObject* parent) :
     QObject(parent)

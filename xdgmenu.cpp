@@ -25,7 +25,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-
 #include "xdgmenu.h"
 #include "xdgmenu_p.h"
 #include "xdgmenureader.h"
@@ -39,12 +38,12 @@
 #include <QtXml/QDomElement>
 #include <QtXml/QDomNamedNodeMap>
 #include <QFile>
-#include <QSettings>
 #include <QFileInfo>
+#include <QFileSystemWatcher>
+#include <QSettings>
 #include <QDir>
 #include <QHash>
 #include <QLocale>
-#include <QFileSystemWatcher>
 #include <QTranslator>
 #include <QCoreApplication>
 #include <QCryptographicHash>

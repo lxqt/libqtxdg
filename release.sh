@@ -25,4 +25,4 @@ sha256sum --tag *.tar.gz *.tar.xz >> CHECKSUMS
 cd ..
 echo "Uploading to lxqt.org..."
 
-scp -r "$version" "lxde.org:/var/www/lxqt/downloads/$PROJECT/"
+scp -r "$version" "downloads.lxqt.org:/srv/downloads.lxqt.org/$PROJECT/"

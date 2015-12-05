@@ -116,8 +116,9 @@ QIcon XdgIcon::fromTheme(const QString& iconName, const QIcon& fallback)
             cachedIcon = new QIcon(new QtXdg::QIconLoaderEngineFixed(name));
         else
             cachedIcon = new QIcon(iconName);
-        qtIconCache()->insert(name, cachedIcon);
         icon = *cachedIcon;
+
+        qtIconCache()->insert(name, cachedIcon);
     }
 
     // Note the qapp check is to allow lazy loading of static icons

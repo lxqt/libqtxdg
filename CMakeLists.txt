@@ -260,3 +260,18 @@ set (CPACK_GENERATOR TBZ2)
 set (CPACK_SOURCE_GENERATOR TBZ2)
 set (CPACK_SOURCE_IGNORE_FILES /build/;.gitignore;.*~;.git;.kdev4;temp)
 include (CPack)
+
+# building documentation with Doxygen -----------------------------------------
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+add_custom_target(doc
+${DOXYGEN_EXECUTABLE} Doxyfile
+COMMENT "Generating API documentation with Doxygen" VERBATIM
+)
+# find_package(qhelpgenerator) doesn't work, but we're using Qt so assume it exists
+add_custom_target(qch
+qhelpgenerator -o qtxdg.qch index.qhp
+DEPENDS doc
+WORKING_DIRECTORY doc/html
+)
+endif(DOXYGEN_FOUND)

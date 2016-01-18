@@ -383,12 +383,17 @@ bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const
     }
 
     QString cmd = args.takeFirst();
+    QString workingDir = q->value("Path").toString();
+    if (!workingDir.isEmpty() && !QDir(workingDir).exists())
+	    workingDir = QString();
 
     if (nonDetach)
     {
         QScopedPointer<QProcess> p(new QProcess);
         p->setStandardInputFile(QProcess::nullDevice());
         p->setProcessChannelMode(QProcess::ForwardedChannels);
+        if (!workingDir.isEmpty())
+            p->setWorkingDirectory(workingDir);
         p->start(cmd, args);
         bool started = p->waitForStarted();
         if (started)
@@ -400,7 +405,7 @@ bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const
     }
     else
     {
-        return QProcess::startDetached(cmd, args);
+        return QProcess::startDetached(cmd, args, workingDir);
     }
 }
 

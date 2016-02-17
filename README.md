@@ -1,8 +1,6 @@
 ##Overview
 
-```libqtxdg``` is An Qt implementation of freedesktop.org xdg specifications.
-It's built with Qt5.
-
+```libqtxdg``` is a Qt implementation of freedesktop.org XDG specifications which is built with Qt5.
 
 ##Dependencies
 

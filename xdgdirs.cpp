@@ -137,6 +137,8 @@ QString XdgDirs::userDir(XdgDirs::UserDirectory dir)
 
             // get path between quotes
             line = line.section(QLatin1Char('"'), 1, 1);
+            if (line.isEmpty())
+                return fallback;
             line.replace(QLatin1String("$HOME"), QLatin1String("~"));
             fixBashShortcuts(line);
             return line;

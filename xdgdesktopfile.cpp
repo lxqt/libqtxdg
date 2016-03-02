@@ -462,10 +462,14 @@ bool XdgDesktopFileData::startByDBus(const QStringList& urls) const
         return false;
     }
     QDBusInterface app(f.completeBaseName(), path, QLatin1String("org.freedesktop.Application"));
-    if (!app.isValid())
+    //Note: after the QDBusInterface construction, it can *invalid* (has reasonable lastError())
+    // but this can be due to some intermediate DBus call(s) which doesn't need to be fatal and
+    // our next call() can succeed
+    // see discussion https://github.com/lxde/libqtxdg/pull/75
+    if (app.lastError().isValid())
     {
-        qWarning() << "XdgDesktopFileData::startByDBus: can't call method on invalid interface:" << app.lastError().message();
-        return false;
+        qWarning().noquote() << "XdgDesktopFileData::startByDBus: invalid interface:" << app.lastError().message()
+            << ", but trying to continue...";
     }
     QDBusMessage reply;
     if (urls.isEmpty())

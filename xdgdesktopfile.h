@@ -146,6 +146,13 @@ public:
     //! Returns an icon name specified in this file.
     QString const iconName() const;
 
+    //! Returns an list of mimetypes specified in this file.
+    /*! @return  Returns a list of the "MimeType=" entries.
+     *  If the file doens't contain the MimeType entry, an empty QStringList is
+     *  returned. Empty values are removed from the returned list.
+     */
+    QStringList mimeTypes() const;
+
     //! This function is provided for convenience. It's equivalent to calling localizedValue("Name").toString().
     QString name() const { return localizedValue("Name").toString(); }
 

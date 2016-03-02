@@ -454,6 +454,8 @@ bool XdgDesktopFileData::startByDBus(const QStringList& urls) const
 
     path = path.replace(QLatin1Char('.'), QLatin1Char('/')).prepend(QLatin1Char('/'));
     QDBusInterface app(f.completeBaseName(), path, QLatin1String("org.freedesktop.Application"));
+    if (!app.isValid())
+        return false;
     QDBusMessage reply;
     if (urls.isEmpty())
         reply = app.call(QLatin1String("Activate"), platformData);

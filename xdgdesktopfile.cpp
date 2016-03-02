@@ -36,6 +36,7 @@
 
 #include <QDebug>
 #include <QDBusInterface>
+#include <QDBusObjectPath>
 #include <QDesktopServices>
 #include <QDir>
 #include <QSharedData>
@@ -448,14 +449,24 @@ bool XdgDesktopFileData::startByDBus(const QStringList& urls) const
 {
     QFileInfo f(mFileName);
     QString path(f.completeBaseName());
+    path = path.replace(QLatin1Char('.'), QLatin1Char('/')).prepend(QLatin1Char('/'));
 
     QVariantMap platformData;
     platformData.insert(QLatin1String("desktop-startup-id"), QString::fromUtf8(qgetenv("DESKTOP_STARTUP_ID")));
 
-    path = path.replace(QLatin1Char('.'), QLatin1Char('/')).prepend(QLatin1Char('/'));
+    QDBusObjectPath d_path(path);
+    if (d_path.path().isEmpty())
+    {
+        qWarning() << "XdgDesktopFileData::startByDBus: invalid name" << f.fileName() << "of DBusActivatable .desktop file"
+                ", assembled DBus object path" << path << "is invalid!";
+        return false;
+    }
     QDBusInterface app(f.completeBaseName(), path, QLatin1String("org.freedesktop.Application"));
     if (!app.isValid())
+    {
+        qWarning() << "XdgDesktopFileData::startByDBus: can't call method on invalid interface:" << app.lastError().message();
         return false;
+    }
     QDBusMessage reply;
     if (urls.isEmpty())
         reply = app.call(QLatin1String("Activate"), platformData);

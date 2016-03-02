@@ -4,7 +4,8 @@ Upstream Authors:
 
 Copyright:
     Copyright (c) 2010-2012 Razor team
-    Copyright (c) 2012-2014 LXQt team
+    Copyright (c) 2012-2016 LXQt team
 
-License: GPL-2 and LGPL-2.1+
-The full text of the licenses can be found in the 'COPYING' file.
+License: LGPL-2.1+ and LGPL-2.1-or-3-with-Digia-1.1-exception
+The full text of the LGPL-2.1+ license can be found in the 'COPYING' file.
+The Digia-1.1 exception can be found in the 'Digia-Qt-LGPL-Exception-1.1' file.

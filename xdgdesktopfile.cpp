@@ -68,6 +68,7 @@ static const char onlyShowInKey[] = "OnlyShowIn";
 static const char notShowInKey[] = "NotShowIn";
 static const char categoriesKey[] = "Categories";
 static const char extendPrefixKey[] = "X-";
+static QLatin1String mimeTypeKey("MimeType");
 
 // Helper functions prototypes
 bool checkTryExec(const QString& progName);
@@ -767,6 +768,33 @@ QIcon const XdgDesktopFile::icon(const QIcon& fallback) const
 QString const XdgDesktopFile::iconName() const
 {
     return value("Icon").toString();
+}
+
+
+QStringList XdgDesktopFile::mimeTypes() const
+{
+    if (contains(mimeTypeKey))
+    {
+        QStringList s = value(mimeTypeKey).toString().split(QLatin1Char(';'));
+        if (s.isEmpty())
+        {
+            return s;
+        }
+        else
+        {
+            // Remove empty strings
+            QMutableListIterator<QString> it(s);
+            while (it.hasNext())
+            {
+                const QString dir = it.next();
+                if (dir.isEmpty())
+                    it.remove();
+            }
+        }
+        return s;
+    }
+
+    return QStringList();
 }
 
 

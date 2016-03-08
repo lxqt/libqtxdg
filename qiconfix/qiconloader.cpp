@@ -590,10 +590,19 @@ QSize QIconLoaderEngineFixed::actualSize(const QSize &size, QIcon::Mode mode,
     QIconLoaderEngineEntry *entry = entryForSize(size);
     if (entry) {
         const QIconDirInfo &dir = entry->dir;
-        if (dir.type == QIconDirInfo::Scalable)
+        if (dir.type == QIconDirInfo::Scalable || dynamic_cast<ScalableEntry *>(entry))
             return size;
         else {
-            int result = qMin<int>(dir.size, qMin(size.width(), size.height()));
+            int dir_size = dir.size;
+            //Note: fallback for directories that don't have its content size defined
+            //  -> get the actual size based on the image if possible
+            PixmapEntry * pix_e;
+            if (0 == dir_size && nullptr != (pix_e = dynamic_cast<PixmapEntry *>(entry)))
+            {
+                QSize pix_size = pix_e->basePixmap.size();
+                dir_size = qMin(pix_size.width(), pix_size.height());
+            }
+            int result = qMin(dir_size, qMin(size.width(), size.height()));
             return QSize(result, result);
         }
     }

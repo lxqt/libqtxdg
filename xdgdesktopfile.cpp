@@ -773,28 +773,7 @@ QString const XdgDesktopFile::iconName() const
 
 QStringList XdgDesktopFile::mimeTypes() const
 {
-    if (contains(mimeTypeKey))
-    {
-        QStringList s = value(mimeTypeKey).toString().split(QLatin1Char(';'));
-        if (s.isEmpty())
-        {
-            return s;
-        }
-        else
-        {
-            // Remove empty strings
-            QMutableListIterator<QString> it(s);
-            while (it.hasNext())
-            {
-                const QString dir = it.next();
-                if (dir.isEmpty())
-                    it.remove();
-            }
-        }
-        return s;
-    }
-
-    return QStringList();
+    return value(mimeTypeKey).toString().split(QLatin1Char(';'), QString::SkipEmptyParts);
 }
 
 

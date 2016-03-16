@@ -133,13 +133,7 @@ QString XdgDirs::userDir(XdgDirs::UserDirectory dir)
 
     QString folderName = userDirectoryString[dir];
 
-    QString fallback;
-    if (getenv("HOME") == NULL)
-        return QString("/tmp");
-    else if (dir == XdgDirs::Desktop)
-        fallback = QString("%1/%2").arg(getenv("HOME")).arg("Desktop");
-    else
-        fallback = QString(getenv("HOME"));
+    const QString fallback = userDirFallback(dir);
 
     QString configDir(configHome());
     QFile configFile(configDir + "/user-dirs.dirs");

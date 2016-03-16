@@ -51,7 +51,7 @@ void removeEndingSlash(QString &s);
 QString createDirectory(const QString &dir);
 
 void cleanAndAddPostfix(QStringList &dirs, const QString& postfix);
-
+QString userDirFallback(XdgDirs::UserDirectory dir);
 
 /************************************************
  Helper func.
@@ -98,6 +98,30 @@ void cleanAndAddPostfix(QStringList &dirs, const QString& postfix)
         removeEndingSlash(dirs[i]);
         dirs[i].append(postfix);
     }
+}
+
+
+QString userDirFallback(XdgDirs::UserDirectory dir)
+{
+    QString fallback;
+    if (getenv("HOME") == NULL)
+        return QString("/tmp");
+    else if (dir == XdgDirs::Desktop)
+        fallback = QString("%1/%2").arg(getenv("HOME")).arg("Desktop");
+    else
+        fallback = QString(getenv("HOME"));
+
+    return fallback;
+}
+
+
+QString XdgDirs::userDirDefault(XdgDirs::UserDirectory dir)
+{
+    // possible values for UserDirectory
+    if (dir < XdgDirs::Desktop || dir > XdgDirs::Videos)
+        return QString();
+
+    return userDirFallback(dir);
 }
 
 

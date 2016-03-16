@@ -62,6 +62,14 @@ public:
      */
     static QString userDir(UserDirectory dir);
 
+
+    /*! @brief Returns the default path to the user specified directory.
+     *  Returns /tmp if no $HOME defined, $HOME/Desktop if dir equals
+     *  XdgDirs::Desktop or $HOME othewise. If dir value is invalid, an empty
+     *  QString is returned.
+     */
+    static QString userDirDefault(UserDirectory dir);
+
     /*! @brief Returns true if writting into configuration file $XDG_CONFIG_HOME/user-dirs.dirs
      * the path in value for the directory in dir is succesfull. Returns false otherwise. If
      * createDir is true, dir will be created if it doesn't exist.

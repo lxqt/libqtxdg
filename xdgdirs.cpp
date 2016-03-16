@@ -128,7 +128,7 @@ QString XdgDirs::userDirDefault(XdgDirs::UserDirectory dir)
 QString XdgDirs::userDir(XdgDirs::UserDirectory dir)
 {
     // possible values for UserDirectory
-    if (dir < 0 || dir > 7)
+    if (dir < XdgDirs::Desktop || dir > XdgDirs::Videos)
         return QString();
 
     QString folderName = userDirectoryString[dir];
@@ -171,7 +171,7 @@ QString XdgDirs::userDir(XdgDirs::UserDirectory dir)
 bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool createDir)
 {
     // possible values for UserDirectory
-    if (dir < 0 || dir > 7)
+    if (dir < XdgDirs::Desktop || dir > XdgDirs::Videos)
         return false;
 
     if (!(value.startsWith(QLatin1String("$HOME"))

@@ -118,6 +118,7 @@ QString userDirFallback(XdgDirs::UserDirectory dir)
 QString XdgDirs::userDirDefault(XdgDirs::UserDirectory dir)
 {
     // possible values for UserDirectory
+    Q_ASSERT(!(dir < XdgDirs::Desktop || dir > XdgDirs::Videos));
     if (dir < XdgDirs::Desktop || dir > XdgDirs::Videos)
         return QString();
 
@@ -128,6 +129,7 @@ QString XdgDirs::userDirDefault(XdgDirs::UserDirectory dir)
 QString XdgDirs::userDir(XdgDirs::UserDirectory dir)
 {
     // possible values for UserDirectory
+    Q_ASSERT(!(dir < XdgDirs::Desktop || dir > XdgDirs::Videos));
     if (dir < XdgDirs::Desktop || dir > XdgDirs::Videos)
         return QString();
 
@@ -171,6 +173,7 @@ QString XdgDirs::userDir(XdgDirs::UserDirectory dir)
 bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool createDir)
 {
     // possible values for UserDirectory
+    Q_ASSERT(!(dir < XdgDirs::Desktop || dir > XdgDirs::Videos));
     if (dir < XdgDirs::Desktop || dir > XdgDirs::Videos)
         return false;
 

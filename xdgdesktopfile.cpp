@@ -354,9 +354,10 @@ XdgDesktopFile::Type XdgDesktopFileData::detectType(XdgDesktopFile *q) const
 bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const QStringList& urls) const
 {
     //DBusActivatable handling
-    if (q->value(QLatin1String("DBusActivatable"), false).toBool())
-        return startByDBus(urls);
-
+    if (q->value(QLatin1String("DBusActivatable"), false).toBool()) {
+        if (startByDBus(urls))
+            return true;
+    }
     QStringList args = q->expandExecString(urls);
 
     if (args.isEmpty())

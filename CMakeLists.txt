@@ -174,6 +174,7 @@ create_pkgconfig_file(
 
 target_compile_definitions(${QTXDGX_LIBRARY_NAME}
     PRIVATE "QTXDG_COMPILATION=\"1\""
+    PRIVATE "QTXDG_VERSION=\"${QTXDG_VERSION_STRING}\""
 )
 
 target_include_directories(${QTXDGX_LIBRARY_NAME}
@@ -258,6 +259,8 @@ else()
     message(STATUS "For building tests use -DBUILD_TESTS=Yes option.")
     message(STATUS "")
 endif()
+
+add_subdirectory(util)
 
 # uninstall target
 configure_file(

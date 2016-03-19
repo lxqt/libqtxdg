@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
 project(libqtxdg)
 
 option(BUILD_TESTS "Builds tests" OFF)
+option(BUILD_DEV_UTILS "Builds and install development utils" OFF)
 
 # additional cmake files
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -260,7 +261,9 @@ else()
     message(STATUS "")
 endif()
 
-add_subdirectory(util)
+if (BUILD_DEV_UTILS)
+    add_subdirectory(util)
+endif()
 
 # uninstall target
 configure_file(

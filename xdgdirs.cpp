@@ -51,7 +51,7 @@ void removeEndingSlash(QString &s);
 QString createDirectory(const QString &dir);
 
 void cleanAndAddPostfix(QStringList &dirs, const QString& postfix);
-
+QString userDirFallback(XdgDirs::UserDirectory dir);
 
 /************************************************
  Helper func.
@@ -101,14 +101,8 @@ void cleanAndAddPostfix(QStringList &dirs, const QString& postfix)
 }
 
 
-QString XdgDirs::userDir(XdgDirs::UserDirectory dir)
+QString userDirFallback(XdgDirs::UserDirectory dir)
 {
-    // possible values for UserDirectory
-    if (dir < 0 || dir > 7)
-        return QString();
-
-    QString folderName = userDirectoryString[dir];
-
     QString fallback;
     if (getenv("HOME") == NULL)
         return QString("/tmp");
@@ -116,6 +110,32 @@ QString XdgDirs::userDir(XdgDirs::UserDirectory dir)
         fallback = QString("%1/%2").arg(getenv("HOME")).arg("Desktop");
     else
         fallback = QString(getenv("HOME"));
+
+    return fallback;
+}
+
+
+QString XdgDirs::userDirDefault(XdgDirs::UserDirectory dir)
+{
+    // possible values for UserDirectory
+    Q_ASSERT(!(dir < XdgDirs::Desktop || dir > XdgDirs::Videos));
+    if (dir < XdgDirs::Desktop || dir > XdgDirs::Videos)
+        return QString();
+
+    return userDirFallback(dir);
+}
+
+
+QString XdgDirs::userDir(XdgDirs::UserDirectory dir)
+{
+    // possible values for UserDirectory
+    Q_ASSERT(!(dir < XdgDirs::Desktop || dir > XdgDirs::Videos));
+    if (dir < XdgDirs::Desktop || dir > XdgDirs::Videos)
+        return QString();
+
+    QString folderName = userDirectoryString[dir];
+
+    const QString fallback = userDirFallback(dir);
 
     QString configDir(configHome());
     QFile configFile(configDir + "/user-dirs.dirs");
@@ -153,7 +173,8 @@ QString XdgDirs::userDir(XdgDirs::UserDirectory dir)
 bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool createDir)
 {
     // possible values for UserDirectory
-    if (dir < 0 || dir > 7)
+    Q_ASSERT(!(dir < XdgDirs::Desktop || dir > XdgDirs::Videos));
+    if (dir < XdgDirs::Desktop || dir > XdgDirs::Videos)
         return false;
 
     if (!(value.startsWith(QLatin1String("$HOME"))

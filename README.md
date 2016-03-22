@@ -13,6 +13,7 @@ applies here.
 
 ###Configuration options:
     BUILD_TESTS         Builds tests, defaults to OFF
+    BUILD_DEV_UTILS     Builds and install development utils, defaults to OFF
 
 ###Configuration Examples:
 Build library  and build self tests: ```cmake -DBUILD_TESTS=ON ..```

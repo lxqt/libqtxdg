@@ -176,6 +176,7 @@ create_pkgconfig_file(
 target_compile_definitions(${QTXDGX_LIBRARY_NAME}
     PRIVATE "QTXDG_COMPILATION=\"1\""
     PRIVATE "QTXDG_VERSION=\"${QTXDG_VERSION_STRING}\""
+    PRIVATE "QT_USE_QSTRINGBUILDER"
 )
 
 target_include_directories(${QTXDGX_LIBRARY_NAME}

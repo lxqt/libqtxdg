@@ -354,9 +354,31 @@ XdgDesktopFile::Type XdgDesktopFileData::detectType(XdgDesktopFile *q) const
 bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const QStringList& urls) const
 {
     //DBusActivatable handling
-    if (q->value(QLatin1String("DBusActivatable"), false).toBool())
-        return startByDBus(urls);
-
+    if (q->value(QLatin1String("DBusActivatable"), false).toBool()) {
+        /* WARNING: We fallback to use Exec when the DBusActivatable fails.
+         *
+         * This is a violation of the standard and we know it!
+         *
+         * From the Standard:
+         * DBusActivatable	A boolean value specifying if D-Bus activation is
+         * supported for this application. If this key is missing, the default
+         * value is false. If the value is true then implementations should
+         * ignore the Exec key and send a D-Bus message to launch the
+         * application. See D-Bus Activation for more information on how this
+         * works. Applications should still include Exec= lines in their desktop
+         * files for compatibility with implementations that do not understand
+         * the DBusActivatable key.
+         *
+         * So, why are we doing it ? In the benefit of user experience.
+         * We first ignore the Exec line and in use the D-Bus to lauch the
+         * application. But if it fails, we try the Exec method.
+         *
+         * We consider that this violation is more acceptable than an failure
+         * in launching an application.
+         */
+        if (startByDBus(urls))
+            return true;
+    }
     QStringList args = q->expandExecString(urls);
 
     if (args.isEmpty())

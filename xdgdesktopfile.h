@@ -184,6 +184,17 @@ public:
     /*! Returns the URL for the Link desktop file; otherwise an empty string is returned.  */
     QString url() const;
 
+    /*! Computes the desktop file ID. It is the identifier of an installed
+     *  desktop entry file.
+     * @par fileName - The desktop file complete name.
+     * @par checkFileExists If true and the file doesn't exist the computed ID
+     * will be an empty QString(). Defaults to true.
+     * @return The computed ID. Returns an empty QString() if it's impossible to
+     * compute the ID. Reference:
+     * https://specifications.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html#desktop-file-id
+     */
+    static QString id(const QString &fileName, bool checkFileExists = true);
+
     /*! The desktop entry specification defines a number of fields to control the visibility of the application menu. This function
          checks whether to display a this application or not. */
     QTXDG_DEPRECATED bool isShow(const QString& environment = "Razor") const;

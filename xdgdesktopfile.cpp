@@ -69,6 +69,7 @@ static const char notShowInKey[] = "NotShowIn";
 static const char categoriesKey[] = "Categories";
 static const char extendPrefixKey[] = "X-";
 static QLatin1String mimeTypeKey("MimeType");
+static const QLatin1String applicationsStr("applications");
 
 // Helper functions prototypes
 bool checkTryExec(const QString& progName);
@@ -1069,6 +1070,37 @@ bool checkTryExec(const QString& progName)
     }
 
     return false;
+}
+
+
+QString XdgDesktopFile::id(const QString &fileName, bool checkFileExists)
+{
+    const QFileInfo f(fileName);
+    if (checkFileExists) {
+        if (!f.exists()) {
+            return QString();
+        }
+    }
+
+    QString id = f.absoluteFilePath();
+    const QStringList dataDirs = XdgDirs::dataDirs();
+
+    foreach(const QString &d, dataDirs) {
+        if (id.startsWith(d)) {
+            // remove only the first occurence
+            id.replace(id.indexOf(d), d.size(), QString());
+        }
+    }
+
+    const QLatin1Char slash('/');
+    const QString s = slash + applicationsStr + slash;
+    if (!id.startsWith(s))
+        return QString();
+
+    id.replace(id.indexOf(s), s.size(), QString());
+    id.replace(slash, QLatin1Char('-'));
+
+    return id;
 }
 
 

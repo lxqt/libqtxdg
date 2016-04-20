@@ -920,13 +920,13 @@ QString expandEnvVariables(const QString str)
     replaceVar(res, "HOME", getenv("HOME"));
     replaceVar(res, "USER", getenv("USER"));
 
-    replaceVar(res, "XDG_DESKTOP_DIR",   QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
-    replaceVar(res, "XDG_TEMPLATES_DIR", QStandardPaths::writableLocation(QStandardPaths::TempLocation));
-    replaceVar(res, "XDG_DOCUMENTS_DIR", QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation));
-    replaceVar(res, "XDG_MUSIC_DIR",     QStandardPaths::writableLocation(QStandardPaths::MusicLocation));
-    replaceVar(res, "XDG_PICTURES_DIR",  QStandardPaths::writableLocation(QStandardPaths::PicturesLocation));
-    replaceVar(res, "XDG_VIDEOS_DIR",    QStandardPaths::writableLocation(QStandardPaths::MoviesLocation));
-    replaceVar(res, "XDG_PHOTOS_DIR",    QStandardPaths::writableLocation(QStandardPaths::PicturesLocation));
+    replaceVar(res, "XDG_DESKTOP_DIR",   XdgDirs::userDir(XdgDirs::Desktop));
+    replaceVar(res, "XDG_TEMPLATES_DIR", XdgDirs::userDir(XdgDirs::Templates));
+    replaceVar(res, "XDG_DOCUMENTS_DIR", XdgDirs::userDir(XdgDirs::Documents));
+    replaceVar(res, "XDG_MUSIC_DIR", XdgDirs::userDir(XdgDirs::Music));
+    replaceVar(res, "XDG_PICTURES_DIR", XdgDirs::userDir(XdgDirs::Pictures));
+    replaceVar(res, "XDG_VIDEOS_DIR", XdgDirs::userDir(XdgDirs::Videos));
+    replaceVar(res, "XDG_PHOTOS_DIR", XdgDirs::userDir(XdgDirs::Pictures));
 
     return res;
 }

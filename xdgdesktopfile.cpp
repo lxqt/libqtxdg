@@ -64,11 +64,11 @@
 static const QStringList nonDetachExecs = QStringList()
     << QLatin1String("pkexec");
 
-static const char onlyShowInKey[] = "OnlyShowIn";
-static const char notShowInKey[] = "NotShowIn";
-static const char categoriesKey[] = "Categories";
-static const char extendPrefixKey[] = "X-";
-static QLatin1String mimeTypeKey("MimeType");
+static const QLatin1String onlyShowInKey("OnlyShowIn");
+static const QLatin1String notShowInKey("NotShowIn");
+static const QLatin1String categoriesKey("Categories");
+static const QLatin1String extendPrefixKey("X-");
+static const QLatin1String mimeTypeKey("MimeType");
 static const QLatin1String applicationsStr("applications");
 
 // Helper functions prototypes

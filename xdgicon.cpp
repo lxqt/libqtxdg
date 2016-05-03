@@ -137,7 +137,7 @@ QIcon XdgIcon::fromTheme(const QString& iconName, const QIcon& fallback)
  ************************************************/
 QIcon XdgIcon::fromTheme(const QStringList& iconNames, const QIcon& fallback)
 {
-    foreach (QString iconName, iconNames)
+    foreach (const QString &iconName, iconNames)
     {
         QIcon icon = fromTheme(iconName);
         if (!icon.isNull())

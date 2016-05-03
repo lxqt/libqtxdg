@@ -215,7 +215,7 @@ void XdgMenuReader::processMergeFileTag(QDomElement& element, QStringList* merge
         QString relativeName;
         QStringList configDirs = XdgDirs::configDirs();
 
-        foreach (QString configDir, configDirs)
+        foreach (const QString &configDir, configDirs)
         {
             if (mFileName.startsWith(configDir))
             {
@@ -236,7 +236,7 @@ void XdgMenuReader::processMergeFileTag(QDomElement& element, QStringList* merge
         if (relativeName.isEmpty())
             return;
 
-        foreach (QString configDir, configDirs)
+        foreach (const QString &configDir, configDirs)
         {
             if (QFileInfo(configDir + relativeName).exists())
             {
@@ -295,7 +295,7 @@ void XdgMenuReader::processDefaultMergeDirsTag(QDomElement& element, QStringList
     QStringList dirs = XdgDirs::configDirs();
     dirs << XdgDirs::configHome();
 
-    foreach (QString dir, dirs)
+    foreach (const QString &dir, dirs)
     {
         mergeDir(QString("%1/menus/%2-merged").arg(dir).arg(menuBaseName), element, mergedFiles);
     }
@@ -329,7 +329,7 @@ void XdgMenuReader::processDefaultAppDirsTag(QDomElement& element)
     QStringList dirs = XdgDirs::dataDirs();
     dirs.prepend(XdgDirs::dataHome(false));
 
-    foreach (QString dir, dirs)
+    foreach (const QString &dir, dirs)
     {
         //qDebug() << "Add AppDir: " << dir + "/applications/";
         addDirTag(element, "AppDir", dir + "/applications/");
@@ -360,7 +360,7 @@ void XdgMenuReader::processDefaultDirectoryDirsTag(QDomElement& element)
     QStringList dirs = XdgDirs::dataDirs();
     dirs.prepend(XdgDirs::dataHome(false));
 
-    foreach (QString dir, dirs)
+    foreach (const QString &dir, dirs)
         addDirTag(element, "DirectoryDir", dir + "/desktop-directories/");
 }
 
@@ -431,7 +431,7 @@ void XdgMenuReader::mergeDir(const QString& dirName, QDomElement& element, QStri
         QDir dir = QDir(dirInfo.canonicalFilePath());
         const QFileInfoList files = dir.entryInfoList(QStringList() << "*.menu", QDir::Files | QDir::Readable);
 
-        foreach (QFileInfo file, files)
+        foreach (const QFileInfo &file, files)
             mergeFile(file.canonicalFilePath(), element, mergedFiles);
     }
 }

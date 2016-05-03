@@ -332,8 +332,8 @@ QString XdgDirs::autostartHome(bool createDir)
 QStringList XdgDirs::autostartDirs(const QString &postfix)
 {
     QStringList dirs;
-    QStringList s = configDirs();
-    foreach(QString dir, s)
+    const QStringList s = configDirs();
+    foreach(const QString &dir, s)
         dirs << QString("%1/autostart").arg(dir) + postfix;
 
     return dirs;

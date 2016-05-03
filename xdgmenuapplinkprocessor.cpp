@@ -187,9 +187,9 @@ void XdgMenuApplinkProcessor::findDesktopFiles(const QString& dirName, const QSt
 {
     QDir dir(dirName);
     mMenu->addWatchPath(dir.absolutePath());
-    QFileInfoList files = dir.entryInfoList(QStringList("*.desktop"), QDir::Files);
+    const QFileInfoList files = dir.entryInfoList(QStringList("*.desktop"), QDir::Files);
 
-    foreach (QFileInfo file, files)
+    foreach (const QFileInfo &file, files)
     {
         XdgDesktopFile* f = XdgDesktopFileCache::getFile(file.canonicalFilePath());
         if (f)
@@ -198,8 +198,8 @@ void XdgMenuApplinkProcessor::findDesktopFiles(const QString& dirName, const QSt
 
 
     // Working recursively ............
-    QFileInfoList dirs = dir.entryInfoList(QStringList(), QDir::Dirs | QDir::NoDotAndDotDot);
-    foreach (QFileInfo d, dirs)
+    const QFileInfoList dirs = dir.entryInfoList(QStringList(), QDir::Dirs | QDir::NoDotAndDotDot);
+    foreach (const QFileInfo &d, dirs)
     {
         QString dn = d.canonicalFilePath();
         if (dn != dirName)
@@ -240,9 +240,9 @@ bool XdgMenuApplinkProcessor::checkTryExec(const QString& progName)
     if (progName.startsWith(QDir::separator()))
         return QFileInfo(progName).isExecutable();
 
-    QStringList dirs = QString(getenv("PATH")).split(":");
+    const QStringList dirs = QString(getenv("PATH")).split(":");
 
-    foreach (QString dir, dirs)
+    foreach (const QString &dir, dirs)
     {
         if (QFileInfo(QDir(dir), progName).isExecutable())
             return true;

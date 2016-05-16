@@ -279,5 +279,3 @@ private:
 
 
 #endif // QTXDG_XDGDESKTOPFILE_H
-
-

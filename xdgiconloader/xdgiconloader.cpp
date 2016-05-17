@@ -31,7 +31,7 @@
 **
 ****************************************************************************/
 #ifndef QT_NO_ICON
-#include "qiconloader_p.h"
+#include "xdgiconloader_p.h"
 
 #include <private/qguiapplication_p.h>
 #include <private/qicon_p.h>

@@ -51,7 +51,6 @@ set(libqtxdg_CPP_FILES
     xmlhelper.cpp
     xdgautostart.cpp
     xdgmimetype.cpp
-    qiconfix/qiconloader.cpp
 )
 
 set(libqtxdg_MOCS
@@ -64,25 +63,20 @@ set(libqtxdg_MOCS
     xdgmenuwidget.h
 )
 
-set(libqtxdg_PRIVATE_INSTALLABLE_H_FILES
-    qiconfix/qiconloader_p.h
-)
-
 QT5_WRAP_CPP(libqtxdg_CXX_FILES ${libqtxdg_MOCS})
 
 add_library(${QTXDGX_LIBRARY_NAME} SHARED
     ${libqtxdg_PUBLIC_H_FILES}
     ${libqtxdg_PRIVATE_H_FILES}
-    ${libqtxdg_PRIVATE_INSTALLABLE_H_FILES}
     ${libqtxdg_PRIVATE_H_FILES}
     ${libqtxdg_CPP_FILES}
     ${libqtxdg_CXX_FILES}
 )
 
-
 target_link_libraries(${QTXDGX_LIBRARY_NAME}
     PUBLIC
         ${QTX_LIBRARIES}
+        ${QTXDGX_ICONLOADER_LIBRARY_NAME}
 )
 
 set_target_properties(${QTXDGX_LIBRARY_NAME} PROPERTIES
@@ -99,17 +93,15 @@ target_compile_definitions(${QTXDGX_LIBRARY_NAME}
 target_include_directories(${QTXDGX_LIBRARY_NAME}
     INTERFACE "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}>"
     INTERFACE "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
-    INTERFACE "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}/${QTXDG_VERSION_STRING}>"
 )
 
 # include directories and targets for the in tree build
 target_include_directories(${QTXDGX_LIBRARY_NAME}
     INTERFACE "$<BUILD_INTERFACE:${QTXDGX_INTREE_INCLUDEDIR}/${QTXDGX_FILE_NAME}>"
     INTERFACE "$<BUILD_INTERFACE:${QTXDGX_INTREE_INCLUDEDIR}>"
-    INTERFACE "$<BUILD_INTERFACE:${QTXDGX_INTREE_INCLUDEDIR}/${QTXDGX_FILE_NAME}/${QTXDG_VERSION_STRING}>"
 )
 
-export(TARGETS ${QTXDGX_LIBRARY_NAME} FILE "${CMAKE_BINARY_DIR}/${QTXDGX_FILE_NAME}-targets.cmake")
+export(TARGETS ${QTXDGX_LIBRARY_NAME} APPEND FILE "${CMAKE_BINARY_DIR}/${QTXDGX_FILE_NAME}-targets.cmake")
 # end of in tree build stuff
 
 # create the portble headers

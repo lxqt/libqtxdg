@@ -48,6 +48,8 @@
 // We mean it.
 //
 
+#include <xdgiconloader_export.h>
+
 #include <QtGui/QIcon>
 #include <QtGui/QIconEngine>
 #include <QtGui/QPixmapCache>
@@ -114,7 +116,7 @@ struct QThemeIconInfo
 };
 
 //class QIconLoaderEngine : public QIconEngine
-class QIconLoaderEngineFixed : public QIconEngine
+class XDGICONLOADER_EXPORT QIconLoaderEngineFixed : public QIconEngine
 {
 public:
     QIconLoaderEngineFixed(const QString& iconName = QString());

@@ -33,7 +33,7 @@
 #include <QStringList>
 #include <QFileInfo>
 #include <QCache>
-#include "qiconfix/qiconloader_p.h"
+#include "../xdgiconloader/xdgiconloader_p.h"
 #include <QCoreApplication>
 
 #define DEFAULT_APP_ICON "application-x-executable"

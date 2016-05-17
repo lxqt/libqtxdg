@@ -32,6 +32,7 @@ set(QTXDG_VERSION_STRING ${QTXDG_MAJOR_VERSION}.${QTXDG_MINOR_VERSION}.${QTXDG_P
 
 include(GNUInstallDirs)             # Standard directories for installation
 include(CMakePackageConfigHelpers)
+include(GenerateExportHeader)
 include(create_portable_headers)
 include(create_pkgconfig_file)
 include(compiler_settings NO_POLICY_SCOPE)
@@ -48,6 +49,9 @@ endif()
 set(QTXDGX_LIBRARY_NAME "Qt5Xdg")
 set(QTXDGX_FILE_NAME "qt5xdg")
 
+set(QTXDGX_ICONLOADER_LIBRARY_NAME "Qt5XdgIconLoader")
+set(QTXDGX_ICONLOADER_FILE_NAME "qt5xdgiconloader")
+
 set(QTXDGX_PKG_CONFIG_DESCRIPTION "Qt5Xdg, a Qt5 implementation of XDG standards")
 set(QTXDGX_PKG_CONFIG_REQUIRES "Qt5Core, Qt5Xml, Qt5Widgets, Qt5DBus")
 set(QTXDGX_INTREE_INCLUDEDIR "${CMAKE_CURRENT_BINARY_DIR}/InTreeBuild/include")
@@ -58,6 +62,7 @@ endif (NOT CMAKE_BUILD_TYPE)
 
 message(STATUS "Building with Qt ${Qt5Core_VERSION_STRING}")
 
+add_subdirectory(xdgiconloader)
 add_subdirectory(qtxdg)
 
 if(BUILD_TESTS)
@@ -99,16 +104,17 @@ create_pkgconfig_file(
     INSTALL
 )
 
-install(EXPORT
-    "${QTXDGX_FILE_NAME}-targets"
-    DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_FILE_NAME}"
-    COMPONENT Devel
-)
-
 install(FILES
     "${CMAKE_BINARY_DIR}/${QTXDGX_FILE_NAME}-config.cmake"
     "${CMAKE_BINARY_DIR}/${QTXDGX_FILE_NAME}-config-version.cmake"
     DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_FILE_NAME}"
+    COMPONENT Devel
+)
+
+install(EXPORT
+    "${QTXDGX_FILE_NAME}-targets"
+    DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_FILE_NAME}"
+    FILE qt5xdg-targets.cmake
     COMPONENT Devel
 )
 

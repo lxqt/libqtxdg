@@ -61,14 +61,12 @@
 
 //QT_BEGIN_NAMESPACE
 
-namespace QtXdg {
+class XdgIconLoader;
 
-class QIconLoader;
-
-struct QIconDirInfo
+struct XdgIconDirInfo
 {
     enum Type { Fixed, Scalable, Threshold };
-    QIconDirInfo(const QString &_path = QString()) :
+    XdgIconDirInfo(const QString &_path = QString()) :
             path(_path),
             size(0),
             maxSize(0),
@@ -83,31 +81,31 @@ struct QIconDirInfo
     Type type : 4;
 };
 
-class QIconLoaderEngineEntry
+class XdgIconLoaderEngineEntry
  {
 public:
-    virtual ~QIconLoaderEngineEntry() {}
+    virtual ~XdgIconLoaderEngineEntry() {}
     virtual QPixmap pixmap(const QSize &size,
                            QIcon::Mode mode,
                            QIcon::State state) = 0;
     QString filename;
-    QIconDirInfo dir;
+    XdgIconDirInfo dir;
     static int count;
 };
 
-struct ScalableEntry : public QIconLoaderEngineEntry
+struct ScalableEntry : public XdgIconLoaderEngineEntry
 {
     QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state) Q_DECL_OVERRIDE;
     QIcon svgIcon;
 };
 
-struct PixmapEntry : public QIconLoaderEngineEntry
+struct PixmapEntry : public XdgIconLoaderEngineEntry
 {
     QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state) Q_DECL_OVERRIDE;
     QPixmap basePixmap;
 };
 
-typedef QList<QIconLoaderEngineEntry*> QThemeIconEntries;
+typedef QList<XdgIconLoaderEngineEntry*> QThemeIconEntries;
 
 struct QThemeIconInfo
 {
@@ -116,11 +114,11 @@ struct QThemeIconInfo
 };
 
 //class QIconLoaderEngine : public QIconEngine
-class XDGICONLOADER_EXPORT QIconLoaderEngineFixed : public QIconEngine
+class XDGICONLOADER_EXPORT XdgIconLoaderEngine : public QIconEngine
 {
 public:
-    QIconLoaderEngineFixed(const QString& iconName = QString());
-    ~QIconLoaderEngineFixed();
+    XdgIconLoaderEngine(const QString& iconName = QString());
+    ~XdgIconLoaderEngine();
 
     void paint(QPainter *painter, const QRect &rect, QIcon::Mode mode, QIcon::State state);
     QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state);
@@ -134,13 +132,13 @@ private:
     bool hasIcon() const;
     void ensureLoaded();
     void virtual_hook(int id, void *data);
-    QIconLoaderEngineEntry *entryForSize(const QSize &size);
-    QIconLoaderEngineFixed(const QIconLoaderEngineFixed &other);
+    XdgIconLoaderEngineEntry *entryForSize(const QSize &size);
+    XdgIconLoaderEngine(const XdgIconLoaderEngine &other);
     QThemeIconInfo m_info;
     QString m_iconName;
     uint m_key;
 
-    friend class QIconLoader;
+    friend class XdgIconLoader;
 };
 
 class QIconTheme
@@ -149,21 +147,21 @@ public:
     QIconTheme(const QString &name);
     QIconTheme() : m_valid(false) {}
     QStringList parents() { return m_parents; }
-    QVector <QIconDirInfo> keyList() { return m_keyList; }
+    QVector <XdgIconDirInfo> keyList() { return m_keyList; }
     QStringList contentDirs() { return m_contentDirs; }
     bool isValid() { return m_valid; }
 
 private:
     QStringList m_contentDirs;
-    QVector <QIconDirInfo> m_keyList;
+    QVector <XdgIconDirInfo> m_keyList;
     QStringList m_parents;
     bool m_valid;
 };
 
-class Q_GUI_EXPORT QIconLoader
+class XDGICONLOADER_EXPORT XdgIconLoader
 {
 public:
-    QIconLoader();
+    XdgIconLoader();
     QThemeIconInfo loadIcon(const QString &iconName) const;
     uint themeKey() const { return m_themeKey; }
 
@@ -172,8 +170,8 @@ public:
     QIconTheme theme() { return themeList.value(themeName()); }
     void setThemeSearchPath(const QStringList &searchPaths);
     QStringList themeSearchPaths() const;
-    QIconDirInfo dirInfo(int dirindex);
-    static QIconLoader *instance();
+    XdgIconDirInfo dirInfo(int dirindex);
+    static XdgIconLoader *instance();
     void updateSystemTheme();
     void invalidateKey() { m_themeKey++; }
     void ensureInitialized();
@@ -192,11 +190,10 @@ private:
     mutable QHash <QString, QIconTheme> themeList;
 };
 
-} // QtXdg
 
 // Note: class template specialization of 'QTypeInfo' must occur at
 //       global scope
-Q_DECLARE_TYPEINFO(QtXdg::QIconDirInfo, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(XdgIconDirInfo, Q_MOVABLE_TYPE);
 
 //QT_END_NAMESPACE
 

@@ -1104,28 +1104,6 @@ QString XdgDesktopFile::id(const QString &fileName, bool checkFileExists)
 }
 
 
-bool XdgDesktopFile::isShow(const QString& environment) const
-{
-    const QString env = environment.toUpper();
-
-    if (d->mIsShow.contains(env))
-        return d->mIsShow.value(env);
-
-    d->mIsShow.insert(env, false);
-    // Means "this application exists, but don't display it in the menus".
-    if (value("NoDisplay").toBool())
-        return false;
-
-    // The file is inapplicable to the current environment
-    if (!isSuitable(true, env))
-        return false;
-
-
-    d->mIsShow.insert(env, true);
-    return true;
-}
-
-
 bool XdgDesktopFile::isShown(const QString &environment) const
 {
     const QString env = environment.toUpper();
@@ -1144,40 +1122,6 @@ bool XdgDesktopFile::isShown(const QString &environment) const
         return false;
 
     d->mIsShow.insert(env, true);
-    return true;
-}
-
-
-bool XdgDesktopFile::isApplicable(bool excludeHidden, const QString& environment) const
-{
-    // Hidden should have been called Deleted. It means the user deleted
-    // (at his level) something that was present
-    if (excludeHidden && value("Hidden").toBool())
-        return false;
-
-    // A list of strings identifying the environments that should display/not
-    // display a given desktop entry.
-    // OnlyShowIn ........
-    if (contains("OnlyShowIn"))
-    {
-        QStringList s = value("OnlyShowIn").toString().split(';');
-        if (!s.contains(environment))
-            return false;
-    }
-
-    // NotShowIn .........
-    if (contains("NotShowIn"))
-    {
-        QStringList s = value("NotShowIn").toString().split(';');
-        if (s.contains(environment))
-            return false;
-    }
-
-    // actually installed. If not, entry may not show in menus, etc.
-    QString s = value("TryExec").toString();
-    if (!s.isEmpty() && ! checkTryExec(s))
-        return false;
-
     return true;
 }
 

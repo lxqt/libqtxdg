@@ -195,10 +195,6 @@ public:
      */
     static QString id(const QString &fileName, bool checkFileExists = true);
 
-    /*! The desktop entry specification defines a number of fields to control the visibility of the application menu. This function
-         checks whether to display a this application or not. */
-    QTXDG_DEPRECATED bool isShow(const QString& environment = "Razor") const;
-
     /*! The desktop entry specification defines a number of fields to control
         the visibility of the application menu. Thisfunction checks whether
         to display a this application or not.
@@ -209,12 +205,6 @@ public:
             desktop environment name are case insensitive.
     */
     bool isShown(const QString &environment = QString()) const;
-
-    /*! This fuction returns true if the desktop file is applicable to the current environment.
-        @par excludeHidden - if set to true (default), files with "Hidden=true" will be considered "not applicable".
-                             Setting this to false is be useful when the user wants to enable/disable items and wants to see those
-                             that are Hidden */
-    QTXDG_DEPRECATED bool isApplicable(bool excludeHidden = true, const QString& environment = "Razor") const;
 
     /*! This fuction returns true if the desktop file is applicable to the
         current environment.

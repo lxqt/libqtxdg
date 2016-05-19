@@ -250,4 +250,3 @@ bool XdgMenuApplinkProcessor::checkTryExec(const QString& progName)
 
     return false;
 }
-

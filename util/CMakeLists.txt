@@ -1,5 +1,5 @@
 include_directories (
-    ${CMAKE_SOURCE_DIR}
+    "${CMAKE_PROJECT_DIR}/qtxdg"
     ${CMAKE_CURRENT_BINARY_DIR}
 )
 

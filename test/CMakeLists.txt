@@ -11,7 +11,7 @@ macro(qtxdg_add_test)
 endmacro()
 
 include_directories (
-    ${CMAKE_SOURCE_DIR}
+    "${CMAKE_SOURCE_DIR}/qtxdg"
     ${CMAKE_CURRENT_BINARY_DIR}
 )
 

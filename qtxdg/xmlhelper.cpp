@@ -44,5 +44,3 @@ QDebug operator<<(QDebug dbg, const QDomElement &el)
     dbg.nospace() << QString("<%1%2>%3</%1>").arg(el.tagName()).arg(args).arg(el.text());
     return dbg.space();
 }
-
-

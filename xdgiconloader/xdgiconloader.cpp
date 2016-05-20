@@ -503,7 +503,7 @@ static bool directoryMatchesSize(const XdgIconDirInfo &dir, int iconsize)
         return dir.size == iconsize;
 
     } else if (dir.type == XdgIconDirInfo::Scalable) {
-        return dir.size <= dir.maxSize &&
+        return iconsize <= dir.maxSize &&
                 iconsize >= dir.minSize;
 
     } else if (dir.type == XdgIconDirInfo::Threshold) {

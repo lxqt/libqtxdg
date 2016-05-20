@@ -1465,7 +1465,7 @@ void XdgDesktopFileCache::initialize(const QString& dirName)
             // We move the desktopFile forward in the list for this mime, so that
             // no desktopfile in front of it have a lower initialPreference.
             int position = m_defaultAppsCache[mime].length();
-            while (position > 0 && m_defaultAppsCache[mime][position - 1]->value("InitialPreference, 0").toInt() < pref)
+            while (position > 0 && m_defaultAppsCache[mime][position - 1]->value("InitialPreference", 0).toInt() < pref)
             {
                 position--;
             }
@@ -1516,7 +1516,7 @@ void loadMimeCacheDir(const QString& dirName, QHash<QString, QList<XdgDesktopFil
             // We move the desktopFile forward in the list for this mime, so that
             // no desktopfile in front of it have a lower initialPreference.
             int position = cache[mime].length();
-            while (position > 0 && cache[mime][position - 1]->value("InitialPreference, 0").toInt() < pref)
+            while (position > 0 && cache[mime][position - 1]->value("InitialPreference", 0).toInt() < pref)
             {
                 position--;
             }

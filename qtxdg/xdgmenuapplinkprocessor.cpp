@@ -40,9 +40,9 @@ XdgMenuApplinkProcessor::XdgMenuApplinkProcessor(QDomElement& element,  XdgMenu*
     mParent = parent;
     mMenu = menu;
 
-    mOnlyUnallocated = element.attribute("onlyUnallocated") == "1";
+    mOnlyUnallocated = element.attribute(QLatin1String("onlyUnallocated")) == QLatin1String("1");
 
-    MutableDomElementIterator i(element, "Menu");
+    MutableDomElementIterator i(element, QLatin1String("Menu"));
     while(i.hasNext())
     {
         QDomElement e = i.next();
@@ -122,18 +122,18 @@ void XdgMenuApplinkProcessor::step2()
         if (!show)
             continue;
 
-        QDomElement appLink = doc.createElement("AppLink");
+        QDomElement appLink = doc.createElement(QLatin1String("AppLink"));
 
-        appLink.setAttribute("id", fileInfo->id());
-        appLink.setAttribute("title", file->localizedValue("Name").toString());
-        appLink.setAttribute("comment", file->localizedValue("Comment").toString());
-        appLink.setAttribute("genericName", file->localizedValue("GenericName").toString());
-        appLink.setAttribute("exec", file->value("Exec").toString());
-        appLink.setAttribute("terminal", file->value("Terminal").toBool());
-        appLink.setAttribute("startupNotify", file->value("StartupNotify").toBool());
-        appLink.setAttribute("path", file->value("Path").toString());
-        appLink.setAttribute("icon", file->value("Icon").toString());
-        appLink.setAttribute("desktopFile", file->fileName());
+        appLink.setAttribute(QLatin1String("id"), fileInfo->id());
+        appLink.setAttribute(QLatin1String("title"), file->localizedValue(QLatin1String("Name")).toString());
+        appLink.setAttribute(QLatin1String("comment"), file->localizedValue(QLatin1String("Comment")).toString());
+        appLink.setAttribute(QLatin1String("genericName"), file->localizedValue(QLatin1String("GenericName")).toString());
+        appLink.setAttribute(QLatin1String("exec"), file->value(QLatin1String("Exec")).toString());
+        appLink.setAttribute(QLatin1String("terminal"), file->value(QLatin1String("Terminal")).toBool());
+        appLink.setAttribute(QLatin1String("startupNoify"), file->value(QLatin1String("StartupNotify")).toBool());
+        appLink.setAttribute(QLatin1String("path"), file->value(QLatin1String("Path")).toString());
+        appLink.setAttribute(QLatin1String("icon"), file->value(QLatin1String("Icon")).toString());
+        appLink.setAttribute(QLatin1String("desktopFile"), file->fileName());
 
         mElement.appendChild(appLink);
 
@@ -159,7 +159,7 @@ void XdgMenuApplinkProcessor::fillAppFileInfoList()
 {
     // Build a pool by collecting entries found in <AppDir>
     {
-        MutableDomElementIterator i(mElement, "AppDir");
+        MutableDomElementIterator i(mElement, QLatin1String("AppDir"));
         i.toBack();
         while(i.hasPrevious())
         {
@@ -187,7 +187,7 @@ void XdgMenuApplinkProcessor::findDesktopFiles(const QString& dirName, const QSt
 {
     QDir dir(dirName);
     mMenu->addWatchPath(dir.absolutePath());
-    const QFileInfoList files = dir.entryInfoList(QStringList("*.desktop"), QDir::Files);
+    const QFileInfoList files = dir.entryInfoList(QStringList(QLatin1String("*.desktop")), QDir::Files);
 
     foreach (const QFileInfo &file, files)
     {
@@ -204,7 +204,7 @@ void XdgMenuApplinkProcessor::findDesktopFiles(const QString& dirName, const QSt
         QString dn = d.canonicalFilePath();
         if (dn != dirName)
         {
-            findDesktopFiles(dn, QString("%1%2-").arg(prefix, d.fileName()));
+            findDesktopFiles(dn, QString::fromLatin1("%1%2-").arg(prefix, d.fileName()));
         }
     }
 }
@@ -216,13 +216,13 @@ void XdgMenuApplinkProcessor::createRules()
     while(i.hasNext())
     {
         QDomElement e = i.next();
-        if (e.tagName()=="Include")
+        if (e.tagName()== QLatin1String("Include"))
         {
             mRules.addInclude(e);
             mElement.removeChild(e);
         }
 
-        else if (e.tagName()=="Exclude")
+        else if (e.tagName()== QLatin1String("Exclude"))
         {
             mRules.addExclude(e);
             mElement.removeChild(e);
@@ -240,7 +240,7 @@ bool XdgMenuApplinkProcessor::checkTryExec(const QString& progName)
     if (progName.startsWith(QDir::separator()))
         return QFileInfo(progName).isExecutable();
 
-    const QStringList dirs = QString(getenv("PATH")).split(":");
+    const QStringList dirs = QFile::decodeName(qgetenv("PATH")).split(QLatin1Char(':'));
 
     foreach (const QString &dir, dirs)
     {

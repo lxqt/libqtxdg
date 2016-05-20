@@ -38,10 +38,10 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationVersion(QLatin1String(QTXDG_VERSION));
 
     QCommandLineParser parser;
-    parser.setApplicationDescription("QtXdg XdgDesktopFile start Tester");
+    parser.setApplicationDescription(QLatin1String("QtXdg XdgDesktopFile start Tester"));
     parser.addHelpOption();
     parser.addVersionOption();
-    parser.addPositionalArgument("file [urls...]", "desktop file to start and it's urls", "file [urls...]");
+    parser.addPositionalArgument(QLatin1String("file [urls...]"), QLatin1String("desktop file to start and it's urls"),QLatin1String("file [urls...]"));
     parser.process(app);
 
     if (parser.positionalArguments().isEmpty()) {
@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
     const QString canonicalFileName = fileInfo.canonicalFilePath();
 
     if (!fileInfo.exists()) {
-        printErr(QString("File %1 does not exist\n").arg(userFileName));
+        printErr(QString::fromLatin1("File %1 does not exist\n").arg(userFileName));
         return EXIT_FAILURE;
     }
 
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     if (valid) {
         f.startDetached(userArgs);
     } else {
-        printErr(QString("%1 is not a valid .desktop file\n").arg(canonicalFileName));
+        printErr(QString::fromLatin1("%1 is not a valid .desktop file\n").arg(canonicalFileName));
         return EXIT_FAILURE;
     }
 

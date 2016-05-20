@@ -63,7 +63,7 @@ XdgDesktopFileList XdgAutoStart::desktopFileList(QStringList dirs, bool excludeH
         if (!dir.exists())
             continue;
 
-        const QFileInfoList files = dir.entryInfoList(QStringList("*.desktop"), QDir::Files | QDir::Readable);
+        const QFileInfoList files = dir.entryInfoList(QStringList(QLatin1String("*.desktop")), QDir::Files | QDir::Readable);
         foreach (const QFileInfo &fi, files)
         {
             if (processed.contains(fi.fileName()))
@@ -88,5 +88,5 @@ XdgDesktopFileList XdgAutoStart::desktopFileList(QStringList dirs, bool excludeH
 QString XdgAutoStart::localPath(const XdgDesktopFile& file)
 {
     QFileInfo fi(file.fileName());
-    return QString("%1/%2").arg(XdgDirs::autostartHome(), fi.fileName());
+    return QString::fromLatin1("%1/%2").arg(XdgDirs::autostartHome(), fi.fileName());
 }

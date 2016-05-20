@@ -76,7 +76,7 @@ bool XdgMenuReader::load(const QString& fileName, const QString& baseDir)
     QFile file(mFileName);
     if (!file.open(QFile::ReadOnly | QFile::Text))
     {
-        mErrorStr = QString("%1 not loading: %2").arg(fileName).arg(file.errorString());
+        mErrorStr = QString::fromLatin1("%1 not loading: %2").arg(fileName).arg(file.errorString());
         return false;
     }
     //qDebug() << "Load file:" << mFileName;
@@ -88,7 +88,7 @@ bool XdgMenuReader::load(const QString& fileName, const QString& baseDir)
 
     if (!mXml.setContent(&file, true, &errorStr, &errorLine, &errorColumn))
     {
-        mErrorStr = QString("Parse error at line %1, column %2:\n%3")
+        mErrorStr = QString::fromLatin1("Parse error at line %1, column %2:\n%3")
                         .arg(errorLine)
                         .arg(errorColumn)
                         .arg(errorStr);
@@ -97,10 +97,10 @@ bool XdgMenuReader::load(const QString& fileName, const QString& baseDir)
 
     QDomElement root = mXml.documentElement();
 
-    QDomElement debugElement = mXml.createElement("FileInfo");
-    debugElement.setAttribute("file", mFileName);
+    QDomElement debugElement = mXml.createElement(QLatin1String("FileInfo"));
+    debugElement.setAttribute(QLatin1String("file"), mFileName);
     if (mParentReader)
-        debugElement.setAttribute("parent", mParentReader->fileName());
+        debugElement.setAttribute(QLatin1String("parent"), mParentReader->fileName());
 
     QDomNode null;
     root.insertBefore(debugElement, null);
@@ -124,49 +124,49 @@ void XdgMenuReader::processMergeTags(QDomElement& element)
     {
         QDomElement next = n.previousSiblingElement();
         // MergeFile ..................
-        if (n.tagName() == "MergeFile")
+        if (n.tagName() == QLatin1String("MergeFile"))
         {
             processMergeFileTag(n, &mergedFiles);
             n.parentNode().removeChild(n);
         }
 
         // MergeDir ...................
-        else if(n.tagName() == "MergeDir")
+        else if(n.tagName() == QLatin1String("MergeDir"))
         {
             processMergeDirTag(n, &mergedFiles);
             n.parentNode().removeChild(n);
         }
 
         // DefaultMergeDirs ...........
-        else if (n.tagName() == "DefaultMergeDirs")
+        else if (n.tagName() == QLatin1String("DefaultMergeDirs"))
         {
             processDefaultMergeDirsTag(n, &mergedFiles);
             n.parentNode().removeChild(n);
         }
 
         // AppDir ...................
-        else if(n.tagName() == "AppDir")
+        else if(n.tagName() == QLatin1String("AppDir"))
         {
             processAppDirTag(n);
             n.parentNode().removeChild(n);
         }
 
         // DefaultAppDirs .............
-        else if(n.tagName() == "DefaultAppDirs")
+        else if(n.tagName() == QLatin1String("DefaultAppDirs"))
         {
             processDefaultAppDirsTag(n);
             n.parentNode().removeChild(n);
         }
 
         // DirectoryDir ...................
-        else if(n.tagName() == "DirectoryDir")
+        else if(n.tagName() == QLatin1String("DirectoryDir"))
         {
             processDirectoryDirTag(n);
             n.parentNode().removeChild(n);
         }
 
         // DefaultDirectoryDirs ...........
-        else if(n.tagName() == "DefaultDirectoryDirs")
+        else if(n.tagName() == QLatin1String("DefaultDirectoryDirs"))
         {
             processDefaultDirectoryDirsTag(n);
             n.parentNode().removeChild(n);
@@ -174,7 +174,7 @@ void XdgMenuReader::processMergeTags(QDomElement& element)
 
 
         // Menu .......................
-        else if(n.tagName() == "Menu")
+        else if(n.tagName() == QLatin1String("Menu"))
         {
             processMergeTags(n);
         }
@@ -205,7 +205,7 @@ void XdgMenuReader::processMergeFileTag(QDomElement& element, QStringList* merge
 {
     //qDebug() << "Process " << element;// << "in" << mFileName;
 
-    if (element.attribute("type") != "parent")
+    if (element.attribute(QLatin1String("type")) != QLatin1String("parent"))
     {
         mergeFile(element.text(), element, mergedFiles);
     }
@@ -288,7 +288,7 @@ void XdgMenuReader::processDefaultMergeDirsTag(QDomElement& element, QStringList
     //qDebug() << "Process " << element;// << "in" << mFileName;
 
     QString menuBaseName = QFileInfo(mMenu->menuFileName()).baseName();
-    int n = menuBaseName.lastIndexOf('-');
+    int n = menuBaseName.lastIndexOf(QLatin1Char('-'));
     if (n>-1)
         menuBaseName = menuBaseName.mid(n+1);
 
@@ -297,11 +297,11 @@ void XdgMenuReader::processDefaultMergeDirsTag(QDomElement& element, QStringList
 
     foreach (const QString &dir, dirs)
     {
-        mergeDir(QString("%1/menus/%2-merged").arg(dir).arg(menuBaseName), element, mergedFiles);
+        mergeDir(QString::fromLatin1("%1/menus/%2-merged").arg(dir).arg(menuBaseName), element, mergedFiles);
     }
 
-    if (menuBaseName == "applications")
-        mergeFile(QString("%1/menus/applications-kmenuedit.menu").arg(XdgDirs::configHome()), element, mergedFiles);
+    if (menuBaseName == QLatin1String("applications"))
+        mergeFile(QString::fromLatin1("%1/menus/applications-kmenuedit.menu").arg(XdgDirs::configHome()), element, mergedFiles);
 }
 
 
@@ -312,7 +312,7 @@ void XdgMenuReader::processDefaultMergeDirsTag(QDomElement& element, QStringList
 void XdgMenuReader::processAppDirTag(QDomElement& element)
 {
     //qDebug() << "Process " << element;
-    addDirTag(element, "AppDir", element.text());
+    addDirTag(element, QLatin1String("AppDir"), element.text());
 }
 
 
@@ -332,7 +332,7 @@ void XdgMenuReader::processDefaultAppDirsTag(QDomElement& element)
     foreach (const QString &dir, dirs)
     {
         //qDebug() << "Add AppDir: " << dir + "/applications/";
-        addDirTag(element, "AppDir", dir + "/applications/");
+        addDirTag(element, QLatin1String("AppDir"), dir + QLatin1String("/applications/"));
     }
 }
 
@@ -343,7 +343,7 @@ void XdgMenuReader::processDefaultAppDirsTag(QDomElement& element)
 void XdgMenuReader::processDirectoryDirTag(QDomElement& element)
 {
     //qDebug() << "Process " << element;
-    addDirTag(element, "DirectoryDir", element.text());
+    addDirTag(element, QLatin1String("DirectoryDir"), element.text());
 }
 
 
@@ -361,7 +361,7 @@ void XdgMenuReader::processDefaultDirectoryDirsTag(QDomElement& element)
     dirs.prepend(XdgDirs::dataHome(false));
 
     foreach (const QString &dir, dirs)
-        addDirTag(element, "DirectoryDir", dir + "/desktop-directories/");
+        addDirTag(element, QLatin1String("DirectoryDir"), dir + QLatin1String("/desktop-directories/"));
 }
 
 /************************************************
@@ -409,7 +409,7 @@ void XdgMenuReader::mergeFile(const QString& fileName, QDomElement& element, QSt
         {
             // As a special exception, remove the <Name> element from the root
             // element of each file being merged.
-            if (n.tagName() != "Name")
+            if (n.tagName() != QLatin1String("Name"))
             {
                 QDomNode imp = mXml.importNode(n, true);
                 element.parentNode().insertBefore(imp, element);
@@ -429,7 +429,7 @@ void XdgMenuReader::mergeDir(const QString& dirName, QDomElement& element, QStri
     {
         //qDebug() << "Merge dir: " << dirInfo.canonicalFilePath();
         QDir dir = QDir(dirInfo.canonicalFilePath());
-        const QFileInfoList files = dir.entryInfoList(QStringList() << "*.menu", QDir::Files | QDir::Readable);
+        const QFileInfoList files = dir.entryInfoList(QStringList() << QLatin1String("*.menu"), QDir::Files | QDir::Readable);
 
         foreach (const QFileInfo &file, files)
             mergeFile(file.canonicalFilePath(), element, mergedFiles);

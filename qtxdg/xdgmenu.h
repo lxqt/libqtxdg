@@ -108,7 +108,7 @@ public:
      */
     void setLogDir(const QString& directory);
 
-    static QString getMenuFileName(const QString& baseName = "applications.menu");
+    static QString getMenuFileName(const QString& baseName = QLatin1String("applications.menu"));
 
     bool isOutDated() const;
 

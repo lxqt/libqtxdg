@@ -49,7 +49,6 @@
 #include <QProcess>
 #include <QSettings>
 #include <QStandardPaths>
-#include <QStringBuilder> // for the % operator
 #include <QTextStream>
 #include <QUrl>
 #include <QtAlgorithms>
@@ -754,7 +753,7 @@ QStringList XdgDesktopFile::categories() const
     }
     else
     {
-        key = QLatin1String(extendPrefixKey) % QLatin1String(categoriesKey);
+        key = QLatin1String(extendPrefixKey) + QLatin1String(categoriesKey);
         if (!contains(key))
             return QStringList();
     }
@@ -1163,7 +1162,7 @@ bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) 
     }
     else
     {
-        key = QLatin1String(extendPrefixKey) % QLatin1String(onlyShowInKey);
+        key = QLatin1String(extendPrefixKey) + QLatin1String(onlyShowInKey);
         keyFound = contains(key) ? true : false;
     }
 
@@ -1183,7 +1182,7 @@ bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) 
     }
     else
     {
-        key = QLatin1String(extendPrefixKey) % QLatin1String(notShowInKey);
+        key = QLatin1String(extendPrefixKey) + QLatin1String(notShowInKey);
         keyFound = contains(key) ? true : false;
     }
 
@@ -1582,7 +1581,7 @@ QList<XdgDesktopFile*> XdgDesktopFileCache::getAppsOfCategory(const QString& cat
     foreach (XdgDesktopFile *desktopFile, instance().m_fileCache.values())
     {
         QStringList categories = desktopFile->value(categoriesKey).toString().toUpper().split(QLatin1Char(';'));
-        if (!categories.isEmpty() && (categories.contains(_category) || categories.contains(QLatin1String("X-") % _category)))
+        if (!categories.isEmpty() && (categories.contains(_category) || categories.contains(QLatin1String("X-") + _category)))
             list.append(desktopFile);
     }
     return list;

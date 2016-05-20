@@ -28,7 +28,6 @@
 #include "xdgdirs.h"
 #include <stdlib.h>
 #include <QDir>
-#include <QStringBuilder> // for the % operator
 #include <QDebug>
 #include <QStandardPaths>
 
@@ -185,7 +184,7 @@ bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool 
     QString folderName = userDirectoryString[dir];
 
     QString configDir(configHome());
-    QFile configFile(configDir % QLatin1String("/user-dirs.dirs"));
+    QFile configFile(configDir + QLatin1String("/user-dirs.dirs"));
 
     // create the file if doesn't exist and opens it
     if (!configFile.open(QIODevice::ReadWrite | QIODevice::Text))

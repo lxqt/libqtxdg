@@ -103,12 +103,14 @@ void cleanAndAddPostfix(QStringList &dirs, const QString& postfix)
 QString userDirFallback(XdgDirs::UserDirectory dir)
 {
     QString fallback;
-    if (QFile::decodeName(qgetenv("HOME")).isEmpty())
+    const QString home = QFile::decodeName(qgetenv("HOME"));
+
+    if (home.isEmpty())
         return QString::fromLatin1("/tmp");
     else if (dir == XdgDirs::Desktop)
-        fallback = QString::fromLatin1("%1/%2").arg(QFile::decodeName(qgetenv("HOME"))).arg(QLatin1String("Desktop"));
+        fallback = QString::fromLatin1("%1/%2").arg(home).arg(QLatin1String("Desktop"));
     else
-        fallback = QFile::decodeName(qgetenv("HOME"));
+        fallback = home;
 
     return fallback;
 }

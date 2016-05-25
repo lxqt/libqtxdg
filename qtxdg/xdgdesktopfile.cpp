@@ -924,10 +924,12 @@ QString expandEnvVariables(const QString str)
       )
         return str;
 
-    QString res = str;
-    res.replace(QRegExp(QString::fromLatin1("~(?=$|/)")), QFile::decodeName(qgetenv("HOME")));
+    const QString homeDir = QFile::decodeName(qgetenv("HOME"));
 
-    replaceVar(res, QLatin1String("HOME"), QFile::decodeName(qgetenv("HOME")));
+    QString res = str;
+    res.replace(QRegExp(QString::fromLatin1("~(?=$|/)")), homeDir);
+
+    replaceVar(res, QLatin1String("HOME"), homeDir);
     replaceVar(res, QLatin1String("USER"), QString::fromLocal8Bit(qgetenv("USER")));
 
     replaceVar(res, QLatin1String("XDG_DESKTOP_DIR"),   XdgDirs::userDir(XdgDirs::Desktop));

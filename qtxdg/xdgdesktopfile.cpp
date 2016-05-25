@@ -1178,7 +1178,6 @@ bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) 
     }
 
     // NotShowIn .........
-    keyFound = false;
     if (contains(QLatin1String(notShowInKey)))
     {
         key = QLatin1String(notShowInKey);

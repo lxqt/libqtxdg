@@ -836,9 +836,11 @@ bool XdgDesktopFile::startDetached(const QStringList& urls) const
     {
     case ApplicationType:
         return d->startApplicationDetached(this, urls);
+        break;
 
     case LinkType:
         return d->startLinkDetached(this);
+        break;
 
     default:
         return false;

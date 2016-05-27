@@ -1492,8 +1492,13 @@ void XdgDesktopFileCache::initialize(const QString& dirName)
 XdgDesktopFile* XdgDesktopFileCache::load(const QString& fileName)
 {
     XdgDesktopFile* desktopFile = new XdgDesktopFile();
-    desktopFile->load(fileName);
-    return desktopFile;
+
+    Q_CHECK_PTR(desktopFile);
+    if (desktopFile && desktopFile->load(fileName))
+        return desktopFile;
+
+    delete desktopFile;
+    return nullptr;
 }
 
 

@@ -87,7 +87,6 @@ set_target_properties(${QTXDGX_LIBRARY_NAME} PROPERTIES
 target_compile_definitions(${QTXDGX_LIBRARY_NAME}
     PRIVATE "QTXDG_COMPILATION=\"1\""
     PRIVATE "QTXDG_VERSION=\"${QTXDG_VERSION_STRING}\""
-    PRIVATE "QT_USE_QSTRINGBUILDER"
 )
 
 target_include_directories(${QTXDGX_LIBRARY_NAME}

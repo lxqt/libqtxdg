@@ -91,7 +91,7 @@ void XdgAction::load(const XdgDesktopFile& desktopFile)
     if (mDesktopFile.isValid())
     {
         // & is reserved for mnemonics
-        setText(mDesktopFile.name().replace('&', QLatin1String("&&")));
+        setText(mDesktopFile.name().replace(QLatin1Char('&'), QLatin1String("&&")));
         setToolTip(mDesktopFile.comment());
 
         connect(this, SIGNAL(triggered()), this, SLOT(runConmmand()));
@@ -117,6 +117,6 @@ void XdgAction::updateIcon()
 {
     setIcon(mDesktopFile.icon());
     if (icon().isNull())
-        setIcon(XdgIcon::fromTheme("application-x-executable"));
+        setIcon(XdgIcon::fromTheme(QLatin1String("application-x-executable")));
     QCoreApplication::processEvents();
 }

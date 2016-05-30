@@ -28,21 +28,20 @@
 #include "xdgdirs.h"
 #include <stdlib.h>
 #include <QDir>
-#include <QStringBuilder> // for the % operator
 #include <QDebug>
 #include <QStandardPaths>
 
 
 static const QString userDirectoryString[8] =
 {
-    "Desktop",
-    "Download",
-    "Templates",
-    "Publicshare",
-    "Documents",
-    "Music",
-    "Pictures",
-    "Videos"
+    QLatin1String("Desktop"),
+    QLatin1String("Download"),
+    QLatin1String("Templates"),
+    QLatin1String("Publicshare"),
+    QLatin1String("Documents"),
+    QLatin1String("Music"),
+    QLatin1String("Pictures"),
+    QLatin1String("Videos")
 };
 
 // Helper functions prototypes
@@ -59,7 +58,7 @@ QString userDirFallback(XdgDirs::UserDirectory dir);
 void fixBashShortcuts(QString &s)
 {
     if (s.startsWith(QLatin1Char('~')))
-        s = QString(getenv("HOME")) + (s).mid(1);
+        s = QFile::decodeName(qgetenv("HOME")) + (s).mid(1);
 }
 
 
@@ -78,9 +77,9 @@ QString createDirectory(const QString &dir)
     QDir d(dir);
     if (!d.exists())
     {
-        if (!d.mkpath("."))
+        if (!d.mkpath(QLatin1String(".")))
         {
-            qWarning() << QString("Can't create %1 directory.").arg(d.absolutePath());
+            qWarning() << QString::fromLatin1("Can't create %1 directory.").arg(d.absolutePath());
         }
     }
     QString r = d.absolutePath();
@@ -104,12 +103,12 @@ void cleanAndAddPostfix(QStringList &dirs, const QString& postfix)
 QString userDirFallback(XdgDirs::UserDirectory dir)
 {
     QString fallback;
-    if (getenv("HOME") == NULL)
-        return QString("/tmp");
+    if (QFile::decodeName(qgetenv("HOME")).isEmpty())
+        return QString::fromLatin1("/tmp");
     else if (dir == XdgDirs::Desktop)
-        fallback = QString("%1/%2").arg(getenv("HOME")).arg("Desktop");
+        fallback = QString::fromLatin1("%1/%2").arg(QFile::decodeName(qgetenv("HOME"))).arg(QLatin1String("Desktop"));
     else
-        fallback = QString(getenv("HOME"));
+        fallback = QFile::decodeName(qgetenv("HOME"));
 
     return fallback;
 }
@@ -138,14 +137,14 @@ QString XdgDirs::userDir(XdgDirs::UserDirectory dir)
     const QString fallback = userDirFallback(dir);
 
     QString configDir(configHome());
-    QFile configFile(configDir + "/user-dirs.dirs");
+    QFile configFile(configDir + QLatin1String("/user-dirs.dirs"));
     if (!configFile.exists())
         return fallback;
 
     if (!configFile.open(QIODevice::ReadOnly | QIODevice::Text))
         return fallback;
 
-    QString userDirVar("XDG_" + folderName.toUpper() + "_DIR");
+    QString userDirVar(QLatin1String("XDG_") + folderName.toUpper() + QLatin1String("_DIR"));
     QTextStream in(&configFile);
     QString line;
     while (!in.atEnd())
@@ -179,13 +178,13 @@ bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool 
 
     if (!(value.startsWith(QLatin1String("$HOME"))
                            || value.startsWith(QLatin1String("~/"))
-                           || value.startsWith(QString(getenv("HOME")))))
+                           || value.startsWith(QFile::decodeName(qgetenv("HOME")))))
         return false;
 
     QString folderName = userDirectoryString[dir];
 
     QString configDir(configHome());
-    QFile configFile(configDir % QLatin1String("/user-dirs.dirs"));
+    QFile configFile(configDir + QLatin1String("/user-dirs.dirs"));
 
     // create the file if doesn't exist and opens it
     if (!configFile.open(QIODevice::ReadWrite | QIODevice::Text))
@@ -214,10 +213,10 @@ bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool 
     stream.reset();
     configFile.resize(0);
     if (!foundVar)
-        stream << QString("XDG_%1_DIR=\"%2\"\n").arg(folderName.toUpper()).arg(value);
+        stream << QString::fromLatin1("XDG_%1_DIR=\"%2\"\n").arg(folderName.toUpper()).arg(value);
 
     for (QVector<QString>::iterator i = lines.begin(); i != lines.end(); ++i)
-        stream << *i << "\n";
+        stream << *i << QLatin1Char('\n');
 
     configFile.close();
 
@@ -316,7 +315,7 @@ QString XdgDirs::runtimeDir()
 
 QString XdgDirs::autostartHome(bool createDir)
 {
-    QString s = QString("%1/autostart").arg(configHome(createDir));
+    QString s = QString::fromLatin1("%1/autostart").arg(configHome(createDir));
     fixBashShortcuts(s);
 
     if (createDir)
@@ -334,7 +333,7 @@ QStringList XdgDirs::autostartDirs(const QString &postfix)
     QStringList dirs;
     const QStringList s = configDirs();
     foreach(const QString &dir, s)
-        dirs << QString("%1/autostart").arg(dir) + postfix;
+        dirs << QString::fromLatin1("%1/autostart").arg(dir) + postfix;
 
     return dirs;
 }

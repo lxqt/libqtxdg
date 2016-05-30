@@ -66,7 +66,7 @@ static QString fallbackTheme()
         if (themeHint.isValid())
             return themeHint.toString();
     }
-    return QString("hicolor");
+    return QLatin1String("hicolor");
 }
 
 XdgIconLoader::XdgIconLoader() :
@@ -181,7 +181,7 @@ QIconTheme::QIconTheme(const QString &themeName)
             QStringList themeSearchPaths = QIcon::themeSearchPaths();
             foreach (QString path, themeSearchPaths)
             {
-                if (!path.startsWith(':') && QFileInfo(path).isDir())
+                if (!path.startsWith(QLatin1Char(':')) && QFileInfo(path).isDir())
                     m_contentDirs.append(path + QLatin1Char('/') + themeName);
             }
 

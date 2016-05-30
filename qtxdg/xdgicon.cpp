@@ -36,7 +36,7 @@
 #include "../xdgiconloader/xdgiconloader_p.h"
 #include <QCoreApplication>
 
-#define DEFAULT_APP_ICON "application-x-executable"
+static const QLatin1String DEFAULT_APP_ICON("application-x-executable");
 
 static void qt_cleanup_icon_cache();
 typedef QCache<QString, QIcon> IconCache;
@@ -96,12 +96,12 @@ QIcon XdgIcon::fromTheme(const QString& iconName, const QIcon& fallback)
     if (iconName.isEmpty())
         return fallback;
 
-    bool isAbsolute = (iconName[0] == '/');
+    bool isAbsolute = (iconName[0] == QLatin1Char('/'));
 
     QString name = QFileInfo(iconName).fileName();
-    if (name.endsWith(".png", Qt::CaseInsensitive) ||
-        name.endsWith(".svg", Qt::CaseInsensitive) ||
-        name.endsWith(".xpm", Qt::CaseInsensitive))
+    if (name.endsWith(QLatin1String(".png"), Qt::CaseInsensitive) ||
+        name.endsWith(QLatin1String(".svg"), Qt::CaseInsensitive) ||
+        name.endsWith(QLatin1String(".xpm"), Qt::CaseInsensitive))
     {
         name.truncate(name.length() - 4);
     }

@@ -79,7 +79,7 @@ public:
         - ApplicationType, "value" should be the Exec value;
         - LinkType, "value" should be the URL;
         - DirectoryType, "value" should be omitted */
-    XdgDesktopFile(XdgDesktopFile::Type type, const QString& name, const QString& value = 0);
+    XdgDesktopFile(XdgDesktopFile::Type type, const QString& name, const QString& value = QString());
 
     //! Destroys the object.
     virtual ~XdgDesktopFile();
@@ -154,10 +154,10 @@ public:
     QStringList mimeTypes() const;
 
     //! This function is provided for convenience. It's equivalent to calling localizedValue("Name").toString().
-    QString name() const { return localizedValue("Name").toString(); }
+    QString name() const { return localizedValue(QLatin1String("Name")).toString(); }
 
     //! This function is provided for convenience. It's equivalent to calling localizedValue("Comment").toString().
-    QString comment() const { return localizedValue("Comment").toString(); }
+    QString comment() const { return localizedValue(QLatin1String("Comment")).toString(); }
 
     /*! Returns the desktop file type.
         @see XdgDesktopFile::Type */
@@ -221,7 +221,7 @@ public:
     bool isSuitable(bool excludeHidden = true, const QString &environment = QString()) const;
 
 protected:
-    virtual QString prefix() const { return "Desktop Entry"; }
+    virtual QString prefix() const { return QLatin1String("Desktop Entry"); }
     virtual bool check() const { return true; }
 private:
     /*! Returns the localized version of the key if the Desktop File already contains a localized version of it.

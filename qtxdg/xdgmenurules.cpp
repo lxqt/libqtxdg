@@ -63,26 +63,26 @@ XdgMenuRuleOr::XdgMenuRuleOr(const QDomElement& element, QObject* parent) :
     {
         QDomElement e = iter.next();
 
-        if (e.tagName() == "Or")
+        if (e.tagName() == QLatin1String("Or"))
             mChilds.append(new XdgMenuRuleOr(e, this));
 
-        else if (e.tagName() == "And")
+        else if (e.tagName() == QLatin1String("And"))
             mChilds.append(new XdgMenuRuleAnd(e, this));
 
-        else if (e.tagName() == "Not")
+        else if (e.tagName() == QLatin1String("Not"))
             mChilds.append(new XdgMenuRuleNot(e, this));
 
-        else if (e.tagName() == "Filename")
+        else if (e.tagName() == QLatin1String("Filename"))
             mChilds.append(new XdgMenuRuleFileName(e, this));
 
-        else if (e.tagName() == "Category")
+        else if (e.tagName() == QLatin1String("Category"))
             mChilds.append(new XdgMenuRuleCategory(e, this));
 
-        else if (e.tagName() == "All")
+        else if (e.tagName() == QLatin1String("All"))
             mChilds.append(new XdgMenuRuleAll(e, this));
 
         else
-            qWarning() << "Unknown rule" << e.tagName();
+            qWarning() << QString::fromLatin1("Unknown rule") << e.tagName();
     }
 
 }

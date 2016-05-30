@@ -92,3 +92,14 @@ set(QTXDG_COMMON_WARNING_FLAGS "-Wall")
 #-----------------------------------------------------------------------------
 list(APPEND QTXDG_WARNING_FLAGS ${QTXDG_COMMON_WARNING_FLAGS})
 add_definitions(${QTXDG_WARNING_FLAGS})
+
+#-----------------------------------------------------------------------------
+# String conversion flags
+#-----------------------------------------------------------------------------
+add_definitions(
+    -DQT_USE_QSTRINGBUILDER
+    -DQT_NO_CAST_FROM_ASCII
+    -DQT_NO_CAST_TO_ASCII
+    -DQT_NO_URL_CAST_FROM_STRING
+    -DQT_NO_CAST_FROM_BYTEARRAY
+)

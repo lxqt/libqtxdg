@@ -1630,7 +1630,7 @@ XdgDesktopFile* XdgDesktopFileCache::getDefaultApp(const QString& mimetype)
                     foreach (const QString &desktopFileName, value.toStringList())
                     {
                         XdgDesktopFile* desktopFile = XdgDesktopFileCache::getFile(desktopFileName);
-                        if (desktopFile->isValid())
+                        if (desktopFile)
                         {
                             return desktopFile;
                         }

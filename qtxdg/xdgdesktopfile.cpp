@@ -294,8 +294,12 @@ public:
 
 
 XdgDesktopFileData::XdgDesktopFileData():
+    mFileName(),
     mIsValid(false),
-    mValidIsChecked(false)
+    mValidIsChecked(false),
+    mIsShow(),
+    mItems(),
+    mType(XdgDesktopFile::UnknownType)
 {
 }
 

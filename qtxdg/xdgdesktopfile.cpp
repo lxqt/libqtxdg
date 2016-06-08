@@ -836,9 +836,11 @@ bool XdgDesktopFile::startDetached(const QStringList& urls) const
     {
     case ApplicationType:
         return d->startApplicationDetached(this, urls);
+        break;
 
     case LinkType:
         return d->startLinkDetached(this);
+        break;
 
     default:
         return false;
@@ -1176,7 +1178,6 @@ bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) 
     }
 
     // NotShowIn .........
-    keyFound = false;
     if (contains(QLatin1String(notShowInKey)))
     {
         key = QLatin1String(notShowInKey);
@@ -1281,45 +1282,51 @@ QString findDesktopFile(const QString& desktopName)
 
 XdgDesktopFile* XdgDesktopFileCache::getFile(const QString& fileName)
 {
+    if (fileName.isEmpty())
+        return nullptr;
+
     if (instance().m_fileCache.contains(fileName))
     {
         return instance().m_fileCache.value(fileName);
     }
 
-    if (fileName.startsWith(QDir::separator()))
+    QString file;
+    if (!fileName.startsWith(QDir::separator()))
     {
-        // Absolute path ........................
-        //qDebug() << "XdgDesktopFileCache: add new file" << fileName;
-        XdgDesktopFile* desktopFile = load(fileName);
-        if (desktopFile->isValid())
-            instance().m_fileCache.insert(fileName, desktopFile);
-        return desktopFile;
+        // Relative path
+        // Search desktop file ..................
+        file = findDesktopFile(fileName);
+        if (file.isEmpty())
+            return nullptr;
     }
     else
     {
-        // Search desktop file ..................
-        QString filePath = findDesktopFile(fileName);
-        XdgDesktopFile* desktopFile;
-        //qDebug() << "Sokoloff XdgDesktopFileCache::getFile found fileName" << fileName << filePath;
-        if (!filePath.isEmpty())
+        file = fileName;
+    }
+
+    XdgDesktopFile* desktopFile;
+
+    // The file was found
+    if (!instance().m_fileCache.contains(file))
+    {
+        desktopFile = load(file);
+        if (desktopFile)
         {
-            // The file was found
-            if (!instance().m_fileCache.contains(filePath))
-            {
-                desktopFile = load(filePath);
-                instance().m_fileCache.insert(filePath, desktopFile);
-            }
-            else
-                desktopFile = instance().m_fileCache.value(filePath);
-
+            instance().m_fileCache.insert(file, desktopFile);
             return desktopFile;
-
         }
         else
         {
-            return new XdgDesktopFile;
+            return nullptr;
         }
     }
+    else
+    {
+        // already in the cache
+        desktopFile = instance().m_fileCache.value(file);
+        return desktopFile;
+    }
+
 }
 
 QList<XdgDesktopFile*> XdgDesktopFileCache::getAllFiles()
@@ -1491,8 +1498,13 @@ void XdgDesktopFileCache::initialize(const QString& dirName)
 XdgDesktopFile* XdgDesktopFileCache::load(const QString& fileName)
 {
     XdgDesktopFile* desktopFile = new XdgDesktopFile();
-    desktopFile->load(fileName);
-    return desktopFile;
+
+    Q_CHECK_PTR(desktopFile);
+    if (desktopFile && desktopFile->load(fileName))
+        return desktopFile;
+
+    delete desktopFile;
+    return nullptr;
 }
 
 
@@ -1618,7 +1630,7 @@ XdgDesktopFile* XdgDesktopFileCache::getDefaultApp(const QString& mimetype)
                     foreach (const QString &desktopFileName, value.toStringList())
                     {
                         XdgDesktopFile* desktopFile = XdgDesktopFileCache::getFile(desktopFileName);
-                        if (desktopFile->isValid())
+                        if (desktopFile)
                         {
                             return desktopFile;
                         }

@@ -1554,10 +1554,7 @@ QSettings::Format XdgDesktopFileCache::desktopFileSettingsFormat()
     static QSettings::Format format = QSettings::InvalidFormat;
 
     if (format == QSettings::InvalidFormat)
-    {
         format = QSettings::registerFormat(QLatin1String("*.list"), readDesktopFile, writeDesktopFile);
-        qDebug() << "registerFormat returned:" << format;
-    }
 
     return format;
 }

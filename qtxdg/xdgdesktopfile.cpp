@@ -747,13 +747,13 @@ QVariant XdgDesktopFile::localizedValue(const QString& key, const QVariant& defa
 QStringList XdgDesktopFile::categories() const
 {
     QString key;
-    if (contains(QLatin1String(categoriesKey)))
+    if (contains(categoriesKey))
     {
-        key = QLatin1String(categoriesKey);
+        key = categoriesKey;
     }
     else
     {
-        key = QLatin1String(extendPrefixKey) + QLatin1String(categoriesKey);
+        key = extendPrefixKey + categoriesKey;
         if (!contains(key))
             return QStringList();
     }
@@ -1159,14 +1159,14 @@ bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) 
 
     QString key;
     bool keyFound = false;
-    if (contains(QLatin1String(onlyShowInKey)))
+    if (contains(onlyShowInKey))
     {
-        key = QLatin1String(onlyShowInKey);
+        key = onlyShowInKey;
         keyFound = true;
     }
     else
     {
-        key = QLatin1String(extendPrefixKey) + QLatin1String(onlyShowInKey);
+        key = extendPrefixKey + onlyShowInKey;
         keyFound = contains(key) ? true : false;
     }
 
@@ -1178,14 +1178,14 @@ bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) 
     }
 
     // NotShowIn .........
-    if (contains(QLatin1String(notShowInKey)))
+    if (contains(notShowInKey))
     {
-        key = QLatin1String(notShowInKey);
+        key = notShowInKey;
         keyFound = true;
     }
     else
     {
-        key = QLatin1String(extendPrefixKey) + QLatin1String(notShowInKey);
+        key = extendPrefixKey + notShowInKey;
         keyFound = contains(key) ? true : false;
     }
 

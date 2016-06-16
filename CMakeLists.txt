@@ -97,6 +97,18 @@ write_basic_package_version_file(
     COMPATIBILITY AnyNewerVersion
 )
 
+configure_package_config_file(
+    "${PROJECT_SOURCE_DIR}/cmake/${QTXDGX_ICONLOADER_FILE_NAME}-config.cmake.in"
+    "${CMAKE_BINARY_DIR}/${QTXDGX_ICONLOADER_FILE_NAME}-config.cmake"
+    INSTALL_DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_ICONLOADER_FILE_NAME}"
+)
+
+write_basic_package_version_file(
+    "${CMAKE_BINARY_DIR}/${QTXDGX_ICONLOADER_FILE_NAME}-config-version.cmake"
+    VERSION ${QTXDG_VERSION_STRING}
+    COMPATIBILITY AnyNewerVersion
+)
+
 create_pkgconfig_file(
     PACKAGE_NAME ${QTXDGX_LIBRARY_NAME}
     DESCRIPTIVE_NAME ${QTXDGX_LIBRARY_NAME}
@@ -127,10 +139,24 @@ install(FILES
     COMPONENT Devel
 )
 
+install(FILES
+    "${CMAKE_BINARY_DIR}/${QTXDGX_ICONLOADER_FILE_NAME}-config.cmake"
+    "${CMAKE_BINARY_DIR}/${QTXDGX_ICONLOADER_FILE_NAME}-config-version.cmake"
+    DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_ICONLOADER_FILE_NAME}"
+    COMPONENT Devel
+)
+
 install(EXPORT
     "${QTXDGX_FILE_NAME}-targets"
     DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_FILE_NAME}"
-    FILE qt5xdg-targets.cmake
+    FILE "${QTXDGX_FILE_NAME}-targets.cmake"
+    COMPONENT Devel
+)
+
+install(EXPORT
+    "${QTXDGX_ICONLOADER_FILE_NAME}-targets"
+    DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_ICONLOADER_FILE_NAME}"
+    FILE "${QTXDGX_ICONLOADER_FILE_NAME}-targets.cmake"
     COMPONENT Devel
 )
 

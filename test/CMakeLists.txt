@@ -27,4 +27,5 @@ set_property(DIRECTORY APPEND
 qtxdg_add_test(
     qtxdg_test
     tst_xdgdirs
+    tst_xdgdesktopfile
 )

@@ -73,9 +73,6 @@ XdgIconLoader::XdgIconLoader() :
 {
 }
 
-// We lazily initialize the loader to make static icons
-// work. Though we do not officially support this.
-
 static inline QString systemThemeName()
 {
     if (const QPlatformTheme *theme = QGuiApplicationPrivate::platformTheme()) {

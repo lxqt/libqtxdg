@@ -78,7 +78,7 @@ struct XdgIconDirInfo
     short maxSize;
     short minSize;
     short threshold;
-    Type type : 4;
+    Type type;
 };
 
 class XdgIconLoaderEngineEntry

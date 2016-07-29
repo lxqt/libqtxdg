@@ -141,6 +141,8 @@ private:
     friend class XdgIconLoader;
 };
 
+class QIconCacheGtkReader;
+
 class QIconTheme
 {
 public:
@@ -150,12 +152,13 @@ public:
     QVector <XdgIconDirInfo> keyList() { return m_keyList; }
     QStringList contentDirs() { return m_contentDirs; }
     bool isValid() { return m_valid; }
-
 private:
     QStringList m_contentDirs;
     QVector <XdgIconDirInfo> m_keyList;
     QStringList m_parents;
     bool m_valid;
+public:
+    QVector<QSharedPointer<QIconCacheGtkReader>> m_gtkCaches;
 };
 
 class XDGICONLOADER_EXPORT XdgIconLoader

@@ -692,6 +692,13 @@ void XdgIconLoaderEngine::virtual_hook(int id, void *data)
             name = m_iconName;
         }
         break;
+#if QT_VERSION >= QT_VERSION_CHECK(5, 7, 0)
+    case QIconEngine::IsNullHook:
+        {
+            *reinterpret_cast<bool*>(data) = m_info.entries.isEmpty();
+        }
+        break;
+#endif
     default:
         QIconEngine::virtual_hook(id, data);
     }

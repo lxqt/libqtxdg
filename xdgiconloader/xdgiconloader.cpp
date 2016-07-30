@@ -693,7 +693,7 @@ void XdgIconLoaderEngine::virtual_hook(int id, void *data)
     case QIconEngine::IconNameHook:
         {
             QString &name = *reinterpret_cast<QString*>(data);
-            name = m_iconName;
+            name = m_info.iconName;
         }
         break;
     default:

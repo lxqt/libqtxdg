@@ -54,6 +54,7 @@ target_include_directories(${QTXDGX_ICONLOADER_LIBRARY_NAME}
 target_link_libraries(${QTXDGX_ICONLOADER_LIBRARY_NAME}
     PUBLIC
         Qt5::Gui
+        Qt5::Svg
 )
 
 set_target_properties(${QTXDGX_ICONLOADER_LIBRARY_NAME}

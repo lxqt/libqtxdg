@@ -38,6 +38,7 @@ include(create_pkgconfig_file)
 include(compiler_settings NO_POLICY_SCOPE)
 
 find_package(Qt5Widgets REQUIRED QUIET)
+find_package(Qt5Svg REQUIRED QUIET)
 find_package(Qt5Xml REQUIRED QUIET)
 find_package(Qt5DBus REQUIRED QUIET)
 
@@ -56,7 +57,7 @@ set(QTXDGX_PKG_CONFIG_DESCRIPTION "Qt5Xdg, a Qt5 implementation of XDG standards
 set(QTXDGX_PKG_CONFIG_REQUIRES "Qt5Core, Qt5Xml, Qt5Widgets, Qt5DBus, Qt5XdgIconLoader")
 
 set(QTXDGX_ICONLOADER_PKG_CONFIG_DESCRIPTION "Qt5XdgIconLader, a Qt5 XDG Icon Loader")
-set(QTXDGX_ICONLOADER_PKG_CONFIG_REQUIRES "Qt5Gui")
+set(QTXDGX_ICONLOADER_PKG_CONFIG_REQUIRES "Qt5Gui, Qt5Svg")
 
 set(QTXDGX_INTREE_INCLUDEDIR "${CMAKE_CURRENT_BINARY_DIR}/InTreeBuild/include")
 

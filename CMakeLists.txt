@@ -38,6 +38,7 @@ include(create_pkgconfig_file)
 include(compiler_settings NO_POLICY_SCOPE)
 
 find_package(Qt5Widgets REQUIRED QUIET)
+find_package(Qt5Svg REQUIRED QUIET)
 find_package(Qt5Xml REQUIRED QUIET)
 find_package(Qt5DBus REQUIRED QUIET)
 

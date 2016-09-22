@@ -1,0 +1,27 @@
+sudo: required
+
+language: cpp
+
+compiler:
+  - gcc
+  - clang
+
+arch:
+  packages:
+    - cmake
+    - qt5-base
+    - qt5-svg
+
+    # for GUI test
+    - xorg-server-xvfb
+
+  script:
+    - locale
+    - cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_PREFIX_PATH=/usr -DBUILD_TESTS=YES -DBUILD_DEV_UTILS=YES .
+    - make all
+
+    # run the tests using the xvfb-run wrapper
+    - xvfb-run --auto-servernum ctest --output-on-failure
+
+script:
+  - "curl -s https://raw.githubusercontent.com/mikkeloscar/arch-travis/master/arch-travis.sh | bash"

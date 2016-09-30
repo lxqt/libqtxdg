@@ -30,6 +30,8 @@ set(QTXDG_MINOR_VERSION 0)
 set(QTXDG_PATCH_VERSION 0)
 set(QTXDG_VERSION_STRING ${QTXDG_MAJOR_VERSION}.${QTXDG_MINOR_VERSION}.${QTXDG_PATCH_VERSION})
 
+set(QT_MINIMUM_VERSION "5.4.2")
+
 include(GNUInstallDirs)             # Standard directories for installation
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
@@ -37,13 +39,10 @@ include(create_portable_headers)
 include(create_pkgconfig_file)
 include(compiler_settings NO_POLICY_SCOPE)
 
-find_package(Qt5Widgets REQUIRED QUIET)
-find_package(Qt5Svg REQUIRED QUIET)
-find_package(Qt5Xml REQUIRED QUIET)
-find_package(Qt5DBus REQUIRED QUIET)
+find_package(Qt5 ${QT_MINIMUM_VERSION} CONFIG REQUIRED Widgets Svg Xml DBus)
 
 if (BUILD_TESTS)
-    find_package(Qt5Test REQUIRED QUIET)
+    find_package(Qt5 ${QT_MINIMUM_VERSION} CONFIG REQUIRED Test)
 endif()
 
 

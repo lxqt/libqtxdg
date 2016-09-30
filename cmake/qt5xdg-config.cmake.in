@@ -2,10 +2,9 @@
 
 include(CMakeFindDependencyMacro)
 
-find_dependency(Qt5Widgets)
-find_dependency(Qt5Xml)
-find_dependency(Qt5DBus)
-find_dependency(Qt5XdgIconLoader)
+find_dependency(Qt5Widgets @QT_MINIMUM_VERSION@)
+find_dependency(Qt5Xml @QT_MINIMUM_VERSION@)
+find_dependency(Qt5DBus @QT_MINIMUM_VERSION@)
 
 if (CMAKE_VERSION VERSION_GREATER 2.8.12)
     cmake_policy(SET CMP0024 OLD)

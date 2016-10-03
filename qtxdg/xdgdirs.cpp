@@ -178,10 +178,12 @@ bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool 
     if (dir < XdgDirs::Desktop || dir > XdgDirs::Videos)
         return false;
 
+    const QString home = QFile::decodeName(qgetenv("HOME"));
     if (!(value.startsWith(QLatin1String("$HOME"))
                            || value.startsWith(QLatin1String("~/"))
-                           || value.startsWith(QFile::decodeName(qgetenv("HOME")))))
-        return false;
+                           || value.startsWith(home)
+                           || value.startsWith(QDir(home).canonicalPath())))
+	return false;
 
     QString folderName = userDirectoryString[dir];
 

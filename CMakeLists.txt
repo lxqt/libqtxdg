@@ -30,6 +30,8 @@ set(QTXDG_MINOR_VERSION 0)
 set(QTXDG_PATCH_VERSION 0)
 set(QTXDG_VERSION_STRING ${QTXDG_MAJOR_VERSION}.${QTXDG_MINOR_VERSION}.${QTXDG_PATCH_VERSION})
 
+set(QT_MINIMUM_VERSION "5.4.2")
+
 include(GNUInstallDirs)             # Standard directories for installation
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
@@ -37,13 +39,10 @@ include(create_portable_headers)
 include(create_pkgconfig_file)
 include(compiler_settings NO_POLICY_SCOPE)
 
-find_package(Qt5Widgets REQUIRED QUIET)
-find_package(Qt5Svg REQUIRED QUIET)
-find_package(Qt5Xml REQUIRED QUIET)
-find_package(Qt5DBus REQUIRED QUIET)
+find_package(Qt5 ${QT_MINIMUM_VERSION} CONFIG REQUIRED Widgets Svg Xml DBus)
 
 if (BUILD_TESTS)
-    find_package(Qt5Test REQUIRED QUIET)
+    find_package(Qt5 ${QT_MINIMUM_VERSION} CONFIG REQUIRED Test)
 endif()
 
 
@@ -54,10 +53,10 @@ set(QTXDGX_ICONLOADER_LIBRARY_NAME "Qt5XdgIconLoader")
 set(QTXDGX_ICONLOADER_FILE_NAME "qt5xdgiconloader")
 
 set(QTXDGX_PKG_CONFIG_DESCRIPTION "Qt5Xdg, a Qt5 implementation of XDG standards")
-set(QTXDGX_PKG_CONFIG_REQUIRES "Qt5Core, Qt5Xml, Qt5Widgets, Qt5DBus, Qt5XdgIconLoader")
+set(QTXDGX_PKG_CONFIG_REQUIRES "Qt5Core >= ${QT_MINIMUM_VERSION}, Qt5Xml >= ${QT_MINIMUM_VERSION}, Qt5Widgets >= ${QT_MINIMUM_VERSION}, Qt5DBus >= ${QT_MINIMUM_VERSION}, Qt5XdgIconLoader = ${QTXDG_VERSION_STRING}")
 
 set(QTXDGX_ICONLOADER_PKG_CONFIG_DESCRIPTION "Qt5XdgIconLader, a Qt5 XDG Icon Loader")
-set(QTXDGX_ICONLOADER_PKG_CONFIG_REQUIRES "Qt5Gui, Qt5Svg")
+set(QTXDGX_ICONLOADER_PKG_CONFIG_REQUIRES "Qt5Gui >= ${QT_MINIMUM_VERSION}, Qt5Svg >= ${QT_MINIMUM_VERSION}")
 
 set(QTXDGX_INTREE_INCLUDEDIR "${CMAKE_CURRENT_BINARY_DIR}/InTreeBuild/include")
 

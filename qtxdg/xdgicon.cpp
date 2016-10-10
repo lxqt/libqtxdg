@@ -69,25 +69,6 @@ XdgIcon::~XdgIcon()
 
 
 /************************************************
- Returns the name of the current icon theme.
- ************************************************/
-QString XdgIcon::themeName()
-{
-    return QIcon::themeName();
-}
-
-
-/************************************************
- Sets the current icon theme to name.
- ************************************************/
-void XdgIcon::setThemeName(const QString& themeName)
-{
-    QIcon::setThemeName(themeName);
-    XdgIconLoader::instance()->updateSystemTheme();
-}
-
-
-/************************************************
  Returns the QIcon corresponding to name in the current icon theme. If no such icon
  is found in the current theme fallback is return instead.
  ************************************************/

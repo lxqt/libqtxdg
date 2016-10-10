@@ -44,8 +44,9 @@ public:
                            const QString &fallbackIcon4 = QString());
     static QIcon fromTheme(const QStringList& iconNames, const QIcon& fallback = QIcon());
 
-    static QString themeName();
-    static void setThemeName(const QString& themeName);
+    /* TODO: deprecate & remove all QIcon wrappers */
+    static QString themeName() { return QIcon::themeName(); }
+    static void setThemeName(const QString& themeName) { QIcon::setThemeName(themeName); }
 
     static QIcon defaultApplicationIcon();
     static QString defaultApplicationIconName();

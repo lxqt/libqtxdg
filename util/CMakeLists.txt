@@ -1,6 +1,7 @@
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 include_directories (
     "${CMAKE_PROJECT_DIR}/qtxdg"
-    ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set(QTXDG_DESKTOP_FILE_START_SRCS

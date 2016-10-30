@@ -5,6 +5,7 @@ remove_definitions(
     -DQT_NO_CAST_FROM_ASCII
 )
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC TRUE)
 
 macro(qtxdg_add_test)
@@ -17,7 +18,6 @@ endmacro()
 
 include_directories (
     "${CMAKE_SOURCE_DIR}/qtxdg"
-    ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set_property(DIRECTORY APPEND

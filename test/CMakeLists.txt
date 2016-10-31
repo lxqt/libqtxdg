@@ -1,5 +1,3 @@
-set(PROJECT_NAME "qtxdg_test")
-
 remove_definitions(
     -DQT_USE_QSTRINGBUILDER
     -DQT_NO_CAST_FROM_ASCII

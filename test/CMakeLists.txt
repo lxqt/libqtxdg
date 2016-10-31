@@ -10,13 +10,12 @@ macro(qtxdg_add_test)
     foreach(_testname ${ARGN})
         add_executable(${_testname} ${_testname}.cpp)
         target_link_libraries(${_testname} Qt5::Test ${QTXDGX_LIBRARY_NAME})
+        target_include_directories(${_testname}
+            PRIVATE "${CMAKE_SOURCE_DIR}/qtxdg"
+        )
         add_test(NAME ${_testname} COMMAND ${_testname})
     endforeach()
 endmacro()
-
-include_directories (
-    "${CMAKE_SOURCE_DIR}/qtxdg"
-)
 
 set_property(DIRECTORY APPEND
     PROPERTY COMPILE_DEFINITIONS "QTXDG_BUILDING_TESTS=\"1\""

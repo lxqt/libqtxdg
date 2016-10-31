@@ -1,8 +1,5 @@
 set(QTX_LIBRARIES Qt5::Widgets Qt5::Xml Qt5::DBus)
 
-include_directories(
-    "${Qt5Gui_PRIVATE_INCLUDE_DIRS}"
-)
 set(libqtxdg_PUBLIC_H_FILES
     xdgaction.h
     xdgdesktopfile.h
@@ -96,6 +93,8 @@ target_include_directories(${QTXDGX_LIBRARY_NAME}
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
         "$<BUILD_INTERFACE:${QTXDGX_INTREE_INCLUDEDIR}/${QTXDGX_FILE_NAME}>"
         "$<BUILD_INTERFACE:${QTXDGX_INTREE_INCLUDEDIR}>"
+    PRIVATE
+        ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
 )
 
 export(TARGETS ${QTXDGX_LIBRARY_NAME} APPEND FILE "${CMAKE_BINARY_DIR}/${QTXDGX_FILE_NAME}-targets.cmake")

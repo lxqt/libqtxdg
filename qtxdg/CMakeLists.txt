@@ -60,14 +60,12 @@ set(libqtxdg_MOCS
     xdgmenuwidget.h
 )
 
-QT5_WRAP_CPP(libqtxdg_CXX_FILES ${libqtxdg_MOCS})
-
 add_library(${QTXDGX_LIBRARY_NAME} SHARED
     ${libqtxdg_PUBLIC_H_FILES}
     ${libqtxdg_PRIVATE_H_FILES}
     ${libqtxdg_PRIVATE_H_FILES}
     ${libqtxdg_CPP_FILES}
-    ${libqtxdg_CXX_FILES}
+    ${libqtxdg_MOCS}
 )
 
 target_link_libraries(${QTXDGX_LIBRARY_NAME}

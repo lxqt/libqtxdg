@@ -39,6 +39,8 @@ include(create_portable_headers)
 include(create_pkgconfig_file)
 include(compiler_settings NO_POLICY_SCOPE)
 
+set(CMAKE_AUTOMOC ON)
+
 find_package(Qt5 ${QT_MINIMUM_VERSION} CONFIG REQUIRED Widgets Svg Xml DBus)
 
 if (BUILD_TESTS)

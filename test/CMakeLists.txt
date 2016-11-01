@@ -4,7 +4,6 @@ remove_definitions(
 )
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC TRUE)
 
 macro(qtxdg_add_test)
     foreach(_testname ${ARGN})

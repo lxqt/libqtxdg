@@ -63,7 +63,6 @@ set(libqtxdg_MOCS
 add_library(${QTXDGX_LIBRARY_NAME} SHARED
     ${libqtxdg_PUBLIC_H_FILES}
     ${libqtxdg_PRIVATE_H_FILES}
-    ${libqtxdg_PRIVATE_H_FILES}
     ${libqtxdg_CPP_FILES}
     ${libqtxdg_MOCS}
 )

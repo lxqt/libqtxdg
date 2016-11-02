@@ -94,9 +94,6 @@ target_include_directories(${QTXDGX_LIBRARY_NAME}
         ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
 )
 
-export(TARGETS ${QTXDGX_LIBRARY_NAME} APPEND FILE "${CMAKE_BINARY_DIR}/${QTXDGX_FILE_NAME}-targets.cmake")
-# end of in tree build stuff
-
 # create the portble headers
 create_portable_headers(libqtxdg_PORTABLE_HEADERS
     HEADER_NAMES ${libqtxdg_PUBLIC_CLASSES}

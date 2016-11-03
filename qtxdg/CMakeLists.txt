@@ -1,8 +1,5 @@
 set(QTX_LIBRARIES Qt5::Widgets Qt5::Xml Qt5::DBus)
 
-include_directories(
-    "${Qt5Gui_PRIVATE_INCLUDE_DIRS}"
-)
 set(libqtxdg_PUBLIC_H_FILES
     xdgaction.h
     xdgdesktopfile.h
@@ -63,14 +60,11 @@ set(libqtxdg_MOCS
     xdgmenuwidget.h
 )
 
-QT5_WRAP_CPP(libqtxdg_CXX_FILES ${libqtxdg_MOCS})
-
 add_library(${QTXDGX_LIBRARY_NAME} SHARED
     ${libqtxdg_PUBLIC_H_FILES}
     ${libqtxdg_PRIVATE_H_FILES}
-    ${libqtxdg_PRIVATE_H_FILES}
     ${libqtxdg_CPP_FILES}
-    ${libqtxdg_CXX_FILES}
+    ${libqtxdg_MOCS}
 )
 
 target_link_libraries(${QTXDGX_LIBRARY_NAME}
@@ -85,19 +79,19 @@ set_target_properties(${QTXDGX_LIBRARY_NAME} PROPERTIES
 )
 
 target_compile_definitions(${QTXDGX_LIBRARY_NAME}
-    PRIVATE "QTXDG_COMPILATION=\"1\""
-    PRIVATE "QTXDG_VERSION=\"${QTXDG_VERSION_STRING}\""
+    PRIVATE
+        "QTXDG_COMPILATION=\"1\""
+        "QTXDG_VERSION=\"${QTXDG_VERSION_STRING}\""
 )
 
 target_include_directories(${QTXDGX_LIBRARY_NAME}
-    INTERFACE "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}>"
-    INTERFACE "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
-)
-
-# include directories and targets for the in tree build
-target_include_directories(${QTXDGX_LIBRARY_NAME}
-    INTERFACE "$<BUILD_INTERFACE:${QTXDGX_INTREE_INCLUDEDIR}/${QTXDGX_FILE_NAME}>"
-    INTERFACE "$<BUILD_INTERFACE:${QTXDGX_INTREE_INCLUDEDIR}>"
+    INTERFACE
+        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_FILE_NAME}>"
+        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+        "$<BUILD_INTERFACE:${QTXDGX_INTREE_INCLUDEDIR}/${QTXDGX_FILE_NAME}>"
+        "$<BUILD_INTERFACE:${QTXDGX_INTREE_INCLUDEDIR}>"
+    PRIVATE
+        ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
 )
 
 export(TARGETS ${QTXDGX_LIBRARY_NAME} APPEND FILE "${CMAKE_BINARY_DIR}/${QTXDGX_FILE_NAME}-targets.cmake")

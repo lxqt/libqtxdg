@@ -1,7 +1,4 @@
-include_directories (
-    "${CMAKE_PROJECT_DIR}/qtxdg"
-    ${CMAKE_CURRENT_BINARY_DIR}
-)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(QTXDG_DESKTOP_FILE_START_SRCS
     qtxdg-desktop-file-start.cpp
@@ -9,6 +6,10 @@ set(QTXDG_DESKTOP_FILE_START_SRCS
 
 add_executable(qtxdg-desktop-file-start
     ${QTXDG_DESKTOP_FILE_START_SRCS}
+)
+
+target_include_directories(qtxdg-desktop-file-start
+    PRIVATE "${CMAKE_SOURCE_DIR}/qtxdg"
 )
 
 target_compile_definitions(qtxdg-desktop-file-start

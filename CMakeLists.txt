@@ -39,6 +39,8 @@ include(create_portable_headers)
 include(create_pkgconfig_file)
 include(compiler_settings NO_POLICY_SCOPE)
 
+set(CMAKE_AUTOMOC ON)
+
 find_package(Qt5 ${QT_MINIMUM_VERSION} CONFIG REQUIRED Widgets Svg Xml DBus)
 
 if (BUILD_TESTS)
@@ -64,7 +66,7 @@ if (NOT CMAKE_BUILD_TYPE)
     set ( CMAKE_BUILD_TYPE Release )
 endif (NOT CMAKE_BUILD_TYPE)
 
-message(STATUS "Building with Qt ${Qt5Core_VERSION_STRING}")
+message(STATUS "Building ${PROJECT_NAME} with Qt ${Qt5Core_VERSION_STRING}")
 
 add_subdirectory(xdgiconloader)
 add_subdirectory(qtxdg)

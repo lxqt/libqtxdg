@@ -9,7 +9,7 @@ add_executable(qtxdg-desktop-file-start
 )
 
 target_include_directories(qtxdg-desktop-file-start
-    PRIVATE "${CMAKE_SOURCE_DIR}/qtxdg"
+    PRIVATE "${PROJECT_SOURCE_DIR}/qtxdg"
 )
 
 target_compile_definitions(qtxdg-desktop-file-start

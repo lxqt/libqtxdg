@@ -68,18 +68,18 @@ public:
     XdgIconLoaderEngine(const QString& iconName = QString());
     ~XdgIconLoaderEngine();
 
-    void paint(QPainter *painter, const QRect &rect, QIcon::Mode mode, QIcon::State state);
-    QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state);
-    QSize actualSize(const QSize &size, QIcon::Mode mode, QIcon::State state);
-    QIconEngine *clone() const;
-    bool read(QDataStream &in);
-    bool write(QDataStream &out) const;
+    void paint(QPainter *painter, const QRect &rect, QIcon::Mode mode, QIcon::State state) Q_DECL_OVERRIDE;
+    QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state) Q_DECL_OVERRIDE;
+    QSize actualSize(const QSize &size, QIcon::Mode mode, QIcon::State state) Q_DECL_OVERRIDE;
+    QIconEngine *clone() const Q_DECL_OVERRIDE;
+    bool read(QDataStream &in) Q_DECL_OVERRIDE;
+    bool write(QDataStream &out) const Q_DECL_OVERRIDE;
 
 private:
-    QString key() const;
+    QString key() const Q_DECL_OVERRIDE;
     bool hasIcon() const;
     void ensureLoaded();
-    void virtual_hook(int id, void *data);
+    void virtual_hook(int id, void *data) Q_DECL_OVERRIDE;
     QIconLoaderEngineEntry *entryForSize(const QSize &size);
     XdgIconLoaderEngine(const XdgIconLoaderEngine &other);
     QThemeIconInfo m_info;

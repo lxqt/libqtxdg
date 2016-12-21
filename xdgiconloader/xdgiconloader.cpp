@@ -309,13 +309,11 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
     // Used to protect against potential recursions
     visited << themeName;
 
-    XdgIconTheme theme = themeList.value(themeName);
+    XdgIconTheme &theme = themeList[themeName];
     if (!theme.isValid()) {
         theme = XdgIconTheme(themeName);
         if (!theme.isValid())
             theme = XdgIconTheme(fallbackTheme());
-
-        themeList.insert(themeName, theme);
     }
 
     const QStringList contentDirs = theme.contentDirs();

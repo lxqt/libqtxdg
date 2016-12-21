@@ -92,7 +92,7 @@ class QIconCacheGtkReader
 {
 public:
     explicit QIconCacheGtkReader(const QString &themeDir);
-    QVector<const char *> lookup(const QString &);
+    QVector<const char *> lookup(const QStringRef &);
     bool isValid() const { return m_isValid; }
 private:
     QFile m_file;
@@ -165,7 +165,7 @@ static quint32 icon_name_hash(const char *p)
     with this name is present. The char* are pointers to the mapped data.
     For example, this would return { "32x32/apps", "24x24/apps" , ... }
  */
-QVector<const char *> QIconCacheGtkReader::lookup(const QString &name)
+QVector<const char *> QIconCacheGtkReader::lookup(const QStringRef &name)
 {
     QVector<const char *> ret;
     if (!isValid())
@@ -325,7 +325,7 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
     const QString xpmext(QLatin1String(".xpm"));
 
 
-    QString iconNameFallback = iconName;
+    QStringRef iconNameFallback(&iconName);
 
     // Iterate through all icon's fallbacks in current theme
     while (info.entries.isEmpty()) {
@@ -389,7 +389,7 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
         }
 
         if (!info.entries.isEmpty()) {
-            info.iconName = iconNameFallback;
+            info.iconName = iconNameFallback.toString();
             break;
         }
 

@@ -220,7 +220,7 @@ XdgIconTheme::XdgIconTheme(const QString &themeName)
 {
     QFile themeIndex;
 
-    QStringList iconDirs = QIcon::themeSearchPaths();
+    const QStringList iconDirs = QIcon::themeSearchPaths();
     for ( int i = 0 ; i < iconDirs.size() ; ++i) {
         QDir iconDir(iconDirs[i]);
         QString themeDir = iconDir.path() + QLatin1Char('/') + themeName;

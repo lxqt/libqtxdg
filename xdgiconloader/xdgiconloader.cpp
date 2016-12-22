@@ -357,25 +357,30 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
             QString contentDir = contentDirs.at(i) + QLatin1Char('/');
             for (int j = 0; j < subDirs.size() ; ++j) {
                 const QIconDirInfo &dirInfo = subDirs.at(j);
-                QString subdir = dirInfo.path;
-                QDir currentDir(contentDir + subdir);
-                if (currentDir.exists(pngIconName)) {
+                const QString subDir = contentDir + dirInfo.path + QLatin1Char('/');
+                const QString pngPath = subDir + pngIconName;
+                if (QFile::exists(pngPath)) {
                     PixmapEntry *iconEntry = new PixmapEntry;
                     iconEntry->dir = dirInfo;
-                    iconEntry->filename = currentDir.filePath(pngIconName);
+                    iconEntry->filename = pngPath;
                     // Notice we ensure that pixmap entries always come before
                     // scalable to preserve search order afterwards
                     info.entries.prepend(iconEntry);
-                } else if (gSupportsSvg &&
-                    currentDir.exists(svgIconName)) {
-                    ScalableEntry *iconEntry = new ScalableEntry;
-                    iconEntry->dir = dirInfo;
-                    iconEntry->filename = currentDir.filePath(svgIconName);
-                    info.entries.append(iconEntry);
-                } else if(currentDir.exists(iconName + xpmext)) {
+                } else {
+                    const QString svgPath = subDir + svgIconName;
+                    if (gSupportsSvg && QFile::exists(svgPath)) {
+                        ScalableEntry *iconEntry = new ScalableEntry;
+                        iconEntry->dir = dirInfo;
+                        iconEntry->filename = svgPath;
+                        info.entries.append(iconEntry);
+                        break;
+                    }
+                }
+                const QString xpmPath = subDir + xpmIconName;
+                if (QFile::exists(xpmPath)) {
                     PixmapEntry *iconEntry = new PixmapEntry;
                     iconEntry->dir = dirInfo;
-                    iconEntry->filename = currentDir.filePath(iconName + xpmext);
+                    iconEntry->filename = xpmPath;
                     // Notice we ensure that pixmap entries always come before
                     // scalable to preserve search order afterwards
                     info.entries.append(iconEntry);

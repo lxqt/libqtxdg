@@ -92,7 +92,7 @@ class QIconCacheGtkReader
 {
 public:
     explicit QIconCacheGtkReader(const QString &themeDir);
-    QVector<const char *> lookup(const QString &);
+    QVector<const char *> lookup(const QStringRef &);
     bool isValid() const { return m_isValid; }
 private:
     QFile m_file;
@@ -123,7 +123,7 @@ private:
 QIconCacheGtkReader::QIconCacheGtkReader(const QString &dirName)
     : m_isValid(false)
 {
-    QFileInfo info(dirName + QLatin1Literal("/icon-theme.cache"));
+    QFileInfo info(dirName + QLatin1String("/icon-theme.cache"));
     if (!info.exists() || info.lastModified() < QFileInfo(dirName).lastModified())
         return;
     m_file.setFileName(info.absoluteFilePath());
@@ -165,7 +165,7 @@ static quint32 icon_name_hash(const char *p)
     with this name is present. The char* are pointers to the mapped data.
     For example, this would return { "32x32/apps", "24x24/apps" , ... }
  */
-QVector<const char *> QIconCacheGtkReader::lookup(const QString &name)
+QVector<const char *> QIconCacheGtkReader::lookup(const QStringRef &name)
 {
     QVector<const char *> ret;
     if (!isValid())
@@ -220,7 +220,7 @@ XdgIconTheme::XdgIconTheme(const QString &themeName)
 {
     QFile themeIndex;
 
-    QStringList iconDirs = QIcon::themeSearchPaths();
+    const QStringList iconDirs = QIcon::themeSearchPaths();
     for ( int i = 0 ; i < iconDirs.size() ; ++i) {
         QDir iconDir(iconDirs[i]);
         QString themeDir = iconDir.path() + QLatin1Char('/') + themeName;
@@ -304,18 +304,14 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
     QThemeIconInfo info;
     Q_ASSERT(!themeName.isEmpty());
 
-    QPixmap pixmap;
-
     // Used to protect against potential recursions
     visited << themeName;
 
-    XdgIconTheme theme = themeList.value(themeName);
+    XdgIconTheme &theme = themeList[themeName];
     if (!theme.isValid()) {
         theme = XdgIconTheme(themeName);
         if (!theme.isValid())
             theme = XdgIconTheme(fallbackTheme());
-
-        themeList.insert(themeName, theme);
     }
 
     const QStringList contentDirs = theme.contentDirs();
@@ -325,7 +321,7 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
     const QString xpmext(QLatin1String(".xpm"));
 
 
-    QString iconNameFallback = iconName;
+    QStringRef iconNameFallback(&iconName);
 
     // Iterate through all icon's fallbacks in current theme
     while (info.entries.isEmpty()) {
@@ -389,7 +385,7 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
         }
 
         if (!info.entries.isEmpty()) {
-            info.iconName = iconNameFallback;
+            info.iconName = iconNameFallback.toString();
             break;
         }
 

@@ -81,18 +81,25 @@ if (CMAKE_COMPILER_IS_GNUCXX OR QTXDG_COMPILER_IS_CLANGCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions")
 endif()
 
-
 #-----------------------------------------------------------------------------
 # Common warning flags
 #-----------------------------------------------------------------------------
-set(QTXDG_COMMON_WARNING_FLAGS "-Wall")
+set(QTXDG_COMMON_WARNING_FLAGS "-Wall -Wextra -Wchar-subscripts -Wno-long-long -Wpointer-arith -Wundef -Wformat-security")
 
 
 #-----------------------------------------------------------------------------
 # Warning flags
 #-----------------------------------------------------------------------------
+if (CMAKE_COMPILER_IS_GNUCXX OR QTXDG_COMPILER_IS_CLANGCXX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${__QTXDG_COMMON_WARNING_FLAGS} -Wnon-virtual-dtor -Woverloaded-virtual -Wpedantic")
+endif()
+
+if (QTXDG_COMPILER_IS_CLANGCXX)
+    # qCDebug(), qCWarning, etc trigger a very verbose warning, about.... nothing. Disable it.
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-gnu-zero-variadic-macro-arguments")
+endif()
+
 list(APPEND QTXDG_WARNING_FLAGS ${QTXDG_COMMON_WARNING_FLAGS})
-add_definitions(${QTXDG_WARNING_FLAGS})
 
 #-----------------------------------------------------------------------------
 # String conversion flags

@@ -40,7 +40,7 @@ private:
 };
 
 
-QTEST_MAIN(tst_xdgdesktopfile);
+QTEST_MAIN(tst_xdgdesktopfile)
 
 void tst_xdgdesktopfile::testRead()
 {

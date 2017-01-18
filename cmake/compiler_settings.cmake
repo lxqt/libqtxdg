@@ -67,6 +67,14 @@ endif()
 
 
 #-----------------------------------------------------------------------------
+# Global definitions
+#-----------------------------------------------------------------------------
+if (CMAKE_BUILD_TYPE MATCHES "Debug")
+  add_definitions(-DQT_STRICT_ITERATORS)
+endif()
+
+
+#-----------------------------------------------------------------------------
 # Set visibility to hidden to hide symbols, unless they're exported manually
 # in the code
 #-----------------------------------------------------------------------------

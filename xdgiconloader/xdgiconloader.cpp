@@ -295,9 +295,32 @@ XdgIconTheme::XdgIconTheme(const QString &themeName)
 #endif //QT_NO_SETTINGS
 }
 
+/* WARNING:
+ *
+ * https://standards.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html
+ *
+ * <cite>
+ * The dash “-” character is used to separate levels of specificity in icon
+ * names, for all contexts other than MimeTypes. For instance, we use
+ * “input-mouse” as the generic item for all mouse devices, and we use
+ * “input-mouse-usb” for a USB mouse device. However, if the more specific
+ * item does not exist in the current theme, and does exist in a parent
+ * theme, the generic icon from the current theme is preferred, in order
+ * to keep consistent style.
+ * </cite>
+ *
+ * But we believe, that using the more specific icon (even from parents)
+ * is better for user experience. So we are violating the standard
+ * intentionally.
+ *
+ * Ref.
+ * https://github.com/lxde/lxqt/issues/1252
+ * https://github.com/lxde/libqtxdg/pull/116
+ */
 QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
                                  const QString &iconName,
-                                 QStringList &visited) const
+                                 QStringList &visited,
+                                 bool dashFallback) const
 {
     QThemeIconInfo info;
     Q_ASSERT(!themeName.isEmpty());
@@ -385,17 +408,10 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
             }
         }
 
-        if (!info.entries.isEmpty()) {
+        if (!info.entries.isEmpty())
             info.iconName = iconNameFallback.toString();
-            break;
-        }
 
-        // If it's possible - find next fallback for the icon
-        const int indexOfDash = iconNameFallback.lastIndexOf(QLatin1Char('-'));
-        if (indexOfDash == -1)
-            break;
-
-        iconNameFallback.truncate(indexOfDash);
+        break;
     }
 
     if (info.entries.isEmpty()) {
@@ -480,6 +496,16 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
     }
 #endif
 
+    if (dashFallback && info.entries.isEmpty()) {
+        // If it's possible - find next fallback for the icon
+        const int indexOfDash = iconNameFallback.lastIndexOf(QLatin1Char('-'));
+        if (indexOfDash != -1) {
+            iconNameFallback.truncate(indexOfDash);
+            QStringList _visited;
+            info = findIconHelper(themeName, iconNameFallback.toString(), _visited, true);
+        }
+    }
+
     return info;
 }
 
@@ -488,7 +514,7 @@ QThemeIconInfo XdgIconLoader::loadIcon(const QString &name) const
     const QString theme_name = QIconLoader::instance()->themeName();
     if (!theme_name.isEmpty()) {
         QStringList visited;
-        return findIconHelper(theme_name, name, visited);
+        return findIconHelper(theme_name, name, visited, true);
     }
 
     return QThemeIconInfo();

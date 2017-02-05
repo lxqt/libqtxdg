@@ -134,7 +134,8 @@ public:
 private:
     QThemeIconInfo findIconHelper(const QString &themeName,
                                   const QString &iconName,
-                                  QStringList &visited) const;
+                                  QStringList &visited,
+                                  bool dashFallback = false) const;
     mutable QStringList m_iconDirs;
     mutable QHash <QString, XdgIconTheme> themeList;
 };

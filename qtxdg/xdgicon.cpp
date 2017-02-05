@@ -104,7 +104,7 @@ QIcon XdgIcon::fromTheme(const QString& iconName, const QIcon& fallback)
 
     // Note the qapp check is to allow lazy loading of static icons
     // Supporting fallbacks will not work for this case.
-    if (qApp && !isAbsolute && (icon.availableSizes().isEmpty() || icon.name() != iconName))
+    if (qApp && !isAbsolute && icon.availableSizes().isEmpty())
     {
         return fallback;
     }
@@ -121,7 +121,7 @@ QIcon XdgIcon::fromTheme(const QStringList& iconNames, const QIcon& fallback)
     foreach (const QString &iconName, iconNames)
     {
         QIcon icon = fromTheme(iconName);
-        if (!icon.isNull() && icon.name() == iconName)
+        if (!icon.isNull())
             return icon;
     }
 

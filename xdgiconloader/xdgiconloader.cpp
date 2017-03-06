@@ -240,10 +240,8 @@ XdgIconTheme::XdgIconTheme(const QString &themeName)
 #ifndef QT_NO_SETTINGS
     if (themeIndex.exists()) {
         const QSettings indexReader(themeIndex.fileName(), QSettings::IniFormat);
-        QStringListIterator keyIterator(indexReader.allKeys());
-        while (keyIterator.hasNext()) {
-
-            const QString key = keyIterator.next();
+        const QStringList keys = indexReader.allKeys();
+        for (auto const &key : keys) {
             if (key.endsWith(QLatin1String("/Size"))) {
                 // Note the QSettings ini-format does not accept
                 // slashes in key names, hence we have to cheat

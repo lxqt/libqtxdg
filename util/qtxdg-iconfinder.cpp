@@ -20,7 +20,9 @@
 
 #include <QGuiApplication> // XdgIconLoader needs a QGuiApplication
 #include <QCommandLineParser>
+#include <QElapsedTimer>
 #include <private/xdgiconloader/xdgiconloader_p.h>
+
 
 #include <iostream>
 #include <QDebug>
@@ -43,18 +45,30 @@ int main(int argc, char *argv[])
     if (parser.positionalArguments().isEmpty())
         parser.showHelp(EXIT_FAILURE);
 
+    qint64 totalElapsed = 0;
     const auto icons = parser.positionalArguments();
     for (const QString& iconName : icons) {
+        QElapsedTimer t;
+        t.start();
         const auto info = XdgIconLoader::instance()->loadIcon(iconName);
+        qint64 elapsed = t.elapsed();
         const auto icon = info.iconName;
         const auto entries = info.entries;
 
         std::cout << qPrintable(iconName) <<
-            qPrintable(QString::fromLatin1(":")) << qPrintable(icon) << "\n";
+            qPrintable(QString::fromLatin1(":")) << qPrintable(icon) <<
+            qPrintable(QString::fromLatin1(":")) <<
+            qPrintable(QString::number(elapsed)) << "\n";
 
         for (const auto &i : entries) {
             std::cout << "\t" << qPrintable(i->filename) << "\n";
         }
+        totalElapsed += elapsed;
     }
+
+    std::cout << qPrintable(QString::fromLatin1("Total loadIcon() time: ")) <<
+        qPrintable(QString::number(totalElapsed)) <<
+        qPrintable(QString::fromLatin1(" ms")) << "\n";
+
     return EXIT_SUCCESS;
 }

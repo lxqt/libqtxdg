@@ -735,50 +735,50 @@ QPixmap XdgIconLoaderEngine::pixmap(const QSize &size, QIcon::Mode mode,
 
     QIconLoaderEngineEntry *entry = entryForSize(size);
     if (entry) {
-        if (!XdgIconLoader::instance()->theme().followsColorScheme())
+        if (!XdgIconLoader::instance()->theme().followsColorScheme()
+            || !entry->filename.endsWith(QLatin1String(".svg"))) {
             return entry->pixmap(size, mode, state);
+        }
 
-        QImage img;
         // The following lines are adapted from KDE's "kiconloader.cpp" ->
         // KIconLoaderPrivate::processSvg() and KIconLoaderPrivate::createIconImage().
         // They read the SVG color scheme of SVG icons and give images based on the icon mode.
+        QImage img;
         QScopedPointer<QImageReader> reader;
         QBuffer buffer;
-        if (entry->filename.endsWith(QLatin1String("svg"))) {
-            QByteArray processedContents;
-            QScopedPointer<QIODevice> device;
-            device.reset(new QFile(entry->filename));
-            if (device->open(QIODevice::ReadOnly)) {
-                const QPalette pal = qApp->palette();
-                QString styleSheet = QStringLiteral(".ColorScheme-Text{color:%1;}")
-                                     .arg(mode == QIcon::Selected
-                                          ? pal.highlightedText().color().name()
-                                          : pal.windowText().color().name());
-                QXmlStreamReader xmlReader(device.data());
-                QBuffer contentsBuffer(&processedContents);
-                contentsBuffer.open(QIODevice::WriteOnly);
-                QXmlStreamWriter writer(&contentsBuffer);
-                while (!xmlReader.atEnd()) {
-                    if (xmlReader.readNext() == QXmlStreamReader::StartElement
-                        && xmlReader.qualifiedName() == QLatin1String("style")
-                        && xmlReader.attributes().value(QLatin1String("id")) == QLatin1String("current-color-scheme")) {
-                        writer.writeStartElement(QLatin1String("style"));
-                        writer.writeAttributes(xmlReader.attributes());
-                        writer.writeCharacters(styleSheet);
-                        writer.writeEndElement();
-                        while (xmlReader.tokenType() != QXmlStreamReader::EndElement)
-                            xmlReader.readNext();
-                    }
-                    else if (xmlReader.tokenType() != QXmlStreamReader::Invalid)
-                        writer.writeCurrentToken(xmlReader);
+
+        QByteArray processedContents;
+        QScopedPointer<QIODevice> device;
+        device.reset(new QFile(entry->filename));
+        if (device->open(QIODevice::ReadOnly)) {
+            const QPalette pal = qApp->palette();
+            QString styleSheet = QStringLiteral(".ColorScheme-Text{color:%1;}")
+                                 .arg(mode == QIcon::Selected
+                                      ? pal.highlightedText().color().name()
+                                      : pal.windowText().color().name());
+            QXmlStreamReader xmlReader(device.data());
+            QBuffer contentsBuffer(&processedContents);
+            contentsBuffer.open(QIODevice::WriteOnly);
+            QXmlStreamWriter writer(&contentsBuffer);
+            while (!xmlReader.atEnd()) {
+                if (xmlReader.readNext() == QXmlStreamReader::StartElement
+                    && xmlReader.qualifiedName() == QLatin1String("style")
+                    && xmlReader.attributes().value(QLatin1String("id")) == QLatin1String("current-color-scheme")) {
+                    writer.writeStartElement(QLatin1String("style"));
+                    writer.writeAttributes(xmlReader.attributes());
+                    writer.writeCharacters(styleSheet);
+                    writer.writeEndElement();
+                    while (xmlReader.tokenType() != QXmlStreamReader::EndElement)
+                        xmlReader.readNext();
                 }
-                contentsBuffer.close();
+                else if (xmlReader.tokenType() != QXmlStreamReader::Invalid)
+                    writer.writeCurrentToken(xmlReader);
             }
-            buffer.setData(processedContents);
-            reader.reset(new QImageReader(&buffer));
+            contentsBuffer.close();
         }
-        else 
-            reader.reset(new QImageReader(entry->filename));
+        buffer.setData(processedContents);
+        reader.reset(new QImageReader(&buffer));
+
         if (reader->canRead()) {
             int width = size.width();
             if (width != 0)

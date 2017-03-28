@@ -45,6 +45,9 @@
 #include <QtCore/QDir>
 #include <QtCore/QSettings>
 #include <QtGui/QPainter>
+#include <QImageReader>
+#include <QXmlStreamReader>
+#include <QBuffer>
 
 #ifdef Q_DEAD_CODE_FROM_QT4_MAC
 #include <private/qt_cocoa_helpers_mac_p.h>
@@ -216,7 +219,7 @@ QVector<const char *> QIconCacheGtkReader::lookup(const QStringRef &name)
 }
 
 XdgIconTheme::XdgIconTheme(const QString &themeName)
-        : m_valid(false)
+        : m_valid(false), m_followsColorScheme(false)
 {
     QFile themeIndex;
 
@@ -274,6 +277,8 @@ XdgIconTheme::XdgIconTheme(const QString &themeName)
                     m_keyList.append(dirInfo);
                 }
             }
+            else if (key == QLatin1String("Icon Theme/FollowsColorScheme"))
+                m_followsColorScheme = indexReader.value(key).toBool();
         }
 
         // Parent themes provide fallbacks for missing icons
@@ -729,8 +734,67 @@ QPixmap XdgIconLoaderEngine::pixmap(const QSize &size, QIcon::Mode mode,
     ensureLoaded();
 
     QIconLoaderEngineEntry *entry = entryForSize(size);
-    if (entry)
-        return entry->pixmap(size, mode, state);
+    if (entry) {
+        if (!XdgIconLoader::instance()->theme().followsColorScheme())
+            return entry->pixmap(size, mode, state);
+
+        QImage img;
+        // The following lines are adapted from KDE's "kiconloader.cpp" ->
+        // KIconLoaderPrivate::processSvg() and KIconLoaderPrivate::createIconImage().
+        // They read the SVG color scheme of SVG icons and give images based on the icon mode.
+        QScopedPointer<QImageReader> reader;
+        QBuffer buffer;
+        if (entry->filename.endsWith(QLatin1String("svg"))) {
+            QByteArray processedContents;
+            QScopedPointer<QIODevice> device;
+            device.reset(new QFile(entry->filename));
+            if (device->open(QIODevice::ReadOnly)) {
+                const QPalette pal = qApp->palette();
+                QString styleSheet = QStringLiteral(".ColorScheme-Text{color:%1;}")
+                                     .arg(mode == QIcon::Selected
+                                          ? pal.highlightedText().color().name()
+                                          : pal.windowText().color().name());
+                QXmlStreamReader xmlReader(device.data());
+                QBuffer contentsBuffer(&processedContents);
+                contentsBuffer.open(QIODevice::WriteOnly);
+                QXmlStreamWriter writer(&contentsBuffer);
+                while (!xmlReader.atEnd()) {
+                    if (xmlReader.readNext() == QXmlStreamReader::StartElement
+                        && xmlReader.qualifiedName() == QLatin1String("style")
+                        && xmlReader.attributes().value(QLatin1String("id")) == QLatin1String("current-color-scheme")) {
+                        writer.writeStartElement(QLatin1String("style"));
+                        writer.writeAttributes(xmlReader.attributes());
+                        writer.writeCharacters(styleSheet);
+                        writer.writeEndElement();
+                        while (xmlReader.tokenType() != QXmlStreamReader::EndElement)
+                            xmlReader.readNext();
+                    }
+                    else if (xmlReader.tokenType() != QXmlStreamReader::Invalid)
+                        writer.writeCurrentToken(xmlReader);
+                }
+                contentsBuffer.close();
+            }
+            buffer.setData(processedContents);
+            reader.reset(new QImageReader(&buffer));
+        }
+        else 
+            reader.reset(new QImageReader(entry->filename));
+        if (reader->canRead()) {
+            int width = size.width();
+            if (width != 0)
+                reader->setScaledSize(QSize(width, width));
+            img = reader->read();
+        }
+
+        QPixmap px;
+        if (!img.isNull() && px.convertFromImage(img)) {
+            // Do not return the pixmap now but get the icon from it
+            // for QIcon::pixmap() to handle states and modes,
+            // especially the disabled mode.
+            QIcon svgIcon = QIcon(px);
+            return svgIcon.pixmap(size, mode, state);
+        }
+    }
 
     return QPixmap();
 }

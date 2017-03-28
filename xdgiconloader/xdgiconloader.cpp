@@ -719,13 +719,10 @@ QPixmap PixmapEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State st
 
 QPixmap ScalableEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state)
 {
-    if (svgIcon.isNull())
-        svgIcon = QIcon(filename);
-
-    QImage img;
     // The following lines are adapted from KDE's "kiconloader.cpp" ->
     // KIconLoaderPrivate::processSvg() and KIconLoaderPrivate::createIconImage().
     // They read the SVG color scheme of SVG icons and give images based on the icon mode.
+    QImage img;
     QScopedPointer<QImageReader> reader;
     QBuffer buffer;
     if (filename.endsWith(QLatin1String("svg"))) {
@@ -771,17 +768,17 @@ QPixmap ScalableEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State 
     }
 
     QPixmap px;
-    QIcon icn;
     if (!img.isNull() && px.convertFromImage(img)) {
         // Do not return the pixmap now but get the icon from it
         // for QIcon::pixmap() to handle states and modes,
         // especially the disabled mode.
-        icn = QIcon(px);
+        svgIcon = QIcon(px);
     }
-    else
-      icn = svgIcon;
 
-    return icn.pixmap(size, mode, state);
+    if (svgIcon.isNull()) // not really needed with SVG icons
+        svgIcon = QIcon(filename);
+
+    return svgIcon.pixmap(size, mode, state);
 }
 
 QPixmap XdgIconLoaderEngine::pixmap(const QSize &size, QIcon::Mode mode,

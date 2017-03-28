@@ -61,6 +61,12 @@
 
 class XdgIconLoader;
 
+struct ScalableFollowsColorEntry : public ScalableEntry
+{
+    QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state) Q_DECL_OVERRIDE;
+    QIcon svgSelectedIcon;
+};
+
 //class QIconLoaderEngine : public QIconEngine
 class XDGICONLOADER_EXPORT XdgIconLoaderEngine : public QIconEngine
 {
@@ -97,16 +103,18 @@ class XdgIconTheme
 {
 public:
     XdgIconTheme(const QString &name);
-    XdgIconTheme() : m_valid(false) {}
+    XdgIconTheme() = default;
     QStringList parents() { return m_parents; }
     QVector <QIconDirInfo> keyList() { return m_keyList; }
     QStringList contentDirs() { return m_contentDirs; }
-    bool isValid() { return m_valid; }
+    bool isValid() const { return m_valid; }
+    bool followsColorScheme() const { return m_followsColorScheme; }
 private:
     QStringList m_contentDirs;
     QVector <QIconDirInfo> m_keyList;
     QStringList m_parents;
-    bool m_valid;
+    bool m_valid = false;
+    bool m_followsColorScheme = false;
 public:
     QVector<QSharedPointer<QIconCacheGtkReader>> m_gtkCaches;
 };

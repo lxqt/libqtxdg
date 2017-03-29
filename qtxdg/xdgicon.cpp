@@ -145,6 +145,17 @@ QIcon XdgIcon::fromTheme(const QString &iconName,
     return fromTheme(icons);
 }
 
+bool XdgIcon::followColorScheme()
+{
+    return XdgIconLoader::instance()->followColorScheme();
+}
+
+
+void XdgIcon::setFollowColorScheme(bool enable)
+{
+    XdgIconLoader::instance()->setFollowColorScheme(enable);
+}
+
 
 QIcon XdgIcon::defaultApplicationIcon()
 {

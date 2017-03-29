@@ -76,6 +76,15 @@ static bool gSupportsSvg = false;
 static bool gSupportsSvg = true;
 #endif //QT_NO_LIBRARY
 
+void XdgIconLoader::setFollowColorScheme(bool enable)
+{
+    if (m_followColorScheme != enable)
+    {
+        QIconLoader::instance()->invalidateKey();
+        m_followColorScheme = enable;
+    }
+}
+
 XdgIconLoader *XdgIconLoader::instance()
 {
    QIconLoader::instance()->ensureInitialized();
@@ -394,7 +403,7 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
                 } else {
                     const QString svgPath = subDir + svgIconName;
                     if (gSupportsSvg && QFile::exists(svgPath)) {
-                        ScalableEntry *iconEntry = theme.followsColorScheme() ? new ScalableFollowsColorEntry : new ScalableEntry;
+                        ScalableEntry *iconEntry = (followColorScheme() && theme.followsColorScheme()) ? new ScalableFollowsColorEntry : new ScalableEntry;
                         iconEntry->dir = dirInfo;
                         iconEntry->filename = svgPath;
                         info.entries.append(iconEntry);
@@ -447,7 +456,7 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
                 info.entries.prepend(iconEntry);
             } else if (gSupportsSvg &&
                 currentDir.exists(iconName + svgext)) {
-                ScalableEntry *iconEntry = theme.followsColorScheme() ? new ScalableFollowsColorEntry : new ScalableEntry;
+                ScalableEntry *iconEntry = (followColorScheme() && theme.followsColorScheme()) ? new ScalableFollowsColorEntry : new ScalableEntry;
                 iconEntry->filename = currentDir.filePath(iconName + svgext);
                 info.entries.append(iconEntry);
             } else if (currentDir.exists(iconName + xpmext)) {
@@ -485,7 +494,7 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
             info.entries.prepend(iconEntry);
         } else if (gSupportsSvg &&
                    currentDir.exists(iconName + svgext)) {
-            ScalableEntry *iconEntry = theme.followsColorScheme() ? new ScalableFollowsColorEntry : new ScalableEntry;
+            ScalableEntry *iconEntry = (followColorScheme() && theme.followsColorScheme()) ? new ScalableFollowsColorEntry : new ScalableEntry;
             iconEntry->dir = dirInfo;
             iconEntry->filename = currentDir.filePath(iconName + svgext);
             info.entries.append(iconEntry);

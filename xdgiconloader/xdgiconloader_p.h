@@ -135,6 +135,12 @@ public:
     inline void invalidateKey() { QIconLoader::instance()->invalidateKey(); }
     inline void ensureInitialized() { QIconLoader::instance()->ensureInitialized(); }
     inline bool hasUserTheme() const { return QIconLoader::instance()->hasUserTheme(); }
+    /*!
+     * Flag if the "FollowsColorScheme" hint (the KDE extension to XDG
+     * themes) should be honored.
+     */
+    inline bool followColorScheme() const { return m_followColorScheme; }
+    void setFollowColorScheme(bool enable);
 
     XdgIconTheme theme() { return themeList.value(QIconLoader::instance()->themeName()); }
     static XdgIconLoader *instance();
@@ -144,8 +150,8 @@ private:
                                   const QString &iconName,
                                   QStringList &visited,
                                   bool dashFallback = false) const;
-    mutable QStringList m_iconDirs;
     mutable QHash <QString, XdgIconTheme> themeList;
+    bool m_followColorScheme = true;
 };
 
 #endif // QT_NO_ICON

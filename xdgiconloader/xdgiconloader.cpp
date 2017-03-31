@@ -62,10 +62,13 @@ static QString fallbackTheme()
 {
     if (const QPlatformTheme *theme = QGuiApplicationPrivate::platformTheme()) {
         const QVariant themeHint = theme->themeHint(QPlatformTheme::SystemIconFallbackThemeName);
-        if (themeHint.isValid())
-            return themeHint.toString();
+        if (themeHint.isValid()) {
+            const QString theme = themeHint.toString();
+            if (theme != QLatin1String("hicolor"))
+                return theme;
+        }
     }
-    return QLatin1String("hicolor");
+    return QString();
 }
 
 #ifdef QT_NO_LIBRARY
@@ -280,6 +283,7 @@ XdgIconTheme::XdgIconTheme(const QString &themeName)
         m_parents = indexReader.value(
                 QLatin1String("Icon Theme/Inherits")).toStringList();
         m_parents.removeAll(QString());
+        m_parents.removeAll(QLatin1String("hicolor"));
 
         // Ensure a default platform fallback for all themes
         if (m_parents.isEmpty()) {
@@ -287,10 +291,6 @@ XdgIconTheme::XdgIconTheme(const QString &themeName)
             if (!fallback.isEmpty())
                 m_parents.append(fallback);
         }
-
-        // Ensure that all themes fall back to hicolor
-        if (!m_parents.contains(QLatin1String("hicolor")))
-            m_parents.append(QLatin1String("hicolor"));
     }
 #endif //QT_NO_SETTINGS
 }
@@ -331,8 +331,11 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
     XdgIconTheme &theme = themeList[themeName];
     if (!theme.isValid()) {
         theme = XdgIconTheme(themeName);
-        if (!theme.isValid())
-            theme = XdgIconTheme(fallbackTheme());
+        if (!theme.isValid()) {
+            const QString fallback = fallbackTheme();
+            if (!fallback.isEmpty())
+                theme = XdgIconTheme(fallback);
+        }
     }
 
     const QStringList contentDirs = theme.contentDirs();
@@ -514,7 +517,11 @@ QThemeIconInfo XdgIconLoader::loadIcon(const QString &name) const
     const QString theme_name = QIconLoader::instance()->themeName();
     if (!theme_name.isEmpty()) {
         QStringList visited;
-        return findIconHelper(theme_name, name, visited, true);
+        auto info = findIconHelper(theme_name, name, visited, true);
+        if (info.entries.isEmpty())
+           return findIconHelper(QLatin1String("hicolor"), name, visited, true);
+        else
+            return info;
     }
 
     return QThemeIconInfo();

@@ -371,7 +371,6 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
                         iconEntry->dir = dirInfo;
                         iconEntry->filename = svgPath;
                         info.entries.append(iconEntry);
-                        break;
                     }
                 }
                 const QString xpmPath = subDir + xpmIconName;
@@ -382,7 +381,6 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
                     // Notice we ensure that pixmap entries always come before
                     // scalable to preserve search order afterwards
                     info.entries.append(iconEntry);
-                    break;
                 }
             }
         }
@@ -432,14 +430,12 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
                 ScalableEntry *iconEntry = new ScalableEntry;
                 iconEntry->filename = currentDir.filePath(iconName + svgext);
                 info.entries.append(iconEntry);
-                break;
             } else if (currentDir.exists(iconName + xpmext)) {
                 PixmapEntry *iconEntry = new PixmapEntry;
                 iconEntry->filename = currentDir.filePath(iconName + xpmext);
                 // Notice we ensure that pixmap entries always come before
                 // scalable to preserve search order afterwards
                 info.entries.append(iconEntry);
-                break;
             }
         }
     }

@@ -150,6 +150,7 @@ private:
                                   const QString &iconName,
                                   QStringList &visited,
                                   bool dashFallback = false) const;
+    QThemeIconInfo unthemedFallback(const QString &iconName, const QStringList &searchPaths) const;
     mutable QHash <QString, XdgIconTheme> themeList;
     bool m_followColorScheme = true;
 };

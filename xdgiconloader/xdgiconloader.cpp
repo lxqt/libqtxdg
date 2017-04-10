@@ -459,46 +459,6 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
         }
     }
 
-
-    /*********************************************************************
-    Author: Kaitlin Rupert <kaitlin.rupert@intel.com>
-    Date: Aug 12, 2010
-    Description: Make it so that the QIcon loader honors /usr/share/pixmaps
-                 directory.  This is a valid directory per the Freedesktop.org
-                 icon theme specification.
-    Bug: https://bugreports.qt.nokia.com/browse/QTBUG-12874
-     *********************************************************************/
-#ifdef Q_OS_LINUX
-    /* Freedesktop standard says to look in /usr/share/pixmaps last */
-    if (info.entries.isEmpty()) {
-        const QString pixmaps(QLatin1String("/usr/share/pixmaps"));
-
-        const QDir currentDir(pixmaps);
-        const QIconDirInfo dirInfo(pixmaps);
-        if (currentDir.exists(iconName + pngext)) {
-            PixmapEntry *iconEntry = new PixmapEntry;
-            iconEntry->dir = dirInfo;
-            iconEntry->filename = currentDir.filePath(iconName + pngext);
-            // Notice we ensure that pixmap entries always come before
-            // scalable to preserve search order afterwards
-            info.entries.prepend(iconEntry);
-        } else if (gSupportsSvg &&
-                   currentDir.exists(iconName + svgext)) {
-            ScalableEntry *iconEntry = new ScalableEntry;
-            iconEntry->dir = dirInfo;
-            iconEntry->filename = currentDir.filePath(iconName + svgext);
-            info.entries.append(iconEntry);
-        } else if (currentDir.exists(iconName + xpmext)) {
-            PixmapEntry *iconEntry = new PixmapEntry;
-            iconEntry->dir = dirInfo;
-            iconEntry->filename = currentDir.filePath(iconName + xpmext);
-            // Notice we ensure that pixmap entries always come before
-            // scalable to preserve search order afterwards
-            info.entries.append(iconEntry);
-        }
-    }
-#endif
-
     if (dashFallback && info.entries.isEmpty()) {
         // If it's possible - find next fallback for the icon
         const int indexOfDash = iconNameFallback.lastIndexOf(QLatin1Char('-'));
@@ -512,16 +472,74 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
     return info;
 }
 
+QThemeIconInfo XdgIconLoader::pixmapFallback(const QString &iconName) const
+{
+    /*********************************************************************
+    Author: Kaitlin Rupert <kaitlin.rupert@intel.com>
+    Date: Aug 12, 2010
+    Description: Make it so that the QIcon loader honors /usr/share/pixmaps
+                 directory.  This is a valid directory per the Freedesktop.org
+                 icon theme specification.
+    Bug: https://bugreports.qt.nokia.com/browse/QTBUG-12874
+     *********************************************************************/
+    QThemeIconInfo info;
+#ifdef Q_OS_LINUX
+
+    const QString svgext(QLatin1String(".svg"));
+    const QString pngext(QLatin1String(".png"));
+    const QString xpmext(QLatin1String(".xpm"));
+
+    /* Freedesktop standard says to look in /usr/share/pixmaps last */
+    const QString pixmaps(QLatin1String("/usr/share/pixmaps"));
+
+    const QDir currentDir(pixmaps);
+    const QIconDirInfo dirInfo(pixmaps);
+    if (currentDir.exists(iconName + pngext)) {
+        PixmapEntry *iconEntry = new PixmapEntry;
+        iconEntry->dir = dirInfo;
+        iconEntry->filename = currentDir.filePath(iconName + pngext);
+        // Notice we ensure that pixmap entries always come before
+        // scalable to preserve search order afterwards
+        info.entries.prepend(iconEntry);
+    } else if (gSupportsSvg &&
+               currentDir.exists(iconName + svgext)) {
+        ScalableEntry *iconEntry = new ScalableEntry;
+        iconEntry->dir = dirInfo;
+        iconEntry->filename = currentDir.filePath(iconName + svgext);
+        info.entries.append(iconEntry);
+    } else if (currentDir.exists(iconName + xpmext)) {
+        PixmapEntry *iconEntry = new PixmapEntry;
+        iconEntry->dir = dirInfo;
+        iconEntry->filename = currentDir.filePath(iconName + xpmext);
+        // Notice we ensure that pixmap entries always come before
+        // scalable to preserve search order afterwards
+        info.entries.append(iconEntry);
+    }
+#endif
+    return info;
+}
+
 QThemeIconInfo XdgIconLoader::loadIcon(const QString &name) const
 {
     const QString theme_name = QIconLoader::instance()->themeName();
     if (!theme_name.isEmpty()) {
         QStringList visited;
         auto info = findIconHelper(theme_name, name, visited, true);
-        if (info.entries.isEmpty())
-           return findIconHelper(QLatin1String("hicolor"), name, visited, true);
-        else
+        if (info.entries.isEmpty()) {
+            const auto hicolorInfo = findIconHelper(QLatin1String("hicolor"), name, visited, true);
+            if (hicolorInfo.entries.isEmpty()) {
+                const auto pixmapInfo = pixmapFallback(name);
+                if (pixmapInfo.entries.isEmpty()) {
+                    return QThemeIconInfo();
+                } else {
+                    return pixmapInfo;
+                }
+            } else {
+                return hicolorInfo;
+            }
+        } else {
             return info;
+        }
     }
 
     return QThemeIconInfo();

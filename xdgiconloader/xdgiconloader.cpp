@@ -432,33 +432,6 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
         }
     }
 
-    if (info.entries.isEmpty()) {
-       // Search for unthemed icons in main dir of search paths
-       QStringList themeSearchPaths = QIcon::themeSearchPaths();
-        foreach (QString contentDir, themeSearchPaths)  {
-            QDir currentDir(contentDir);
-
-            if (currentDir.exists(iconName + pngext)) {
-                PixmapEntry *iconEntry = new PixmapEntry;
-                iconEntry->filename = currentDir.filePath(iconName + pngext);
-                // Notice we ensure that pixmap entries always come before
-                // scalable to preserve search order afterwards
-                info.entries.prepend(iconEntry);
-            } else if (gSupportsSvg &&
-                currentDir.exists(iconName + svgext)) {
-                ScalableEntry *iconEntry = new ScalableEntry;
-                iconEntry->filename = currentDir.filePath(iconName + svgext);
-                info.entries.append(iconEntry);
-            } else if (currentDir.exists(iconName + xpmext)) {
-                PixmapEntry *iconEntry = new PixmapEntry;
-                iconEntry->filename = currentDir.filePath(iconName + xpmext);
-                // Notice we ensure that pixmap entries always come before
-                // scalable to preserve search order afterwards
-                info.entries.append(iconEntry);
-            }
-        }
-    }
-
     if (dashFallback && info.entries.isEmpty()) {
         // If it's possible - find next fallback for the icon
         const int indexOfDash = iconNameFallback.lastIndexOf(QLatin1Char('-'));
@@ -469,6 +442,41 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
         }
     }
 
+    return info;
+}
+
+QThemeIconInfo XdgIconLoader::unthemedFallback(const QString &iconName) const
+{
+    QThemeIconInfo info;
+
+    const QString svgext(QLatin1String(".svg"));
+    const QString pngext(QLatin1String(".png"));
+    const QString xpmext(QLatin1String(".xpm"));
+
+    // Search for unthemed icons in main dir of search paths
+    QStringList themeSearchPaths = QIcon::themeSearchPaths();
+    foreach (QString contentDir, themeSearchPaths)  {
+        QDir currentDir(contentDir);
+
+        if (currentDir.exists(iconName + pngext)) {
+            PixmapEntry *iconEntry = new PixmapEntry;
+            iconEntry->filename = currentDir.filePath(iconName + pngext);
+            // Notice we ensure that pixmap entries always come before
+            // scalable to preserve search order afterwards
+            info.entries.prepend(iconEntry);
+        } else if (gSupportsSvg &&
+            currentDir.exists(iconName + svgext)) {
+            ScalableEntry *iconEntry = new ScalableEntry;
+            iconEntry->filename = currentDir.filePath(iconName + svgext);
+            info.entries.append(iconEntry);
+        } else if (currentDir.exists(iconName + xpmext)) {
+            PixmapEntry *iconEntry = new PixmapEntry;
+            iconEntry->filename = currentDir.filePath(iconName + xpmext);
+            // Notice we ensure that pixmap entries always come before
+            // scalable to preserve search order afterwards
+            info.entries.append(iconEntry);
+        }
+    }
     return info;
 }
 
@@ -528,11 +536,16 @@ QThemeIconInfo XdgIconLoader::loadIcon(const QString &name) const
         if (info.entries.isEmpty()) {
             const auto hicolorInfo = findIconHelper(QLatin1String("hicolor"), name, visited, true);
             if (hicolorInfo.entries.isEmpty()) {
-                const auto pixmapInfo = pixmapFallback(name);
-                if (pixmapInfo.entries.isEmpty()) {
-                    return QThemeIconInfo();
+                const auto unthemedInfo = unthemedFallback(name);
+                if (unthemedInfo.entries.isEmpty()) {
+                    const auto pixmapInfo = pixmapFallback(name);
+                    if (pixmapInfo.entries.isEmpty()) {
+                        return QThemeIconInfo();
+                    } else {
+                        return pixmapInfo;
+                    }
                 } else {
-                    return pixmapInfo;
+                    return unthemedInfo;
                 }
             } else {
                 return hicolorInfo;

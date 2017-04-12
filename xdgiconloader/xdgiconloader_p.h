@@ -136,6 +136,8 @@ private:
                                   const QString &iconName,
                                   QStringList &visited,
                                   bool dashFallback = false) const;
+    QThemeIconInfo unthemedFallback(const QString &iconName) const;
+    QThemeIconInfo pixmapFallback(const QString &iconName) const;
     mutable QStringList m_iconDirs;
     mutable QHash <QString, XdgIconTheme> themeList;
 };

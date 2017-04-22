@@ -390,12 +390,7 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
             break;
         }
 
-        // If it's possible - find next fallback for the icon
-        const int indexOfDash = iconNameFallback.lastIndexOf(QLatin1Char('-'));
-        if (indexOfDash == -1)
-            break;
-
-        iconNameFallback.truncate(indexOfDash);
+        break;
     }
 
     if (info.entries.isEmpty()) {

@@ -45,6 +45,9 @@
 #include <QtCore/QDir>
 #include <QtCore/QSettings>
 #include <QtGui/QPainter>
+#include <QImageReader>
+#include <QXmlStreamReader>
+#include <QBuffer>
 
 #ifdef Q_DEAD_CODE_FROM_QT4_MAC
 #include <private/qt_cocoa_helpers_mac_p.h>
@@ -712,10 +715,65 @@ QPixmap PixmapEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State st
 
 QPixmap ScalableEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state)
 {
-    if (svgIcon.isNull())
+    // The following lines are adapted from KDE's "kiconloader.cpp" ->
+    // KIconLoaderPrivate::processSvg() and KIconLoaderPrivate::createIconImage().
+    // They read the SVG color scheme of SVG icons and give images based on the icon mode.
+    QImage img;
+    QScopedPointer<QImageReader> reader;
+    QBuffer buffer;
+    if (filename.endsWith(QLatin1String("svg"))) {
+        QByteArray processedContents;
+        QScopedPointer<QIODevice> device;
+        device.reset(new QFile(filename));
+        if (device->open(QIODevice::ReadOnly)) {
+            const QPalette pal = qApp->palette();
+            QString styleSheet = QStringLiteral(".ColorScheme-Text{color:%1;}")
+                                 .arg(mode == QIcon::Selected
+                                      ? pal.highlightedText().color().name()
+                                      : pal.windowText().color().name());
+            QXmlStreamReader xmlReader(device.data());
+            QBuffer contentsBuffer(&processedContents);
+            contentsBuffer.open(QIODevice::WriteOnly);
+            QXmlStreamWriter writer(&contentsBuffer);
+            while (!xmlReader.atEnd()) {
+                if (xmlReader.readNext() == QXmlStreamReader::StartElement
+                    && xmlReader.qualifiedName() == QLatin1String("style")
+                    && xmlReader.attributes().value(QLatin1String("id")) == QLatin1String("current-color-scheme")) {
+                    writer.writeStartElement(QLatin1String("style"));
+                    writer.writeAttributes(xmlReader.attributes());
+                    writer.writeCharacters(styleSheet);
+                    writer.writeEndElement();
+                    while (xmlReader.tokenType() != QXmlStreamReader::EndElement)
+                        xmlReader.readNext();
+                }
+                else if (xmlReader.tokenType() != QXmlStreamReader::Invalid)
+                    writer.writeCurrentToken(xmlReader);
+            }
+            contentsBuffer.close();
+        }
+        buffer.setData(processedContents);
+        reader.reset(new QImageReader(&buffer));
+    }
+    else 
+        reader.reset(new QImageReader(filename));
+    if (reader->canRead()) {
+        int width = size.width();
+        if (width != 0)
+            reader->setScaledSize(QSize(width, width));
+        img = reader->read();
+    }
+
+    QPixmap px;
+    if (!img.isNull() && px.convertFromImage(img)) {
+        // Do not return the pixmap now but get the icon from it
+        // for QIcon::pixmap() to handle states and modes,
+        // especially the disabled mode.
+        svgIcon = QIcon(px);
+    }
+
+    if (svgIcon.isNull()) // not really needed with SVG icons
         svgIcon = QIcon(filename);
 
-    // Simply reuse svg icon engine
     return svgIcon.pixmap(size, mode, state);
 }
 

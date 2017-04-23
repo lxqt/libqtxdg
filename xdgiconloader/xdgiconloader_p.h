@@ -102,11 +102,13 @@ public:
     QVector <QIconDirInfo> keyList() { return m_keyList; }
     QStringList contentDirs() { return m_contentDirs; }
     bool isValid() { return m_valid; }
+    bool followsColorScheme() { return m_followsColorScheme; }
 private:
     QStringList m_contentDirs;
     QVector <QIconDirInfo> m_keyList;
     QStringList m_parents;
     bool m_valid;
+    bool m_followsColorScheme;
 public:
     QVector<QSharedPointer<QIconCacheGtkReader>> m_gtkCaches;
 };

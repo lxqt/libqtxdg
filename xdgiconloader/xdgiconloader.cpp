@@ -672,7 +672,7 @@ QSize XdgIconLoaderEngine::actualSize(const QSize &size, QIcon::Mode mode,
             return QSize(result, result);
         }
     }
-    return QIconEngine::actualSize(size, mode, state);
+    return {0, 0};
 }
 
 QPixmap PixmapEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state)

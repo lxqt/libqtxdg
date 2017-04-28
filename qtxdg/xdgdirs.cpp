@@ -108,7 +108,7 @@ QString userDirFallback(XdgDirs::UserDirectory dir)
     if (home.isEmpty())
         return QString::fromLatin1("/tmp");
     else if (dir == XdgDirs::Desktop)
-        fallback = QString::fromLatin1("%1/%2").arg(home).arg(QLatin1String("Desktop"));
+        fallback = QString::fromLatin1("%1/%2").arg(home, QLatin1String("Desktop"));
     else
         fallback = home;
 
@@ -217,7 +217,7 @@ bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool 
     stream.reset();
     configFile.resize(0);
     if (!foundVar)
-        stream << QString::fromLatin1("XDG_%1_DIR=\"%2\"\n").arg(folderName.toUpper()).arg(value);
+        stream << QString::fromLatin1("XDG_%1_DIR=\"%2\"\n").arg(folderName.toUpper(),(value));
 
     for (QVector<QString>::iterator i = lines.begin(); i != lines.end(); ++i)
         stream << *i << QLatin1Char('\n');

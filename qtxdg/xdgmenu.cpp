@@ -205,8 +205,7 @@ void XdgMenu::save(const QString& fileName)
     if (!file.open(QFile::WriteOnly | QFile::Text))
     {
         qWarning() << QString::fromLatin1("Cannot write file %1:\n%2.")
-                .arg(fileName)
-                .arg(file.errorString());
+                .arg(fileName, file.errorString());
         return;
     }
 
@@ -225,7 +224,7 @@ void XdgMenuPrivate::load(const QString& fileName)
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly | QFile::Text))
     {
-        qWarning() << QString::fromLatin1("%1 not loading: %2").arg(fileName).arg(file.errorString());
+        qWarning() << QString::fromLatin1("%1 not loading: %2").arg(fileName, file.errorString());
         return;
     }
     mXml.setContent(&file, true);

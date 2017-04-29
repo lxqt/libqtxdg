@@ -186,7 +186,7 @@ void XdgMenuWidgetPrivate::buildMenu()
 
     QAction* first = 0;
     if (!q->actions().isEmpty())
-        first = q->actions().last();
+        first = q->actions().constLast();
 
 
     DomElementIterator it(mXml, QString());

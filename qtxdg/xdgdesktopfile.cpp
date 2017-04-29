@@ -1617,7 +1617,7 @@ XdgDesktopFile* XdgDesktopFileCache::getDefaultApp(const QString& mimetype)
     foreach(const QString &dataDir, dataDirs)
     {
         QString defaultsListPath = dataDir + QLatin1String("/applications/mimeapps.list");
-        if (QFileInfo(defaultsListPath).exists())
+        if (QFileInfo::exists(defaultsListPath))
         {
             QSettings defaults(defaultsListPath, desktopFileSettingsFormat());
 

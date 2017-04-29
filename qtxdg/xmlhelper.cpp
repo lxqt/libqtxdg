@@ -41,6 +41,6 @@ QDebug operator<<(QDebug dbg, const QDomElement &el)
     for (int i=0; i<map.count(); ++i)
         args += QLatin1Char(' ') + map.item(i).nodeName() + QLatin1Char('=') + map.item(i).nodeValue() + QLatin1Char('\'');
 
-    dbg.nospace() << QString::fromLatin1("<%1%2>%3</%1>").arg(el.tagName()).arg(args).arg(el.text());
+    dbg.nospace() << QString::fromLatin1("<%1%2>%3</%1>").arg(el.tagName(), args, el.text());
     return dbg.space();
 }

@@ -76,7 +76,7 @@ bool XdgMenuReader::load(const QString& fileName, const QString& baseDir)
     QFile file(mFileName);
     if (!file.open(QFile::ReadOnly | QFile::Text))
     {
-        mErrorStr = QString::fromLatin1("%1 not loading: %2").arg(fileName).arg(file.errorString());
+        mErrorStr = QString::fromLatin1("%1 not loading: %2").arg(fileName, file.errorString());
         return false;
     }
     //qDebug() << "Load file:" << mFileName;
@@ -238,7 +238,7 @@ void XdgMenuReader::processMergeFileTag(QDomElement& element, QStringList* merge
 
         foreach (const QString &configDir, configDirs)
         {
-            if (QFileInfo(configDir + relativeName).exists())
+            if (QFileInfo::exists(configDir + relativeName))
             {
                 mergeFile(configDir + relativeName, element, mergedFiles);
                 return;
@@ -297,7 +297,7 @@ void XdgMenuReader::processDefaultMergeDirsTag(QDomElement& element, QStringList
 
     foreach (const QString &dir, dirs)
     {
-        mergeDir(QString::fromLatin1("%1/menus/%2-merged").arg(dir).arg(menuBaseName), element, mergedFiles);
+        mergeDir(QString::fromLatin1("%1/menus/%2-merged").arg(dir, menuBaseName), element, mergedFiles);
     }
 
     if (menuBaseName == QLatin1String("applications"))

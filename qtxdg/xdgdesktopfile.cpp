@@ -1415,14 +1415,14 @@ bool writeDesktopFile(QIODevice & device, const QSettings::SettingsMap & map)
     QTextStream stream(&device);
     QString section;
 
-    foreach (const QString &key, map.keys())
+    for (auto it = map.constBegin(); it != map.constEnd(); ++it)
     {
-        if (! map.value(key).canConvert<QString>())
+        if (! it.value().canConvert<QString>())
         {
             return false;
         }
 
-        QString thisSection = key.section(QLatin1Char('/'), 0, 0);
+        QString thisSection = it.key().section(QLatin1Char('/'), 0, 0);
         if (thisSection.isEmpty())
         {
             qWarning() << "No section defined";
@@ -1435,7 +1435,7 @@ bool writeDesktopFile(QIODevice & device, const QSettings::SettingsMap & map)
             section = thisSection;
         }
 
-        QString remainingKey = key.section(QLatin1Char('/'), 1, -1);
+        QString remainingKey = it.key().section(QLatin1Char('/'), 1, -1);
 
         if (remainingKey.isEmpty())
         {
@@ -1443,7 +1443,7 @@ bool writeDesktopFile(QIODevice & device, const QSettings::SettingsMap & map)
             return false;
         }
 
-        stream << remainingKey << QLatin1Char('=') << map.value(key).toString() << QLatin1Char('\n');
+        stream << remainingKey << QLatin1Char('=') << it.value().toString() << QLatin1Char('\n');
 
     }
 

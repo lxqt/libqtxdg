@@ -1593,7 +1593,7 @@ QList<XdgDesktopFile*> XdgDesktopFileCache::getAppsOfCategory(const QString& cat
 {
     QList<XdgDesktopFile*> list;
     const QString _category = category.toUpper();
-    foreach (XdgDesktopFile *desktopFile, instance().m_fileCache.values())
+    foreach (XdgDesktopFile *desktopFile, instance().m_fileCache)
     {
         QStringList categories = desktopFile->value(categoriesKey).toString().toUpper().split(QLatin1Char(';'));
         if (!categories.isEmpty() && (categories.contains(_category) || categories.contains(QLatin1String("X-") + _category)))

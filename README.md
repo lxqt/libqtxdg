@@ -1,5 +1,7 @@
 # libqtxdg
 
+[![Travis Build Status](https://travis-ci.org/lxde/libqtxdg.svg?branch=master)](https://travis-ci.org/lxde/libqtxdg)
+
 ## Overview
 
 `libqtxdg` is a Qt 5 implementation of freedesktop.org XDG specifications.   

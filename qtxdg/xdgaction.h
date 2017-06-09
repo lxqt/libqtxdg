@@ -71,7 +71,7 @@ public:
 
     const XdgDesktopFile& desktopFile() const { return mDesktopFile; }
 
-private slots:
+private Q_SLOTS:
     void runConmmand() const;
     void updateIcon();
 

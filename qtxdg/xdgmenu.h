@@ -112,7 +112,7 @@ public:
 
     bool isOutDated() const;
 
-signals:
+Q_SIGNALS:
     void changed();
 
 protected:

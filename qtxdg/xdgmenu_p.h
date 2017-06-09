@@ -73,10 +73,10 @@ public:
     QFileSystemWatcher mWatcher;
     bool mOutDated;
 
-public slots:
+public Q_SLOTS:
     void rebuild();
 
-signals:
+Q_SIGNALS:
     void changed();
 
 

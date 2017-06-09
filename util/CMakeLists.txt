@@ -25,11 +25,15 @@ target_include_directories(qtxdg-iconfinder
 )
 
 target_compile_definitions(qtxdg-desktop-file-start
-    PRIVATE "-DQTXDG_VERSION=\"${QTXDG_VERSION_STRING}\""
+    PRIVATE
+        "-DQTXDG_VERSION=\"${QTXDG_VERSION_STRING}\""
+        "QT_NO_KEYWORDS"
 )
 
 target_compile_definitions(qtxdg-iconfinder
-    PRIVATE "-DQTXDG_VERSION=\"${QTXDG_VERSION_STRING}\""
+    PRIVATE
+        "-DQTXDG_VERSION=\"${QTXDG_VERSION_STRING}\""
+        "QT_NO_KEYWORDS"
 )
 
 target_link_libraries(qtxdg-desktop-file-start

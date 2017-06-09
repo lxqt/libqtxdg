@@ -34,6 +34,11 @@ configure_file(
     COPYONLY
 )
 
+target_compile_definitions(${QTXDGX_ICONLOADER_LIBRARY_NAME}
+    PRIVATE
+        "QT_NO_KEYWORDS"
+)
+
 target_include_directories(${QTXDGX_ICONLOADER_LIBRARY_NAME}
     INTERFACE
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QTXDGX_ICONLOADER_FILE_NAME}>"

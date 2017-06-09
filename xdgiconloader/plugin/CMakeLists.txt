@@ -6,6 +6,10 @@ add_library(${QTXDGX_ICONENGINEPLUGIN_LIBRARY_NAME} MODULE
     ${xdgiconengineplugin_CPP_FILES}
 )
 
+target_compile_definitions(${QTXDGX_ICONENGINEPLUGIN_LIBRARY_NAME}
+    PRIVATE
+        "QT_NO_KEYWORDS"
+)
 target_link_libraries(${QTXDGX_ICONENGINEPLUGIN_LIBRARY_NAME}
     PUBLIC
         Qt5::Gui

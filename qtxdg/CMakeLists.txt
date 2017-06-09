@@ -82,6 +82,7 @@ target_compile_definitions(${QTXDGX_LIBRARY_NAME}
     PRIVATE
         "QTXDG_COMPILATION=\"1\""
         "QTXDG_VERSION=\"${QTXDG_VERSION_STRING}\""
+        "QT_NO_KEYWORDS"
 )
 
 target_include_directories(${QTXDGX_LIBRARY_NAME}

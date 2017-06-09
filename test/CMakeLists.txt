@@ -3,6 +3,10 @@ remove_definitions(
     -DQT_NO_CAST_FROM_ASCII
 )
 
+add_definitions(
+    -DQT_NO_KEYWORDS
+)
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 macro(qtxdg_add_test)

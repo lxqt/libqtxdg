@@ -47,9 +47,9 @@ public:
     QString errorString() const { return mErrorStr; }
     QDomDocument& xml() { return mXml; }
 
-signals:
+Q_SIGNALS:
 
-public slots:
+public Q_SLOTS:
 
 protected:
     void processMergeTags(QDomElement& element);

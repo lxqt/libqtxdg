@@ -90,7 +90,7 @@ void XdgMenuApplinkProcessor::step1()
     }
 
     // Process childs menus ...............................
-    foreach (XdgMenuApplinkProcessor* child, mChilds)
+    Q_FOREACH (XdgMenuApplinkProcessor* child, mChilds)
         child->step1();
 }
 
@@ -100,7 +100,7 @@ void XdgMenuApplinkProcessor::step2()
     // Create AppLinks elements ...........................
     QDomDocument doc = mElement.ownerDocument();
 
-    foreach (XdgMenuAppFileInfo* fileInfo, mSelected)
+    Q_FOREACH (XdgMenuAppFileInfo* fileInfo, mSelected)
     {
         if (mOnlyUnallocated && fileInfo->allocated())
             continue;
@@ -141,7 +141,7 @@ void XdgMenuApplinkProcessor::step2()
 
 
     // Process childs menus ...............................
-    foreach (XdgMenuApplinkProcessor* child, mChilds)
+    Q_FOREACH (XdgMenuApplinkProcessor* child, mChilds)
         child->step2();
 }
 
@@ -189,7 +189,7 @@ void XdgMenuApplinkProcessor::findDesktopFiles(const QString& dirName, const QSt
     mMenu->addWatchPath(dir.absolutePath());
     const QFileInfoList files = dir.entryInfoList(QStringList(QLatin1String("*.desktop")), QDir::Files);
 
-    foreach (const QFileInfo &file, files)
+    Q_FOREACH (const QFileInfo &file, files)
     {
         XdgDesktopFile* f = XdgDesktopFileCache::getFile(file.canonicalFilePath());
         if (f)
@@ -199,7 +199,7 @@ void XdgMenuApplinkProcessor::findDesktopFiles(const QString& dirName, const QSt
 
     // Working recursively ............
     const QFileInfoList dirs = dir.entryInfoList(QStringList(), QDir::Dirs | QDir::NoDotAndDotDot);
-    foreach (const QFileInfo &d, dirs)
+    Q_FOREACH (const QFileInfo &d, dirs)
     {
         QString dn = d.canonicalFilePath();
         if (dn != dirName)
@@ -242,7 +242,7 @@ bool XdgMenuApplinkProcessor::checkTryExec(const QString& progName)
 
     const QStringList dirs = QFile::decodeName(qgetenv("PATH")).split(QLatin1Char(':'));
 
-    foreach (const QString &dir, dirs)
+    Q_FOREACH (const QString &dir, dirs)
     {
         if (QFileInfo(QDir(dir), progName).isExecutable())
             return true;

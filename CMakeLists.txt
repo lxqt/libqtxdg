@@ -67,7 +67,7 @@ if (NOT CMAKE_BUILD_TYPE)
     set ( CMAKE_BUILD_TYPE Release )
 endif (NOT CMAKE_BUILD_TYPE)
 
-message(STATUS "Building ${PROJECT_NAME} with Qt ${Qt5Core_VERSION_STRING}")
+message(STATUS "Building ${PROJECT_NAME} with Qt ${Qt5Core_VERSION}")
 
 add_subdirectory(xdgiconloader)
 add_subdirectory(qtxdg)

@@ -30,5 +30,5 @@
 * Distribution & Version: 
 * Kernel: 
 * Qt Version: 
-* liblxqt Version:  
+* cmake Version:  
 * Package version: 

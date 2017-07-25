@@ -57,14 +57,14 @@ XdgDesktopFileList XdgAutoStart::desktopFileList(QStringList dirs, bool excludeH
 
     QSet<QString> processed;
     XdgDesktopFileList ret;
-    Q_FOREACH (const QString &dirName, dirs)
+    for (const QString &dirName : const_cast<const QStringList&>(dirs))
     {
         QDir dir(dirName);
         if (!dir.exists())
             continue;
 
         const QFileInfoList files = dir.entryInfoList(QStringList(QLatin1String("*.desktop")), QDir::Files | QDir::Readable);
-        Q_FOREACH (const QFileInfo &fi, files)
+        for (const QFileInfo &fi : files)
         {
             if (processed.contains(fi.fileName()))
                 continue;

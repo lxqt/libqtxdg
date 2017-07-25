@@ -215,7 +215,7 @@ void XdgMenuReader::processMergeFileTag(QDomElement& element, QStringList* merge
         QString relativeName;
         QStringList configDirs = XdgDirs::configDirs();
 
-        Q_FOREACH (const QString &configDir, configDirs)
+        for (const QString &configDir : const_cast<const QStringList&>(configDirs))
         {
             if (mFileName.startsWith(configDir))
             {
@@ -236,7 +236,7 @@ void XdgMenuReader::processMergeFileTag(QDomElement& element, QStringList* merge
         if (relativeName.isEmpty())
             return;
 
-        Q_FOREACH (const QString &configDir, configDirs)
+        for (const QString &configDir : configDirs)
         {
             if (QFileInfo::exists(configDir + relativeName))
             {
@@ -295,7 +295,7 @@ void XdgMenuReader::processDefaultMergeDirsTag(QDomElement& element, QStringList
     QStringList dirs = XdgDirs::configDirs();
     dirs << XdgDirs::configHome();
 
-    Q_FOREACH (const QString &dir, dirs)
+    for (const QString &dir : const_cast<const QStringList&>(dirs))
     {
         mergeDir(QString::fromLatin1("%1/menus/%2-merged").arg(dir, menuBaseName), element, mergedFiles);
     }
@@ -329,7 +329,7 @@ void XdgMenuReader::processDefaultAppDirsTag(QDomElement& element)
     QStringList dirs = XdgDirs::dataDirs();
     dirs.prepend(XdgDirs::dataHome(false));
 
-    Q_FOREACH (const QString &dir, dirs)
+    for (const QString &dir : const_cast<const QStringList&> (dirs))
     {
         //qDebug() << "Add AppDir: " << dir + "/applications/";
         addDirTag(element, QLatin1String("AppDir"), dir + QLatin1String("/applications/"));
@@ -360,7 +360,7 @@ void XdgMenuReader::processDefaultDirectoryDirsTag(QDomElement& element)
     QStringList dirs = XdgDirs::dataDirs();
     dirs.prepend(XdgDirs::dataHome(false));
 
-    Q_FOREACH (const QString &dir, dirs)
+    for (const QString &dir : const_cast<const QStringList&>(dirs))
         addDirTag(element, QLatin1String("DirectoryDir"), dir + QLatin1String("/desktop-directories/"));
 }
 
@@ -379,8 +379,7 @@ void XdgMenuReader::addDirTag(QDomElement& previousElement, const QString& tagNa
     }
 }
 
-
-/************************************************
+/*
  If fileName is not an absolute path then the file to be merged should be located
  relative to the location of this menu file.
  ************************************************/
@@ -431,7 +430,7 @@ void XdgMenuReader::mergeDir(const QString& dirName, QDomElement& element, QStri
         QDir dir = QDir(dirInfo.canonicalFilePath());
         const QFileInfoList files = dir.entryInfoList(QStringList() << QLatin1String("*.menu"), QDir::Files | QDir::Readable);
 
-        Q_FOREACH (const QFileInfo &file, files)
+        for (const QFileInfo &file : files)
             mergeFile(file.canonicalFilePath(), element, mergedFiles);
     }
 }

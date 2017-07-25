@@ -412,7 +412,7 @@ QDomElement XdgMenu::findMenu(QDomElement& baseElement, const QString& path, boo
 
     const QStringList names = path.split(QLatin1Char('/'), QString::SkipEmptyParts);
     QDomElement el = baseElement;
-    Q_FOREACH (const QString &name, names)
+    for (const QString &name : names)
     {
         QDomElement p = el;
         el = d->mXml.createElement(QLatin1String("Menu"));
@@ -537,12 +537,12 @@ void XdgMenuPrivate::processDirectoryEntries(QDomElement& element, const QString
     dirs << parentDirs;
 
     bool found = false;
-    Q_FOREACH(const QString &file, files){
+    for (const QString &file : const_cast<const QStringList&>(files)){
         if (file.startsWith(QLatin1Char('/')))
             found = loadDirectoryFile(file, element);
         else
         {
-            Q_FOREACH (const QString &dir, dirs)
+            for (const QString &dir : const_cast<const QStringList&>(dirs))
             {
                 found = loadDirectoryFile(dir + QLatin1Char('/') + file, element);
                 if (found) break;
@@ -651,7 +651,7 @@ QString XdgMenu::getMenuFileName(const QString& baseName)
     const QStringList configDirs = XdgDirs::configDirs();
     QString menuPrefix = QString::fromLocal8Bit(qgetenv("XDG_MENU_PREFIX"));
 
-    Q_FOREACH(const QString &configDir, configDirs)
+    for (const QString &configDir : configDirs)
     {
         QFileInfo file(QString::fromLatin1("%1/menus/%2%3").arg(configDir, menuPrefix, baseName));
         if (file.exists())
@@ -669,9 +669,9 @@ QString XdgMenu::getMenuFileName(const QString& baseName)
     wellKnownFiles << QLatin1String("gnome-applications.menu");
     wellKnownFiles << QLatin1String("lxde-applications.menu");
 
-    Q_FOREACH(const QString &configDir, configDirs)
+    for (const QString &configDir : configDirs)
     {
-        Q_FOREACH (const QString &f, wellKnownFiles)
+        for (const QString &f : const_cast<const QStringList&>(wellKnownFiles))
         {
             QFileInfo file(QString::fromLatin1("%1/menus/%2").arg(configDir, f));
             if (file.exists())

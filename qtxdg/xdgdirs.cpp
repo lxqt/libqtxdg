@@ -336,7 +336,7 @@ QStringList XdgDirs::autostartDirs(const QString &postfix)
 {
     QStringList dirs;
     const QStringList s = configDirs();
-    Q_FOREACH(const QString &dir, s)
+    for (const QString &dir : s)
         dirs << QString::fromLatin1("%1/autostart").arg(dir) + postfix;
 
     return dirs;

@@ -409,9 +409,9 @@ bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const
     }
 
     bool nonDetach = false;
-    Q_FOREACH(const QString &s, nonDetachExecs)
+    for (const QString &s : nonDetachExecs)
     {
-        Q_FOREACH(const QString &a, args)
+        for (const QString &a : const_cast<const QStringList&>(args))
         {
             if (a.contains(s))
             {
@@ -953,7 +953,7 @@ QString expandEnvVariables(const QString str)
 QStringList expandEnvVariables(const QStringList strs)
 {
     QStringList res;
-    Q_FOREACH(const QString &s, strs)
+    for (const QString &s : strs)
         res << expandEnvVariables(s);
 
     return res;
@@ -969,9 +969,9 @@ QStringList XdgDesktopFile::expandExecString(const QStringList& urls) const
 
     QString execStr = value(execKey).toString();
     unEscapeExec(execStr);
-    QStringList tokens = parseCombinedArgString(execStr);
+    const QStringList tokens = parseCombinedArgString(execStr);
 
-    Q_FOREACH (QString token, tokens)
+    for (QString token : tokens)
     {
         // The parseCombinedArgString() splits the string by the space symbols,
         // we temporarily replaced them on the special characters.
@@ -1016,7 +1016,7 @@ QStringList XdgDesktopFile::expandExecString(const QStringList& urls) const
         // program. Local files may either be passed as file: URLs or as file path.
         if (token == QLatin1String("%U"))
         {
-            Q_FOREACH (const QString &s, urls)
+            for (const QString &s : urls)
             {
                 QUrl url(expandEnvVariables(s));
                 result << ((!url.toLocalFile().isEmpty()) ? url.toLocalFile() : QString::fromUtf8(url.toEncoded()));
@@ -1079,9 +1079,9 @@ bool checkTryExec(const QString& progName)
     if (progName.startsWith(QDir::separator()))
         return QFileInfo(progName).isExecutable();
 
-    QStringList dirs = QFile::decodeName(qgetenv("PATH")).split(QLatin1Char(':'));
+    const QStringList dirs = QFile::decodeName(qgetenv("PATH")).split(QLatin1Char(':'));
 
-    Q_FOREACH (const QString &dir, dirs)
+    for (const QString &dir : dirs)
     {
         if (QFileInfo(QDir(dir), progName).isExecutable())
             return true;
@@ -1103,7 +1103,7 @@ QString XdgDesktopFile::id(const QString &fileName, bool checkFileExists)
     QString id = f.absoluteFilePath();
     const QStringList dataDirs = XdgDirs::dataDirs();
 
-    Q_FOREACH(const QString &d, dataDirs) {
+    for (const QString &d : dataDirs) {
         if (id.startsWith(d)) {
             // remove only the first occurence
             id.replace(id.indexOf(d), d.size(), QString());
@@ -1211,7 +1211,8 @@ bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) 
 
 QString expandDynamicUrl(QString url)
 {
-    Q_FOREACH(const QString &line, QProcess::systemEnvironment())
+    const QStringList env = QProcess::systemEnvironment();
+    for (const QString &line : env)
     {
         QString name = line.section(QLatin1Char('='), 0, 0);
         QString val =  line.section(QLatin1Char('='), 1);
@@ -1252,8 +1253,8 @@ QString findDesktopFile(const QString& dirName, const QString& desktopName)
         return fi.canonicalFilePath();
 
     // Working recursively ............
-    QFileInfoList dirs = dir.entryInfoList(QStringList(), QDir::Dirs | QDir::NoDotAndDotDot);
-    Q_FOREACH (const QFileInfo &d, dirs)
+    const QFileInfoList dirs = dir.entryInfoList(QStringList(), QDir::Dirs | QDir::NoDotAndDotDot);
+    for (const QFileInfo &d : dirs)
     {
         QString cn = d.canonicalFilePath();
         if (dirName != cn)
@@ -1273,7 +1274,7 @@ QString findDesktopFile(const QString& desktopName)
     QStringList dataDirs = XdgDirs::dataDirs();
     dataDirs.prepend(XdgDirs::dataHome(false));
 
-    Q_FOREACH (const QString &dirName, dataDirs)
+    for (const QString &dirName : const_cast<const QStringList&>(dataDirs))
     {
         QString f = findDesktopFile(dirName + QLatin1String("/applications"), desktopName);
         if (!f.isEmpty())
@@ -1461,8 +1462,8 @@ void XdgDesktopFileCache::initialize(const QString& dirName)
 
 
     // Working recursively ............
-    QFileInfoList files = dir.entryInfoList(QStringList(), QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
-    Q_FOREACH (const QFileInfo &f, files)
+    const QFileInfoList files = dir.entryInfoList(QStringList(), QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
+    for (const QFileInfo &f : files)
     {
         if (f.isDir())
         {
@@ -1480,9 +1481,9 @@ void XdgDesktopFileCache::initialize(const QString& dirName)
             m_fileCache.insert(f.absoluteFilePath(), df);
         }
 
-        QStringList mimes = df->value(mimeTypeKey).toString().split(QLatin1Char(';'), QString::SkipEmptyParts);
+        const QStringList mimes = df->value(mimeTypeKey).toString().split(QLatin1Char(';'), QString::SkipEmptyParts);
 
-        Q_FOREACH (const QString &mime, mimes)
+        for (const QString &mime : mimes)
         {
             int pref = df->value(initialPreferenceKey, 0).toInt();
             // We move the desktopFile forward in the list for this mime, so that
@@ -1523,7 +1524,7 @@ void loadMimeCacheDir(const QString& dirName, QHash<QString, QList<XdgDesktopFil
 
     // Working recursively ............
     const QFileInfoList files = dir.entryInfoList(QStringList(), QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
-    Q_FOREACH (const QFileInfo &f, files)
+    for (const QFileInfo &f : files)
     {
         if (f.isDir())
         {
@@ -1538,7 +1539,7 @@ void loadMimeCacheDir(const QString& dirName, QHash<QString, QList<XdgDesktopFil
 
         const QStringList mimes = df->value(mimeTypeKey).toString().split(QLatin1Char(';'), QString::SkipEmptyParts);
 
-        Q_FOREACH (const QString &mime, mimes)
+        for (const QString &mime : mimes)
         {
             int pref = df->value(initialPreferenceKey, 0).toInt();
             // We move the desktopFile forward in the list for this mime, so that
@@ -1582,7 +1583,7 @@ void XdgDesktopFileCache::initialize()
     QStringList dataDirs = XdgDirs::dataDirs();
     dataDirs.prepend(XdgDirs::dataHome(false));
 
-    Q_FOREACH (const QString &dirname, dataDirs)
+    for (const QString &dirname : const_cast<const QStringList&>(dataDirs))
     {
         initialize(dirname + QLatin1String("/applications"));
 //        loadMimeCacheDir(dirname + "/applications", m_defaultAppsCache);
@@ -1593,7 +1594,8 @@ QList<XdgDesktopFile*> XdgDesktopFileCache::getAppsOfCategory(const QString& cat
 {
     QList<XdgDesktopFile*> list;
     const QString _category = category.toUpper();
-    Q_FOREACH (XdgDesktopFile *desktopFile, instance().m_fileCache)
+    const QHash<QString, XdgDesktopFile*> fileCache = instance().m_fileCache;
+    for (XdgDesktopFile *desktopFile : fileCache)
     {
         QStringList categories = desktopFile->value(categoriesKey).toString().toUpper().split(QLatin1Char(';'));
         if (!categories.isEmpty() && (categories.contains(_category) || categories.contains(QLatin1String("X-") + _category)))
@@ -1614,7 +1616,7 @@ XdgDesktopFile* XdgDesktopFileCache::getDefaultApp(const QString& mimetype)
     // /usr/share/applications/mimeapps.list (in that order) for a default.
     QStringList dataDirs = XdgDirs::dataDirs();
     dataDirs.prepend(XdgDirs::dataHome(false));
-    Q_FOREACH(const QString &dataDir, dataDirs)
+    for (const QString &dataDir : const_cast<const QStringList&>(dataDirs))
     {
         QString defaultsListPath = dataDir + QLatin1String("/applications/mimeapps.list");
         if (QFileInfo::exists(defaultsListPath))
@@ -1628,7 +1630,8 @@ XdgDesktopFile* XdgDesktopFileCache::getDefaultApp(const QString& mimetype)
                 QVariant value = defaults.value(mimetype);
                 if (value.canConvert<QStringList>()) // A single string can also convert to a stringlist
                 {
-                    Q_FOREACH (const QString &desktopFileName, value.toStringList())
+                    const QStringList values = value.toStringList();
+                    for (const QString &desktopFileName : values)
                     {
                         XdgDesktopFile* desktopFile = XdgDesktopFileCache::getFile(desktopFileName);
                         if (desktopFile)

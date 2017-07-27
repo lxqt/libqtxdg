@@ -47,15 +47,17 @@ void QtXdgTest::testDefaultApp()
 {
     QStringList mimedirs = XdgDirs::dataDirs();
     mimedirs.prepend(XdgDirs::dataHome(false));
-    Q_FOREACH (QString mimedir, mimedirs)
+    for (const QString &mimedir : const_cast<const QStringList&>(mimedirs))
     {
         QDir dir(mimedir + "/mime");
         qDebug() << dir.path();
         QStringList filters = (QStringList() << "*.xml");
-        Q_FOREACH(QFileInfo mediaDir, dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot))
+        const QFileInfoList &mediaDirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+        for (const QFileInfo &mediaDir : mediaDirs)
         {
             qDebug() << "    " << mediaDir.fileName();
-            Q_FOREACH (QString mimeXmlFileName, QDir(mediaDir.absoluteFilePath()).entryList(filters, QDir::Files))
+            const QStringList mimeXmlFileNames = QDir(mediaDir.absoluteFilePath()).entryList(filters, QDir::Files);
+            for (const QString &mimeXmlFileName : mimeXmlFileNames)
             {
                 QString mimetype = mediaDir.fileName() + "/" + mimeXmlFileName.left(mimeXmlFileName.length() - 4);
                 QString xdg_utils_default = xdgUtilDefaultApp(mimetype);

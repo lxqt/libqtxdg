@@ -41,6 +41,7 @@
 #include <qpa/qplatformtheme.h>
 #include <QtGui/QIconEngine>
 #include <QtGui/QPalette>
+#include <QtCore/qmath.h>
 #include <QtCore/QList>
 #include <QtCore/QDir>
 #include <QtCore/QSettings>
@@ -287,6 +288,11 @@ XdgIconTheme::XdgIconTheme(const QString &themeName)
                     dirInfo.maxSize = indexReader.value(directoryKey +
                                                         QLatin1String("/MaxSize"),
                                                         size).toInt();
+#if QT_VERSION >= QT_VERSION_CHECK(5, 9, 0)
+                    dirInfo.scale = indexReader.value(directoryKey +
+                                                      QLatin1String("/Scale"),
+                                                      1).toInt();
+#endif
                     m_keyList.append(dirInfo);
                 }
             }
@@ -594,8 +600,12 @@ void XdgIconLoaderEngine::paint(QPainter *painter, const QRect &rect,
  * This algorithm is defined by the freedesktop spec:
  * http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html
  */
-static bool directoryMatchesSize(const QIconDirInfo &dir, int iconsize)
+static bool directoryMatchesSize(const QIconDirInfo &dir, int iconsize, int iconscale)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 9, 0)
+    if (dir.scale != iconscale)
+        return false;
+#endif
     if (dir.type == QIconDirInfo::Fixed) {
         return dir.size == iconsize;
 
@@ -616,8 +626,29 @@ static bool directoryMatchesSize(const QIconDirInfo &dir, int iconsize)
  * This algorithm is defined by the freedesktop spec:
  * http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html
  */
-static int directorySizeDistance(const QIconDirInfo &dir, int iconsize)
+static int directorySizeDistance(const QIconDirInfo &dir, int iconsize, int iconscale)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 9, 0)
+    const int scaledIconSize = iconsize * iconscale;
+    if (dir.type == QIconDirInfo::Fixed) {
+        return qAbs(dir.size * dir.scale - scaledIconSize);
+
+    } else if (dir.type == QIconDirInfo::Scalable) {
+        if (scaledIconSize < dir.minSize * dir.scale)
+            return dir.minSize * dir.scale - scaledIconSize;
+        else if (scaledIconSize > dir.maxSize * dir.scale)
+            return scaledIconSize - dir.maxSize * dir.scale;
+        else
+            return 0;
+
+    } else if (dir.type == QIconDirInfo::Threshold) {
+        if (scaledIconSize < (dir.size - dir.threshold) * dir.scale)
+            return dir.minSize * dir.scale - scaledIconSize;
+        else if (scaledIconSize > (dir.size + dir.threshold) * dir.scale)
+            return scaledIconSize - dir.maxSize * dir.scale;
+        else return 0;
+    }
+#else
     if (dir.type == QIconDirInfo::Fixed) {
         return qAbs(dir.size - iconsize);
 
@@ -636,12 +667,13 @@ static int directorySizeDistance(const QIconDirInfo &dir, int iconsize)
             return iconsize - dir.maxSize;
         else return 0;
     }
+#endif
 
     Q_ASSERT(1); // Not a valid value
     return INT_MAX;
 }
 
-QIconLoaderEngineEntry *XdgIconLoaderEngine::entryForSize(const QSize &size)
+QIconLoaderEngineEntry *XdgIconLoaderEngine::entryForSize(const QSize &size, int scale)
 {
     int iconsize = qMin(size.width(), size.height());
 
@@ -653,7 +685,7 @@ QIconLoaderEngineEntry *XdgIconLoaderEngine::entryForSize(const QSize &size)
     // Search for exact matches first
     for (int i = 0; i < numEntries; ++i) {
         QIconLoaderEngineEntry *entry = m_info.entries.at(i);
-        if (directoryMatchesSize(entry->dir, iconsize)) {
+        if (directoryMatchesSize(entry->dir, iconsize, scale)) {
             return entry;
         }
     }
@@ -663,7 +695,7 @@ QIconLoaderEngineEntry *XdgIconLoaderEngine::entryForSize(const QSize &size)
     QIconLoaderEngineEntry *closestMatch = 0;
     for (int i = 0; i < numEntries; ++i) {
         QIconLoaderEngineEntry *entry = m_info.entries.at(i);
-        int distance = directorySizeDistance(entry->dir, iconsize);
+        int distance = directorySizeDistance(entry->dir, iconsize, scale);
         if (distance < minimalSize) {
             minimalSize  = distance;
             closestMatch = entry;
@@ -716,6 +748,8 @@ QPixmap PixmapEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State st
         basePixmap.load(filename);
 
     QSize actualSize = basePixmap.size();
+    // If the size of the best match we have (basePixmap) is larger than the
+    // requested size, we downscale it to match.
     if (!actualSize.isNull() && (actualSize.width() > size.width() || actualSize.height() > size.height()))
         actualSize.scale(size, Qt::KeepAspectRatio);
 
@@ -877,6 +911,17 @@ void XdgIconLoaderEngine::virtual_hook(int id, void *data)
     case QIconEngine::IsNullHook:
         {
             *reinterpret_cast<bool*>(data) = m_info.entries.isEmpty();
+        }
+        break;
+#endif
+#if QT_VERSION >= QT_VERSION_CHECK(5, 9, 0)
+    case QIconEngine::ScaledPixmapHook:
+        {
+            QIconEngine::ScaledPixmapArgument &arg = *reinterpret_cast<QIconEngine::ScaledPixmapArgument*>(data);
+            // QIcon::pixmap() multiplies size by the device pixel ratio.
+            const int integerScale = qCeil(arg.scale);
+            QIconLoaderEngineEntry *entry = entryForSize(arg.size / integerScale, integerScale);
+            arg.pixmap = entry ? entry->pixmap(arg.size, arg.mode, arg.state) : QPixmap();
         }
         break;
 #endif

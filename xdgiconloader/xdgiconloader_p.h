@@ -86,7 +86,7 @@ private:
     bool hasIcon() const;
     void ensureLoaded();
     void virtual_hook(int id, void *data) Q_DECL_OVERRIDE;
-    QIconLoaderEngineEntry *entryForSize(const QSize &size);
+    QIconLoaderEngineEntry *entryForSize(const QSize &size, int scale = 1);
     XdgIconLoaderEngine(const XdgIconLoaderEngine &other);
     QThemeIconInfo m_info;
     QString m_iconName;

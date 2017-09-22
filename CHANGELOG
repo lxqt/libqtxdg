@@ -1,7 +1,70 @@
 
-libqtxdg-2.0.0 / 2016-09-17
+libqtxdg-3.0.0 / 2017-09-22
 ===========================
 
+  * Backport support for Scale directory key according to Icon Theme spec
+  * Bump Major to 3
+  * test: Drop Q_FOREACH
+  * Drop Q_FOREACH
+  * liblxqt make no sense here
+  * Copied issue template
+  * Drops Qt5Core_VERSION_STRING
+  * Avoid Qt special keywords collision
+  * XdgDesktopFile: Stops allocating unneeded QMap::keys()
+  * XdgDesktopFile: Stop allocating unneeded QHash:values()
+  * XdgDesktopFile: Improve const-ness
+  * xdgiconloader: Reworks the unthemed/pixmap search
+  * xdgiconloader: Puts the hicolor at the end of the theme hierarchy
+  * XdgIcon: Add flag for "FollowsColorScheme" processing
+  * xdgiconloader: Honor "FolowsColorScheme" theme hint
+  * xdgiconloader: Support symbolic SVG icons
+  * More fixes (#131)
+  * xdgiconloader: Correct hierarchy of fallbacks (#116)
+  * xdgiconloader: Fix XdgIconLoaderEngine::actualSize() (#130)
+  * Update CMakeLists.txt
+  * It adds loadIcon() timing measurements.
+  * xdgiconloader: Consider all existing files/images
+  * Check QTXDGX_ICONENGINEPLUGIN_INSTALL_PATH existence
+  * Mark QTXDGX_ICONENGINEPLUGIN_INSTALL_PATH as advanced
+  * xdgiconloader: Implement QIconEnginePlugin interface
+  * Disables uninstall target
+  * Remove last uses of Java-style (non-mutable) iterators from QtBase
+  * Adds a development qtxdg-iconfinder utility tool
+  * Enable strict iterators for debug builds
+  * Removes extra semi-colons
+  * Improve build warnings
+  * Bump year
+  * QtGui: eradicate Q_FOREACH loops [already const]
+  * Optimize QIconLoader::findIconHelper()
+  * Remove unused variable in QIconLoader::findIconHelper()
+  * Improve use of QHash to minimize double hashing
+  * QIconLoaderEngine: add missing Q_DECL_OVERRIDEs
+  * Replace QLatin1Literal with QLatin1String
+  * QIconCacheGtkReader: use QStringRef more
+  * Gui: use const (and const APIs) more
+  * Adds Link Time Optimization
+  * Replaces CMAKE_SOURCE_DIR by PROJECT_SOURCE_DIR
+  * Refactors superbuild support
+  * Remove duplicate use of source header files
+  * Use AUTOMOC everywhere
+  * Stop using include_directories()
+  * Removes test project definition
+  * Use CMAKE_INCLUDE_CURRENT_DIR
+  * Adds PROJECT_NAME to the build Qt version message
+  * Simplify target_compile_definitions() and target_include_directories()
+  * qiconloader: Reuse Qt implementation
+  * XdgIconLoader: Fix FTBFS in super-build/in-tree builds
+  * Allow xdg-user-dirs in the realpath of $HOME. On some systems /home is a symlink and $HOME points to the symlink. This commit allows the xdg-user-dirs to start with the real/canonical path.
+  * Updates version requirements in pkg-config (.pc) stuff
+  * Make Qt5Xdg use only the same version Qt5XdgIconLoader
+  * Adds minimum Qt version requirement (5.4.2)
+  * test: Fixes false positive in tst_xdgdesktopfile::testReadLocalized()
+  * Remove cpack (#106)
+
+2.0.0 / 2016-09-17
+==================
+
+  * Release 2.0.0: Add changelog
   * Bump version to 2.0.0
   * Extend README.md
   * Updates dependencies

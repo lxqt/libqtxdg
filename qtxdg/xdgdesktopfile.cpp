@@ -1629,13 +1629,22 @@ QList<XdgDesktopFile*>  XdgDesktopFileCache::getApps(const QString& mimetype)
 
 XdgDesktopFile* XdgDesktopFileCache::getDefaultApp(const QString& mimetype)
 {
-    // First, we look in ~/.local/share/applications/mimeapps.list, /usr/local/share/applications/mimeapps.list and
-    // /usr/share/applications/mimeapps.list (in that order) for a default.
-    QStringList dataDirs = XdgDirs::dataDirs();
-    dataDirs.prepend(XdgDirs::dataHome(false));
-    for (const QString &dataDir : const_cast<const QStringList&>(dataDirs))
+    // First, we look in following places for a default in specified order:
+    // ~/.config/mimeapps.list
+    // /etc/xdg/mimeapps.list
+    // ~/.local/share/applications/mimeapps.list
+    // /usr/local/share/applications/mimeapps.list
+    // /usr/share/applications/mimeapps.list
+    QStringList mimeDirsList;
+
+    mimeDirsList.append(XdgDirs::configHome(false));
+    mimeDirsList.append(XdgDirs::configDirs());
+    mimeDirsList.append(XdgDirs::dataHome(false) + QLatin1String("/applications"));
+    mimeDirsList.append(XdgDirs::dataDirs(QLatin1String("/applications")));
+
+    for (const QString &mimeDir : const_cast<const QStringList&>(mimeDirsList))
     {
-        QString defaultsListPath = dataDir + QLatin1String("/applications/mimeapps.list");
+        QString defaultsListPath = mimeDir + QLatin1String("/mimeapps.list");
         if (QFileInfo::exists(defaultsListPath))
         {
             QSettings defaults(defaultsListPath, desktopFileSettingsFormat());

@@ -1396,7 +1396,7 @@ bool readDesktopFile(QIODevice & device, QSettings::SettingsMap & map)
 
         if (value.contains(QLatin1Char(';')))
         {
-            map.insert(key, value.split(QLatin1Char(';')));
+            map.insert(key, value.split(QLatin1Char(';'), QString::SkipEmptyParts));
         }
         else
         {
@@ -1418,7 +1418,10 @@ bool writeDesktopFile(QIODevice & device, const QSettings::SettingsMap & map)
 
     for (auto it = map.constBegin(); it != map.constEnd(); ++it)
     {
-        if (! it.value().canConvert<QString>())
+        bool isString     = it.value().canConvert<QString>();
+        bool isStringList = (it.value().type() == QVariant::StringList);
+
+        if ((! isString) && (! isStringList))
         {
             return false;
         }
@@ -1444,7 +1447,21 @@ bool writeDesktopFile(QIODevice & device, const QSettings::SettingsMap & map)
             return false;
         }
 
-        stream << remainingKey << QLatin1Char('=') << it.value().toString() << QLatin1Char('\n');
+        stream << remainingKey << QLatin1Char('=');
+
+        if (isString)
+        {
+            stream << it.value().toString() << QLatin1Char(';');
+        }
+        else /* if (isStringList) */
+        {
+            for (const QString &value: it.value().toStringList())
+            {
+                stream << value << QLatin1Char(';');
+            }
+        }
+
+        stream << QLatin1Char('\n');
 
     }
 

@@ -841,9 +841,25 @@ QIcon const XdgDesktopFile::icon(const QIcon& fallback) const
 }
 
 
+QIcon const XdgDesktopFile::actionIcon(const QString & action, const QIcon& fallback) const
+{
+    return d->mType == ApplicationType
+        ? XdgDesktopAction{*this, action}.icon(icon(fallback))
+        : fallback;
+}
+
+
 QString const XdgDesktopFile::iconName() const
 {
     return value(iconKey).toString();
+}
+
+
+QString const XdgDesktopFile::actionIconName(const QString & action) const
+{
+    return d->mType == ApplicationType
+        ? XdgDesktopAction{*this, action}.iconName()
+        : QString{};
 }
 
 
@@ -852,6 +868,13 @@ QStringList XdgDesktopFile::mimeTypes() const
     return value(mimeTypeKey).toString().split(QLatin1Char(';'), QString::SkipEmptyParts);
 }
 
+
+QString XdgDesktopFile::actionName(const QString & action) const
+{
+    return d->mType == ApplicationType
+        ? XdgDesktopAction{*this, action}.name()
+        : QString{};
+}
 
 XdgDesktopFile::Type XdgDesktopFile::type() const
 {

@@ -275,14 +275,36 @@ QString &unEscapeExec(QString& str)
     return doUnEscape(str, repl);
 }
 
+namespace
+{
+    /*!
+     * Helper class for getting the keys for "Additional applications actions"
+     * ([Desktop Action %s] sections)
+     */
+    class XdgDesktopAction : public XdgDesktopFile
+    {
+    public:
+        XdgDesktopAction(const XdgDesktopFile & parent, const QString & action)
+            : XdgDesktopFile(parent)
+            , m_prefix(QString{QLatin1String("Desktop Action %1")}.arg(action))
+        {}
+
+    protected:
+        virtual QString prefix() const { return m_prefix; }
+
+    private:
+        const QString m_prefix;
+    };
+}
+
 class XdgDesktopFileData: public QSharedData {
 public:
     XdgDesktopFileData();
     bool read(const QString &prefix);
     XdgDesktopFile::Type detectType(XdgDesktopFile *q) const;
-    bool startApplicationDetached(const XdgDesktopFile *q, const QStringList& urls) const;
+    bool startApplicationDetached(const XdgDesktopFile *q, const QString & action, const QStringList& urls) const;
     bool startLinkDetached(const XdgDesktopFile *q) const;
-    bool startByDBus(const QStringList& urls) const;
+    bool startByDBus(const QString & action, const QStringList& urls) const;
     QStringList getListValue(const XdgDesktopFile * q, const QString & key, bool tryExtendPrefix) const;
 
     QString mFileName;
@@ -367,7 +389,7 @@ XdgDesktopFile::Type XdgDesktopFileData::detectType(XdgDesktopFile *q) const
     return XdgDesktopFile::UnknownType;
 }
 
-bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const QStringList& urls) const
+bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const QString & action, const QStringList& urls) const
 {
     //DBusActivatable handling
     if (q->value(QLatin1String("DBusActivatable"), false).toBool()) {
@@ -392,10 +414,12 @@ bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const
          * We consider that this violation is more acceptable than an failure
          * in launching an application.
          */
-        if (startByDBus(urls))
+        if (startByDBus(action, urls))
             return true;
     }
-    QStringList args = q->expandExecString(urls);
+    QStringList args = action.isEmpty()
+        ? q->expandExecString(urls)
+        : XdgDesktopAction{*q, action}.expandExecString(urls);
 
     if (args.isEmpty())
         return false;
@@ -483,8 +507,7 @@ bool XdgDesktopFileData::startLinkDetached(const XdgDesktopFile *q) const
     return false;
 }
 
-// TODO: Handle ActivateAction
-bool XdgDesktopFileData::startByDBus(const QStringList& urls) const
+bool XdgDesktopFileData::startByDBus(const QString & action, const QStringList& urls) const
 {
     QFileInfo f(mFileName);
     QString path(f.completeBaseName());
@@ -511,7 +534,13 @@ bool XdgDesktopFileData::startByDBus(const QStringList& urls) const
             << ", but trying to continue...";
     }
     QDBusMessage reply;
-    if (urls.isEmpty())
+    if (!action.isEmpty())
+    {
+        QList<QVariant> v_urls;
+        for (const auto & url : urls)
+             v_urls.append(url);
+        reply = app.call(QLatin1String("ActivateAction"), action, v_urls, platformData);
+    } else if (urls.isEmpty())
         reply = app.call(QLatin1String("Activate"), platformData);
     else
         reply = app.call(QLatin1String("Open"), urls, platformData);
@@ -845,7 +874,7 @@ bool XdgDesktopFile::startDetached(const QStringList& urls) const
     switch(d->mType)
     {
     case ApplicationType:
-        return d->startApplicationDetached(this, urls);
+        return d->startApplicationDetached(this, QString{}, urls);
         break;
 
     case LinkType:
@@ -855,6 +884,11 @@ bool XdgDesktopFile::startDetached(const QStringList& urls) const
     default:
         return false;
     }
+}
+
+bool XdgDesktopFile::actionActivate(const QString & action, const QStringList& urls) const
+{
+    return d->mType == ApplicationType ? d->startApplicationDetached(this, action, urls) : false;
 }
 
 

@@ -66,6 +66,7 @@ static const QStringList nonDetachExecs = QStringList()
 static const QLatin1String onlyShowInKey("OnlyShowIn");
 static const QLatin1String notShowInKey("NotShowIn");
 static const QLatin1String categoriesKey("Categories");
+static const QLatin1String actionsKey("Actions");
 static const QLatin1String extendPrefixKey("X-");
 static const QLatin1String mimeTypeKey("MimeType");
 static const QLatin1String applicationsStr("applications");
@@ -282,6 +283,7 @@ public:
     bool startApplicationDetached(const XdgDesktopFile *q, const QStringList& urls) const;
     bool startLinkDetached(const XdgDesktopFile *q) const;
     bool startByDBus(const QStringList& urls) const;
+    QStringList getListValue(const XdgDesktopFile * q, const QString & key, bool tryExtendPrefix) const;
 
     QString mFileName;
     bool mIsValid;
@@ -517,6 +519,19 @@ bool XdgDesktopFileData::startByDBus(const QStringList& urls) const
     return QDBusMessage::ErrorMessage != reply.type();
 }
 
+QStringList XdgDesktopFileData::getListValue(const XdgDesktopFile * q, const QString & key, bool tryExtendPrefix) const
+{
+    QString used_key = key;
+    if (!q->contains(used_key) && tryExtendPrefix)
+    {
+        used_key = extendPrefixKey + key;
+        if (!q->contains(used_key))
+            return QStringList();
+    }
+
+    return q->value(key).toString().split(QLatin1Char(';'), QString::SkipEmptyParts);
+}
+
 
 XdgDesktopFile::XdgDesktopFile():
     d(new XdgDesktopFileData)
@@ -750,22 +765,13 @@ QVariant XdgDesktopFile::localizedValue(const QString& key, const QVariant& defa
 
 QStringList XdgDesktopFile::categories() const
 {
-    QString key;
-    if (contains(categoriesKey))
-    {
-        key = categoriesKey;
-    }
-    else
-    {
-        key = extendPrefixKey + categoriesKey;
-        if (!contains(key))
-            return QStringList();
-    }
-
-    QStringList cats = value(key).toString().split(QLatin1Char(';'));
-    return cats;
+    return d->getListValue(this, categoriesKey, true);
 }
 
+QStringList XdgDesktopFile::actions() const
+{
+    return d->getListValue(this, actionsKey, false);
+}
 
 void XdgDesktopFile::removeEntry(const QString& key)
 {

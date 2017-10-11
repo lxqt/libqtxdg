@@ -130,6 +130,9 @@ public:
     //! Returns the entry Categories. It supports X-Categories extensions.
     QStringList categories() const;
 
+    //! Returns list of values in entry Actions.
+    QStringList actions() const;
+
     //! Returns true if there exists a setting called key; returns false otherwise.
     bool contains(const QString& key) const;
 

@@ -145,9 +145,13 @@ public:
 
     //! Returns an icon specified in this file.
     QIcon const icon(const QIcon& fallback = QIcon()) const;
+    //! Returns an icon for application action \param action.
+    QIcon const actionIcon(const QString & action, const QIcon& fallback = QIcon()) const;
 
     //! Returns an icon name specified in this file.
     QString const iconName() const;
+    //! Returns an icon name for application action \param action.
+    QString const actionIconName(const QString & action) const;
 
     //! Returns an list of mimetypes specified in this file.
     /*! @return  Returns a list of the "MimeType=" entries.
@@ -158,6 +162,8 @@ public:
 
     //! This function is provided for convenience. It's equivalent to calling localizedValue("Name").toString().
     QString name() const { return localizedValue(QLatin1String("Name")).toString(); }
+    //! Returns an (localized) name for application action \param action.
+    QString actionName(const QString & action) const;
 
     //! This function is provided for convenience. It's equivalent to calling localizedValue("Comment").toString().
     QString comment() const { return localizedValue(QLatin1String("Comment")).toString(); }

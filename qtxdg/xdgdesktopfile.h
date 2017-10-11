@@ -178,6 +178,19 @@ public:
     //! This function is provided for convenience. It's equivalent to calling startDetached(QStringList(url)).
     bool startDetached(const QString& url = QString()) const;
 
+    /*! For file with Application type. Activates action defined by the \param action. Action is activated
+     * either with the [Desktop Action %s]/Exec or by the D-Bus if the [Desktop Entry]/DBusActivatable is set.
+     * \note Starting is done the same way as \sa startDetached()
+     *
+     * \return true on success; otherwise returns false.
+     * \param urls - A list of files or URLS. Each file is passed as a separate argument to the executable program.
+     *
+     * For file with Link type, do nothing.
+     *
+     * For file with Directory type, do nothing.
+    */
+    bool actionActivate(const QString & action, const QStringList & urls) const;
+
     /*! A Exec value consists of an executable program optionally followed by one or more arguments.
         This function expands this arguments and returns command line string parts.
         Note this method make sense only for Application type.

@@ -1,7 +1,19 @@
 
-libqtxdg-3.0.0 / 2017-09-22
+libqtxdg-3.1.0 / 2017-10-21
 ===========================
 
+  * Bump version to 3.1.0
+  * xdgdesktopfile: Add API for getting actions info
+  * xdgdesktopfile: Add support for activating actions
+  * xdgdesktopfile: Add getting actions
+  * Check $XDG_CONFIG_HOME and $XDG_CONFIG_DIRS for mimeapps.list first.
+  * Fix reading and writing mimeapps.list file.
+  * Don't export github templates
+
+3.0.0 / 2017-09-22
+==================
+
+  * Release 3.0.0: Update changelog
   * Backport support for Scale directory key according to Icon Theme spec
   * Bump Major to 3
   * test: Drop Q_FOREACH

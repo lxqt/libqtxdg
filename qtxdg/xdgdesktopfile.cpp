@@ -558,7 +558,7 @@ QStringList XdgDesktopFileData::getListValue(const XdgDesktopFile * q, const QSt
             return QStringList();
     }
 
-    return q->value(key).toString().split(QLatin1Char(';'), QString::SkipEmptyParts);
+    return q->value(used_key).toString().split(QLatin1Char(';'), QString::SkipEmptyParts);
 }
 
 

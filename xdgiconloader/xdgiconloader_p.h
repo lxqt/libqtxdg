@@ -64,7 +64,6 @@ class XdgIconLoader;
 struct ScalableFollowsColorEntry : public ScalableEntry
 {
     QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state) Q_DECL_OVERRIDE;
-    QIcon svgSelectedIcon;
 };
 
 //class QIconLoaderEngine : public QIconEngine

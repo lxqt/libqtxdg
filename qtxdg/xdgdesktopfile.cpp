@@ -1518,7 +1518,8 @@ bool writeDesktopFile(QIODevice & device, const QSettings::SettingsMap & map)
         }
         else /* if (isStringList) */
         {
-            for (const QString &value: it.value().toStringList())
+            const auto values = it.value().toStringList();
+            for (const QString &value : values)
             {
                 stream << value << QLatin1Char(';');
             }

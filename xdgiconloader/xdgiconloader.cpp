@@ -382,7 +382,7 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
             auto cache = theme.m_gtkCaches.at(i);
             if (cache->isValid()) {
                 const auto result = cache->lookup(iconNameFallback);
-                if (cache->isValid()) {
+                if (!result.isEmpty()) {
                     const QVector<QIconDirInfo> subDirsCopy = subDirs;
                     subDirs.clear();
                     subDirs.reserve(result.count());

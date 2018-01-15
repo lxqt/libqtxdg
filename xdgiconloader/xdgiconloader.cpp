@@ -48,6 +48,7 @@
 #include <QtGui/QPainter>
 #include <QImageReader>
 #include <QXmlStreamReader>
+#include <QFileSystemWatcher>
 
 #ifdef Q_DEAD_CODE_FROM_QT4_MAC
 #include <private/qt_cocoa_helpers_mac_p.h>
@@ -109,11 +110,14 @@ public:
     explicit QIconCacheGtkReader(const QString &themeDir);
     QVector<const char *> lookup(const QStringRef &);
     bool isValid() const { return m_isValid; }
+    bool reValid(bool infoRefresh);
 private:
+    QFileInfo m_cacheFileInfo;
     QFile m_file;
     const unsigned char *m_data;
     quint64 m_size;
     bool m_isValid;
+    QFileSystemWatcher m_watcher;
 
     quint16 read16(uint offset)
     {
@@ -136,35 +140,61 @@ private:
 
 
 QIconCacheGtkReader::QIconCacheGtkReader(const QString &dirName)
-    : m_isValid(false)
+    : m_cacheFileInfo{dirName + QLatin1String("/icon-theme.cache")}
+    , m_data(nullptr)
+    , m_isValid(false)
 {
-    QFileInfo info(dirName + QLatin1String("/icon-theme.cache"));
-    if (!info.exists() || info.lastModified() < QFileInfo(dirName).lastModified())
-        return;
-    m_file.setFileName(info.absoluteFilePath());
+    m_file.setFileName(m_cacheFileInfo.absoluteFilePath());
+    // Note: The cache file can be (IS) removed and newly created during the
+    // cache update. But we hold open file descriptor for the "old" removed
+    // file. So we need to watch the changes and reopen/remap the file.
+    QObject::connect(&m_watcher, &QFileSystemWatcher::fileChanged, &m_watcher, [this] { m_isValid = false; });
+    reValid(false);
+}
+
+bool QIconCacheGtkReader::reValid(bool infoRefresh)
+{
+    if (m_data)
+        m_file.unmap(const_cast<unsigned char *>(m_data));
+    m_file.close();
+
+    if (infoRefresh)
+        m_cacheFileInfo.refresh();
+
+    const QDir dir = m_cacheFileInfo.absoluteDir();
+
+    if (!m_cacheFileInfo.exists() || m_cacheFileInfo.lastModified() < QFileInfo{dir.absolutePath()}.lastModified())
+        return m_isValid;
+
+    // Note: If the file is removed, it is also silently removed from watched
+    // paths in QFileSystemWatcher.
+    if (!m_watcher.files().contains(m_cacheFileInfo.absoluteFilePath()))
+        m_watcher.addPath(m_cacheFileInfo.absoluteFilePath());
+
     if (!m_file.open(QFile::ReadOnly))
-        return;
+        return m_isValid;
     m_size = m_file.size();
     m_data = m_file.map(0, m_size);
     if (!m_data)
-        return;
+        return m_isValid;
     if (read16(0) != 1) // VERSION_MAJOR
-        return;
+        return m_isValid;
 
     m_isValid = true;
 
     // Check that all the directories are older than the cache
-    auto lastModified = info.lastModified();
+    auto lastModified = m_cacheFileInfo.lastModified();
     quint32 dirListOffset = read32(8);
     quint32 dirListLen = read32(dirListOffset);
     for (uint i = 0; i < dirListLen; ++i) {
         quint32 offset = read32(dirListOffset + 4 + 4 * i);
-        if (!m_isValid || offset >= m_size || lastModified < QFileInfo(dirName + QLatin1Char('/')
-                + QString::fromUtf8(reinterpret_cast<const char*>(m_data + offset))).lastModified()) {
+        if (!m_isValid || offset >= m_size || lastModified < QFileInfo(dir
+                    , QString::fromUtf8(reinterpret_cast<const char*>(m_data + offset))).lastModified()) {
             m_isValid = false;
-            return;
+            return m_isValid;
         }
     }
+    return m_isValid;
 }
 
 static quint32 icon_name_hash(const char *p)
@@ -379,9 +409,9 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
             // Try to reduce the amount of subDirs by looking in the GTK+ cache in order to save
             // a massive amount of file stat (especially if the icon is not there)
             auto cache = theme.m_gtkCaches.at(i);
-            if (cache->isValid()) {
+            if (cache->isValid() || cache->reValid(true)) {
                 const auto result = cache->lookup(iconNameFallback);
-                if (!result.isEmpty()) {
+                if (cache->isValid()) {
                     const QVector<QIconDirInfo> subDirsCopy = subDirs;
                     subDirs.clear();
                     subDirs.reserve(result.count());

@@ -117,7 +117,6 @@ private:
     const unsigned char *m_data;
     quint64 m_size;
     bool m_isValid;
-    QFileSystemWatcher m_watcher;
 
     quint16 read16(uint offset)
     {
@@ -137,6 +136,7 @@ private:
             | m_data[offset+1] << 16 | m_data[offset] << 24;
     }
 };
+Q_GLOBAL_STATIC(QFileSystemWatcher, gtkCachesWatcher);
 
 
 QIconCacheGtkReader::QIconCacheGtkReader(const QString &dirName)
@@ -148,7 +148,16 @@ QIconCacheGtkReader::QIconCacheGtkReader(const QString &dirName)
     // Note: The cache file can be (IS) removed and newly created during the
     // cache update. But we hold open file descriptor for the "old" removed
     // file. So we need to watch the changes and reopen/remap the file.
-    QObject::connect(&m_watcher, &QFileSystemWatcher::fileChanged, &m_watcher, [this] { m_isValid = false; });
+    QObject::connect(static_cast<QFileSystemWatcher *>(gtkCachesWatcher), &QFileSystemWatcher::fileChanged
+            , static_cast<QFileSystemWatcher *>(gtkCachesWatcher), [this](const QString & path)
+        {
+            if (m_file.fileName() == path)
+            {
+                m_isValid = false;
+                // invalidate icons to reload them ...
+                QIconLoader::instance()->invalidateKey();
+            }
+        });
     reValid(false);
 }
 
@@ -168,8 +177,8 @@ bool QIconCacheGtkReader::reValid(bool infoRefresh)
 
     // Note: If the file is removed, it is also silently removed from watched
     // paths in QFileSystemWatcher.
-    if (!m_watcher.files().contains(m_cacheFileInfo.absoluteFilePath()))
-        m_watcher.addPath(m_cacheFileInfo.absoluteFilePath());
+    if (!gtkCachesWatcher->files().contains(m_cacheFileInfo.absoluteFilePath()))
+        gtkCachesWatcher->addPath(m_cacheFileInfo.absoluteFilePath());
 
     if (!m_file.open(QFile::ReadOnly))
         return m_isValid;

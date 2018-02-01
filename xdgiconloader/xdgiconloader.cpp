@@ -148,8 +148,7 @@ QIconCacheGtkReader::QIconCacheGtkReader(const QString &dirName)
     // Note: The cache file can be (IS) removed and newly created during the
     // cache update. But we hold open file descriptor for the "old" removed
     // file. So we need to watch the changes and reopen/remap the file.
-    QObject::connect(static_cast<QFileSystemWatcher *>(gtkCachesWatcher), &QFileSystemWatcher::fileChanged
-            , static_cast<QFileSystemWatcher *>(gtkCachesWatcher), [this](const QString & path)
+    QObject::connect(gtkCachesWatcher(), &QFileSystemWatcher::fileChanged, &m_file, [this](const QString & path)
         {
             if (m_file.fileName() == path)
             {

@@ -463,7 +463,8 @@ bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const
         if (started)
         {
             QProcess* proc = p.take(); //release the pointer(will be selfdestroyed upon finish)
-            QObject::connect(proc, SIGNAL(finished(int,QProcess::ExitStatus)), proc, SLOT(deleteLater()));
+            QObject::connect(proc, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
+                proc, &QProcess::deleteLater);
         }
         return started;
     }

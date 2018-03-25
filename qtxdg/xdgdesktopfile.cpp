@@ -527,7 +527,7 @@ bool XdgDesktopFileData::startByDBus(const QString & action, const QStringList& 
     //Note: after the QDBusInterface construction, it can *invalid* (has reasonable lastError())
     // but this can be due to some intermediate DBus call(s) which doesn't need to be fatal and
     // our next call() can succeed
-    // see discussion https://github.com/lxde/libqtxdg/pull/75
+    // see discussion https://github.com/lxqt/libqtxdg/pull/75
     if (app.lastError().isValid())
     {
         qWarning().noquote() << "XdgDesktopFileData::startByDBus: invalid interface:" << app.lastError().message()

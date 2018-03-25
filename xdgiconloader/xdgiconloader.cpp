@@ -371,8 +371,8 @@ XdgIconTheme::XdgIconTheme(const QString &themeName)
  * intentionally.
  *
  * Ref.
- * https://github.com/lxde/lxqt/issues/1252
- * https://github.com/lxde/libqtxdg/pull/116
+ * https://github.com/lxqt/lxqt/issues/1252
+ * https://github.com/lxqt/libqtxdg/pull/116
  */
 QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
                                  const QString &iconName,

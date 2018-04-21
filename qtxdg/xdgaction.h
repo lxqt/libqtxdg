@@ -71,9 +71,11 @@ public:
 
     const XdgDesktopFile& desktopFile() const { return mDesktopFile; }
 
+public Q_SLOTS:
+    void updateIcon();
+
 private Q_SLOTS:
     void runConmmand() const;
-    void updateIcon();
 
 private:
     void load(const XdgDesktopFile& desktopFile);

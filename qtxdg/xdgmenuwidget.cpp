@@ -105,7 +105,8 @@ void XdgMenuWidgetPrivate::init(const QDomElement& xml)
         title = xml.attribute(QLatin1String("name"));
     q->setTitle(escape(title));
 
-    q->setToolTip(xml.attribute(QLatin1String("comment")));
+    //q->setToolTip(xml.attribute(QLatin1String("comment")));
+    q->setToolTipsVisible(true);
 
 
     QIcon parentIcon;
@@ -221,12 +222,12 @@ XdgAction* XdgMenuWidgetPrivate::createAction(const QDomElement& xml)
     else
         title = xml.attribute(QLatin1String("name"));
 
+    action->setText(escape(title));
 
     if (!xml.attribute(QLatin1String("genericName")).isEmpty() &&
          xml.attribute(QLatin1String("genericName")) != title)
-        title += QString::fromLatin1(" (%1)").arg(xml.attribute(QLatin1String("genericName")));
+        action->setToolTip(xml.attribute(QLatin1String("genericName")));
 
-    action->setText(escape(title));
     return action;
 }
 

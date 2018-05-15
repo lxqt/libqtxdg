@@ -118,5 +118,4 @@ void XdgAction::updateIcon()
     setIcon(mDesktopFile.icon());
     if (icon().isNull())
         setIcon(XdgIcon::fromTheme(QLatin1String("application-x-executable")));
-    QCoreApplication::processEvents();
 }

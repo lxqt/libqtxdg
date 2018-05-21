@@ -1,6 +1,29 @@
-libqtxdg-3.1.0 / 2017-10-21
+
+libqtxdg-3.2.0 / 2018-05-21
 ===========================
 
+  * Bump minor version to 2
+  * xdgaction: Remove unneeded processEvents() call
+  * CMake: Prevent in-source builds
+  * Set genericName as tooltip
+  * Use Qt5 new signal slot syntax
+  * Fixed project uris to https://lxqt.org
+  * Fix some  lxde mentions
+  * fixup...correct context object for disconnection
+  * fixup...only one watcher object & invalidate key
+  * xdgiconloader: Add GTK cache revalidation
+  * xdgiconloader: Cache ScalableFollowsColorEntry properly
+  * Prevent a possible container detach
+  * Fixed a typo in searching gtk icon cache
+  * Normalize signal/slot signatures
+  * Fix symbolic SVG icons with Qt5.10
+  * Don't allow Q_FOREACH to be used
+  * xdgdesktopfile: Fix typo made in 24c9845
+
+3.1.0 / 2017-10-21
+==================
+
+  * Release 3.1.0: Update changelog
   * Bump version to 3.1.0
   * xdgdesktopfile: Add API for getting actions info
   * xdgdesktopfile: Add support for activating actions

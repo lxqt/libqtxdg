@@ -136,7 +136,7 @@ private:
             | m_data[offset+1] << 16 | m_data[offset] << 24;
     }
 };
-Q_GLOBAL_STATIC(QFileSystemWatcher, gtkCachesWatcher);
+Q_GLOBAL_STATIC(QFileSystemWatcher, gtkCachesWatcher)
 
 
 QIconCacheGtkReader::QIconCacheGtkReader(const QString &dirName)

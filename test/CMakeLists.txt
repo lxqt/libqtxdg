@@ -14,7 +14,7 @@ macro(qtxdg_add_test)
         add_executable(${_testname} ${_testname}.cpp)
         target_link_libraries(${_testname} Qt5::Test ${QTXDGX_LIBRARY_NAME})
         target_include_directories(${_testname}
-            PRIVATE "${PROJECT_SOURCE_DIR}/qtxdg"
+            PRIVATE "${PROJECT_SOURCE_DIR}/src/qtxdg"
         )
         add_test(NAME ${_testname} COMMAND ${_testname})
     endforeach()

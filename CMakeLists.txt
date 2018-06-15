@@ -70,8 +70,7 @@ endif (NOT CMAKE_BUILD_TYPE)
 
 message(STATUS "Building ${PROJECT_NAME} with Qt ${Qt5Core_VERSION}")
 
-add_subdirectory(xdgiconloader)
-add_subdirectory(qtxdg)
+add_subdirectory(src)
 
 if(BUILD_TESTS)
     enable_testing()

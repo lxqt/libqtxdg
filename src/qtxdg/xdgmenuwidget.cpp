@@ -170,7 +170,7 @@ void XdgMenuWidgetPrivate::mouseMoveEvent(QMouseEvent *event)
         return;
 
     QList<QUrl> urls;
-    urls << QUrl(a->desktopFile().fileName());
+    urls << QUrl::fromLocalFile(a->desktopFile().fileName());
 
     QMimeData *mimeData = new QMimeData();
     mimeData->setUrls(urls);

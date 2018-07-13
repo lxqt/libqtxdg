@@ -20,6 +20,7 @@
 
 #include "matcommandmanager.h"
 #include "defappmatcommand.h"
+#include "openmatcommand.h"
 
 #include "xdgmacros.h"
 
@@ -67,6 +68,9 @@ int main(int argc, char *argv[])
 
     MatCommandInterface *const mimeCmd = new DefAppMatCommand(&parser);
     manager->add(mimeCmd);
+
+    MatCommandInterface *const openCmd = new OpenMatCommand(&parser);
+    manager->add(openCmd);
 
     // Find out the positional arguments.
     parser.parse(QCoreApplication::arguments());

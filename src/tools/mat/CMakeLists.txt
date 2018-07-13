@@ -2,6 +2,7 @@ add_executable(qtxdg-mat
     matcommandmanager.cpp
     matcommandinterface.cpp
     defappmatcommand.cpp
+    openmatcommand.cpp
 
     qtxdg-mat.cpp
 )

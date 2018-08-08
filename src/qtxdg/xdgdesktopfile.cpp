@@ -635,9 +635,13 @@ bool XdgDesktopFile::load(const QString& fileName)
         if (f.exists())
             d->mFileName = f.canonicalFilePath();
         else
-            d->mFileName = QString();
+            return false;
     } else { // relative path
-        d->mFileName = findDesktopFile(fileName);
+        const QString r = findDesktopFile(fileName);
+        if (r.isEmpty())
+            return false;
+        else
+            d->mFileName = r;
     }
     d->read(prefix());
     d->mIsValid = d->mIsValid && check();

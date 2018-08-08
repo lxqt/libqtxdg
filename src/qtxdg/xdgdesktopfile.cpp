@@ -300,6 +300,15 @@ namespace
 class XdgDesktopFileData: public QSharedData {
 public:
     XdgDesktopFileData();
+
+    inline void clear() {
+        mFileName.clear();
+        mIsValid = false;
+        mValidIsChecked = false;
+        mIsShow.clear();
+        mItems.clear();
+        mType = XdgDesktopFile::UnknownType;
+    }
     bool read(const QString &prefix);
     XdgDesktopFile::Type detectType(XdgDesktopFile *q) const;
     bool startApplicationDetached(const XdgDesktopFile *q, const QString & action, const QStringList& urls) const;
@@ -620,6 +629,7 @@ bool XdgDesktopFile::operator==(const XdgDesktopFile &other) const
 
 bool XdgDesktopFile::load(const QString& fileName)
 {
+    d->clear();
     if (fileName.startsWith(QDir::separator())) { // absolute path
         QFileInfo f(fileName);
         if (f.exists())

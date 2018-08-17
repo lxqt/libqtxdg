@@ -13,6 +13,7 @@ set(libqtxdg_PUBLIC_H_FILES
     xdgautostart.h
     xdgmacros.h
     xdgmimetype.h
+    xdgmimeapps.h
 )
 
 set(libqtxdg_PUBLIC_CLASSES
@@ -25,18 +26,22 @@ set(libqtxdg_PUBLIC_CLASSES
     XmlHelper
     XdgAutoStart
     XdgMimeType
+    XdgMimeApps
 )
 
 set(libqtxdg_PRIVATE_H_FILES
+    qtxdglogging.h
     xdgmenuapplinkprocessor.h
     xdgmenulayoutprocessor.h
     xdgmenu_p.h
     xdgmenureader.h
     xdgmenurules.h
     xdgdesktopfile_p.h
+    xdgmimeapps_p.h
 )
 
 set(libqtxdg_CPP_FILES
+    qtxdglogging.cpp
     xdgaction.cpp
     xdgdesktopfile.cpp
     xdgdirs.cpp
@@ -50,6 +55,9 @@ set(libqtxdg_CPP_FILES
     xmlhelper.cpp
     xdgautostart.cpp
     xdgmimetype.cpp
+    xdgmimeapps.cpp
+    xdgmimeappsbackendinterface.cpp
+    xdgmimeappsglibbackend.cpp
 )
 
 QT5_ADD_DBUS_INTERFACE(libqtxdg_DBUS_INTERFACE_SRCS
@@ -70,6 +78,9 @@ target_link_libraries(${QTXDGX_LIBRARY_NAME}
     PUBLIC
         ${QTX_LIBRARIES}
         ${QTXDGX_ICONLOADER_LIBRARY_NAME}
+        ${GLIB_LIBRARIES}
+        ${GLIB_GOBJECT_LIBRARIES}
+        ${GLIB_GIO_LIBRARIES}
 )
 
 set_target_properties(${QTXDGX_LIBRARY_NAME} PROPERTIES
@@ -92,6 +103,8 @@ target_include_directories(${QTXDGX_LIBRARY_NAME}
         "$<BUILD_INTERFACE:${QTXDGX_INTREE_INCLUDEDIR}>"
     PRIVATE
         ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
+        ${GLIB_INCLUDE_DIRS}
+        ${GLIB_GIO_UNIX_INCLUDE_DIR}
 )
 
 # create the portble headers

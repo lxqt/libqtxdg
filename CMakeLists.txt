@@ -19,9 +19,11 @@ set(QTXDG_VERSION_STRING ${QTXDG_MAJOR_VERSION}.${QTXDG_MINOR_VERSION}.${QTXDG_P
 
 set(LXQTBT_MINIMUM_VERSION "0.6.0")
 set(QT_MINIMUM_VERSION "5.7.1")
+set(GLIB_MINIMUM_VERSION "2.41.0") # Mime Apps new implementation
 
 find_package(lxqt-build-tools ${LXQTBT_MINIMUM_VERSION} REQUIRED)
 find_package(Qt5 ${QT_MINIMUM_VERSION} CONFIG REQUIRED Widgets Svg Xml DBus)
+find_package(GLIB ${GLIB_MINIMUM_VERSION} REQUIRED COMPONENTS gobject gio gio-unix)
 
 include(GNUInstallDirs)             # Standard directories for installation
 include(CMakePackageConfigHelpers)

@@ -841,8 +841,8 @@ QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, Q
             const QPalette pal = qApp->palette();
             // Note: indexes are assembled as in qtsvg (QSvgIconEnginePrivate::hashKey())
             QMap<int, QString> style_sheets;
-            style_sheets[(QIcon::Normal<<4)|QIcon::Off] = QStringLiteral(".ColorScheme-Text{color:%1;}").arg(pal.windowText().color().name());
-            style_sheets[(QIcon::Selected<<4)|QIcon::Off] = QStringLiteral(".ColorScheme-Text{color:%1;}").arg(pal.highlightedText().color().name());
+            style_sheets[(QIcon::Normal<<4)|QIcon::Off] = QStringLiteral(".ColorScheme-Text,.ColorScheme-PositiveText,.ColorScheme-NeutralText,.ColorScheme-NegativeText{color:%1;}").arg(pal.windowText().color().name());
+            style_sheets[(QIcon::Selected<<4)|QIcon::Off] = QStringLiteral(".ColorScheme-Text,.ColorScheme-PositiveText,.ColorScheme-NeutralText,.ColorScheme-NegativeText{color:%1;}").arg(pal.highlightedText().color().name());
             QMap<int, QSharedPointer<QXmlStreamWriter> > writers;
             for (auto i = style_sheets.cbegin(); i != style_sheets.cend(); ++i)
             {

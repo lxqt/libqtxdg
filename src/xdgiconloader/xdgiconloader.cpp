@@ -823,6 +823,11 @@ QPixmap ScalableEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State 
     return svgIcon.pixmap(size, mode, state);
 }
 
+static const QString STYLE = QStringLiteral("\n.ColorScheme-Text, .ColorScheme-NeutralText {color:%1;}\
+\n.ColorScheme-Background {color:%2;}\
+\n.ColorScheme-Highlight {color:%3;}");
+// Note: Qt palette does not have any colors for positive/negative text
+// .ColorScheme-PositiveText,ColorScheme-NegativeText {color:%4;}
 
 QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state)
 {
@@ -841,8 +846,8 @@ QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, Q
             const QPalette pal = qApp->palette();
             // Note: indexes are assembled as in qtsvg (QSvgIconEnginePrivate::hashKey())
             QMap<int, QString> style_sheets;
-            style_sheets[(QIcon::Normal<<4)|QIcon::Off] = QStringLiteral(".ColorScheme-Text,.ColorScheme-PositiveText,.ColorScheme-NeutralText,.ColorScheme-NegativeText{color:%1;}").arg(pal.windowText().color().name());
-            style_sheets[(QIcon::Selected<<4)|QIcon::Off] = QStringLiteral(".ColorScheme-Text,.ColorScheme-PositiveText,.ColorScheme-NeutralText,.ColorScheme-NegativeText{color:%1;}").arg(pal.highlightedText().color().name());
+            style_sheets[(QIcon::Normal<<4)|QIcon::Off] = STYLE.arg(pal.windowText().color().name()).arg(pal.window().color().name()).arg(pal.highlight().color().name());
+            style_sheets[(QIcon::Selected<<4)|QIcon::Off] = STYLE.arg(pal.highlightedText().color().name()).arg(pal.highlight().color().name()).arg(pal.highlightedText().color().name());
             QMap<int, QSharedPointer<QXmlStreamWriter> > writers;
             for (auto i = style_sheets.cbegin(); i != style_sheets.cend(); ++i)
             {
@@ -856,16 +861,27 @@ QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, Q
                         && xmlReader.qualifiedName() == QLatin1String("style")
                         && xmlReader.attributes().value(QLatin1String("id")) == QLatin1String("current-color-scheme"))
                 {
+                    const auto attribs = xmlReader.attributes();
+                    // store original data/text of the <style> element
+                    QString original_data;
+                    while (xmlReader.tokenType() != QXmlStreamReader::EndElement)
+                    {
+                        if (xmlReader.tokenType() == QXmlStreamReader::Characters)
+                            original_data += xmlReader.text();
+                        xmlReader.readNext();
+                    }
                     for (auto i = style_sheets.cbegin(); i != style_sheets.cend(); ++i)
                     {
                         QXmlStreamWriter & writer = *writers[i.key()];
                         writer.writeStartElement(QLatin1String("style"));
-                        writer.writeAttributes(xmlReader.attributes());
+                        writer.writeAttributes(attribs);
+                        // Note: We're writting the original style text to leave
+                        // there "defaults" for unknown/unsupported classes.
+                        // Then appending our "overrides"
+                        writer.writeCharacters(original_data);
                         writer.writeCharacters(*i);
                         writer.writeEndElement();
                     }
-                    while (xmlReader.tokenType() != QXmlStreamReader::EndElement)
-                        xmlReader.readNext();
                 } else if (xmlReader.tokenType() != QXmlStreamReader::Invalid)
                 {
                     for (auto i = style_sheets.cbegin(); i != style_sheets.cend(); ++i)

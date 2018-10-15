@@ -115,7 +115,13 @@ void XdgAction::runConmmand() const
 
 void XdgAction::updateIcon()
 {
-    setIcon(mDesktopFile.icon());
     if (icon().isNull())
-        setIcon(XdgIcon::fromTheme(QLatin1String("application-x-executable")));
+    {
+        QIcon icon = mDesktopFile.icon().isNull() ? XdgIcon::fromTheme(QLatin1String("application-x-executable")) : mDesktopFile.icon();
+
+        // Some themes may lack the "application-x-executable" icon; checking null prevents
+        // infinite recursion (setIcon->dataChanged->updateIcon->setIcon
+         if (!icon.isNull())
+            setIcon(icon);
+    }
 }

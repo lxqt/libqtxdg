@@ -496,7 +496,7 @@ bool XdgDesktopFileData::startLinkDetached(const XdgDesktopFile *q) const
 
     QString scheme = QUrl(url).scheme();
 
-    if (scheme.isEmpty() || scheme.toUpper() == QLatin1String("FILE"))
+    if (scheme.isEmpty() || scheme == QLatin1String("file"))
     {
         // Local file
         QFileInfo fi(url);

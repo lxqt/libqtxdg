@@ -1,4 +1,9 @@
-cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
+# CMP0000: Call the cmake_minimum_required() command at the beginning of the top-level
+# CMakeLists.txt file even before calling the project() command.
+# The cmake_minimum_required(VERSION) command implicitly invokes the cmake_policy(VERSION)
+# command to specify that the current project code is written for the given range of CMake
+# versions.
 project(libqtxdg)
 
 option(BUILD_TESTS "Builds tests" OFF)
@@ -7,23 +12,8 @@ option(BUILD_DEV_UTILS "Builds and install development utils" OFF)
 # additional cmake files
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-if (CMAKE_VERSION VERSION_LESS "3.1")
-    include(CheckCXXCompilerFlag)
-    CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
-    if(COMPILER_SUPPORTS_CXX11)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-    else()
-        CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
-        # -std=c++0x is deprecated but some tools e.g. qmake or older gcc are still using it
-        if(COMPILER_SUPPORTS_CXX0X)
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-        else()
-            message(FATAL_ERROR "Compiler ${CMAKE_CXX_COMPILER} does not support c++11/c++0x")
-        endif()
-    endif()
-else()
-  set(CMAKE_CXX_STANDARD 11)
-endif()
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_STANDARD 14 CACHE STRING "C++ ISO Standard")
 
 set(QTXDG_MAJOR_VERSION 3)
 set(QTXDG_MINOR_VERSION 2)

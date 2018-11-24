@@ -20,7 +20,7 @@ set(QTXDG_MINOR_VERSION 2)
 set(QTXDG_PATCH_VERSION 0)
 set(QTXDG_VERSION_STRING ${QTXDG_MAJOR_VERSION}.${QTXDG_MINOR_VERSION}.${QTXDG_PATCH_VERSION})
 
-set(QT_MINIMUM_VERSION "5.6.1")
+set(QT_MINIMUM_VERSION "5.7.1")
 
 include(GNUInstallDirs)             # Standard directories for installation
 include(CMakePackageConfigHelpers)

@@ -631,7 +631,8 @@ void XdgIconLoaderEngine::paint(QPainter *painter, const QRect &rect,
 #if defined(Q_DEAD_CODE_FROM_QT4_MAC)
     pixmapSize *= qt_mac_get_scalefactor();
 #endif
-    painter->drawPixmap(rect, pixmap(pixmapSize, mode, state));
+    const qreal dpr = painter->device()->devicePixelRatioF();
+    painter->drawPixmap(rect, pixmap(pixmapSize * dpr, mode, state));
 }
 
 /*

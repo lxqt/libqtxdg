@@ -31,6 +31,7 @@
 #include "xdgdirs.h"
 #include "xdgicon.h"
 #include "application_interface.h" // generated interface for DBus org.freedesktop.Application
+#include "xdgmimeapps.h"
 
 #include <cstdlib>
 #include <unistd.h>
@@ -524,8 +525,9 @@ bool XdgDesktopFileData::startLinkDetached(const XdgDesktopFile *q) const
         QFileInfo fi(url);
 
         QMimeDatabase db;
+        XdgMimeApps appsDb;
         QMimeType mimeInfo = db.mimeTypeForFile(fi);
-        XdgDesktopFile* desktopFile = XdgDesktopFileCache::getDefaultApp(mimeInfo.name());
+        XdgDesktopFile* desktopFile = appsDb.defaultApp(mimeInfo.name());
 
         if (desktopFile)
             return desktopFile->startDetached(url);

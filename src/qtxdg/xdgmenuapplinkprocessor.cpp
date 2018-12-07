@@ -192,8 +192,8 @@ void XdgMenuApplinkProcessor::findDesktopFiles(const QString& dirName, const QSt
 
     for (const QFileInfo &file : files)
     {
-        XdgDesktopFile* f = XdgDesktopFileCache::getFile(file.canonicalFilePath());
-        if (f)
+        XdgDesktopFile *f = new XdgDesktopFile;
+        if (f->load(file.canonicalFilePath()) && f->isValid())
             mAppFileInfoHash.insert(prefix + file.fileName(), new XdgMenuAppFileInfo(f, prefix + file.fileName(), this));
     }
 

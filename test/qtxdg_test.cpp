@@ -33,6 +33,7 @@
 #include "xdgdesktopfile.h"
 #include "xdgdesktopfile_p.h"
 #include "xdgdirs.h"
+#include "xdgmimeapps.h"
 
 #include <QtTest>
 
@@ -138,7 +139,8 @@ void QtXdgTest::testCustomFormat()
 
 QString QtXdgTest::xdgDesktopFileDefaultApp(QString mimetype)
 {
-    XdgDesktopFile *defaultApp = XdgDesktopFileCache::getDefaultApp(mimetype);
+    XdgMimeApps appsDb;
+    XdgDesktopFile *defaultApp = appsDb.defaultApp(mimetype);
     QString defaultAppS;
     if (defaultApp)
     {

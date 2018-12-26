@@ -258,7 +258,7 @@ private:
 typedef QList<XdgDesktopFile> XdgDesktopFileList;
 
 
-class QTXDG_API XdgDesktopFileCache
+class QTXDG_API QTXDG_DEPRECATED XdgDesktopFileCache
 {
 public:
     static XdgDesktopFile* getFile(const QString& fileName);

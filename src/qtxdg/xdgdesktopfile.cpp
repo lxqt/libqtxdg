@@ -1003,7 +1003,6 @@ QString expandEnvVariables(const QString str)
         scheme == QLatin1String("irc")    ||
         scheme == QLatin1String("telnet") ||
         scheme == QLatin1String("xmpp")   ||
-        scheme == QLatin1String("irc")    ||
         scheme == QLatin1String("nfs")
       )
         return str;

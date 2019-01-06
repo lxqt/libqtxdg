@@ -405,7 +405,7 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
     QStringRef iconNameFallback(&iconName);
 
     // Iterate through all icon's fallbacks in current theme
-    while (info.entries.isEmpty()) {
+    if (info.entries.isEmpty()) {
         const QString svgIconName = iconNameFallback + svgext;
         const QString pngIconName = iconNameFallback + pngext;
         const QString xpmIconName = iconNameFallback + xpmext;
@@ -470,8 +470,6 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
 
         if (!info.entries.isEmpty())
             info.iconName = iconNameFallback.toString();
-
-        break;
     }
 
     if (info.entries.isEmpty()) {

@@ -1214,7 +1214,7 @@ bool XdgDesktopFile::isShown(const QString &environment) const
         return false;
 
     // The file is not suitable to the current environment
-    if (!isSuitable(true, env))
+    if (!isSuitable(true, true, env))
         return false;
 
     d->mIsShow.insert(env, true);
@@ -1222,60 +1222,63 @@ bool XdgDesktopFile::isShown(const QString &environment) const
 }
 
 
-bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) const
+bool XdgDesktopFile::isSuitable(bool excludeHidden, bool honorShowIn, const QString &environment) const
 {
     // Hidden should have been called Deleted. It means the user deleted
     // (at his level) something that was present
     if (excludeHidden && value(QLatin1String("Hidden")).toBool())
         return false;
 
-    // A list of strings identifying the environments that should display/not
-    // display a given desktop entry.
-    // OnlyShowIn ........
-    QString env;
-    if (environment.isEmpty())
-        env = QString::fromLocal8Bit(detectDesktopEnvironment());
-    else {
-        env = environment.toUpper();
-    }
+    if (honorShowIn)
+    {
+        // A list of strings identifying the environments that should display/not
+        // display a given desktop entry.
+        // OnlyShowIn ........
+        QString env;
+        if (environment.isEmpty())
+            env = QString::fromLocal8Bit(detectDesktopEnvironment());
+        else {
+            env = environment.toUpper();
+        }
 
-    QString key;
-    bool keyFound = false;
-    if (contains(onlyShowInKey))
-    {
-        key = onlyShowInKey;
-        keyFound = true;
-    }
-    else
-    {
-        key = extendPrefixKey + onlyShowInKey;
-        keyFound = contains(key) ? true : false;
-    }
+        QString key;
+        bool keyFound = false;
+        if (contains(onlyShowInKey))
+        {
+            key = onlyShowInKey;
+            keyFound = true;
+        }
+        else
+        {
+            key = extendPrefixKey + onlyShowInKey;
+            keyFound = contains(key) ? true : false;
+        }
 
-    if (keyFound)
-    {
-        QStringList s = value(key).toString().toUpper().split(QLatin1Char(';'));
-        if (!s.contains(env))
-            return false;
-    }
+        if (keyFound)
+        {
+            QStringList s = value(key).toString().toUpper().split(QLatin1Char(';'));
+            if (!s.contains(env))
+                return false;
+        }
 
-    // NotShowIn .........
-    if (contains(notShowInKey))
-    {
-        key = notShowInKey;
-        keyFound = true;
-    }
-    else
-    {
-        key = extendPrefixKey + notShowInKey;
-        keyFound = contains(key) ? true : false;
-    }
+        // NotShowIn .........
+        if (contains(notShowInKey))
+        {
+            key = notShowInKey;
+            keyFound = true;
+        }
+        else
+        {
+            key = extendPrefixKey + notShowInKey;
+            keyFound = contains(key) ? true : false;
+        }
 
-    if (keyFound)
-    {
-        QStringList s = value(key).toString().toUpper().split(QLatin1Char(';'));
-        if (s.contains(env))
-            return false;
+        if (keyFound)
+        {
+            QStringList s = value(key).toString().toUpper().split(QLatin1Char(';'));
+            if (s.contains(env))
+                return false;
+        }
     }
 
     // actually installed. If not, entry may not show in menus, etc.

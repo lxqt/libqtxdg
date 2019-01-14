@@ -43,15 +43,15 @@
  * directories MUST be ignored as well.
  */
 
-XdgDesktopFileList XdgAutoStart::desktopFileList(bool excludeHidden)
+XdgDesktopFileList XdgAutoStart::desktopFileList(bool excludeHidden, bool honorShowIn)
 {
     QStringList dirs;
     dirs << XdgDirs::autostartHome(false) << XdgDirs::autostartDirs();
 
-    return desktopFileList(dirs, excludeHidden);
+    return desktopFileList(dirs, excludeHidden, honorShowIn);
 }
 
-XdgDesktopFileList XdgAutoStart::desktopFileList(QStringList dirs, bool excludeHidden)
+XdgDesktopFileList XdgAutoStart::desktopFileList(QStringList dirs, bool excludeHidden, bool honorShowIn)
 {
     dirs.removeDuplicates();
 
@@ -75,7 +75,7 @@ XdgDesktopFileList XdgAutoStart::desktopFileList(QStringList dirs, bool excludeH
             if (!desktop.load(fi.absoluteFilePath()))
                 continue;
 
-            if (!desktop.isSuitable(excludeHidden))
+            if (!desktop.isSuitable(excludeHidden, honorShowIn))
                 continue;
 
             ret << desktop;

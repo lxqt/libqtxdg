@@ -239,8 +239,10 @@ public:
             XDG_CURRENT_DESKTOP environment variable. If not set, "UNKNOWN"
             will be used as the desktop name. All operations envolving the
             desktop environment name are case insensitive.
+        @par honorShowIn - if set to true, "OnlyShowIn" and "NotShowIn" keys
+            are handled.
     */
-    bool isSuitable(bool excludeHidden = true, const QString &environment = QString()) const;
+    bool isSuitable(bool excludeHidden = true, bool honorShowIn = true, const QString &environment = QString()) const;
 
 protected:
     virtual QString prefix() const { return QLatin1String("Desktop Entry"); }

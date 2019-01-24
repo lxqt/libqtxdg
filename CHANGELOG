@@ -1,4 +1,24 @@
 
+libqtxdg-3.3.0 / 2019-01-25
+===========================
+
+  * Bumped version to 3.3.0
+  * Set cmake_minimum_required to 3.1.0
+  * Use C++ ISO Standard 14, removed support for < 14
+  * Added Qt Strings abbreviations macros
+  * Added Qt Strings abbreviations macros to reduce clutter
+  * Restructured source code directory layout
+  * Implementation fixes:
+    - XdgDesktopFile: Simplify scheme handling
+    - XdgDesktopFile: Clear internal data before loading a new file
+    - XdgDesktopFile: Don't try read non existent files 
+    - xdgaction: Set icon in updateIcon() only if needed
+    - xdgiconloader: Support more classes for "FollowColors" icons
+    - xdgiconloader: Consider device pixel ratio when painting
+    - xdgiconloader: Cover all KDE colors schemes for symbolic icons
+    - xdgiconloader: Fixes pedantic warning
+    - xdgmenuwidget: Fix menu-item drag url 
+    
 libqtxdg-3.2.0 / 2018-05-21
 ===========================
 

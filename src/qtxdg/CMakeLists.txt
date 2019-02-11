@@ -96,7 +96,7 @@ target_include_directories(${QTXDGX_LIBRARY_NAME}
 )
 
 # create the portble headers
-create_portable_headers(libqtxdg_PORTABLE_HEADERS
+lxqt_create_portable_headers(libqtxdg_PORTABLE_HEADERS
     HEADER_NAMES ${libqtxdg_PUBLIC_CLASSES}
     OUTPUT_DIR "${QTXDGX_INTREE_INCLUDEDIR}/${QTXDGX_FILE_NAME}"
 )

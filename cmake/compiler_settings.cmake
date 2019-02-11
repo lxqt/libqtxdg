@@ -51,103 +51,22 @@
 # the ``cmake_policy()`` command to set it to ``OLD`` or ``NEW``
 # explicitly.
 #-----------------------------------------------------------------------------
-if(COMMAND CMAKE_POLICY)
-    if (POLICY CMP0063)
-        cmake_policy(SET CMP0063 NEW)
-    endif()
-endif()
-
-
-#-----------------------------------------------------------------------------
-# Detect Clang compiler
-#-----------------------------------------------------------------------------
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(QTXDG_COMPILER_IS_CLANGCXX 1)
-endif()
-
-
-#-----------------------------------------------------------------------------
-# Global definitions
-#-----------------------------------------------------------------------------
-if (CMAKE_BUILD_TYPE MATCHES "Debug")
-  add_definitions(-DQT_STRICT_ITERATORS)
-endif()
-
-
-#-----------------------------------------------------------------------------
-# Set visibility to hidden to hide symbols, unless they're exported manually
-# in the code
-#-----------------------------------------------------------------------------
-set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
-
-
-#-----------------------------------------------------------------------------
-# Disable exceptions
-#-----------------------------------------------------------------------------
-if (CMAKE_COMPILER_IS_GNUCXX OR QTXDG_COMPILER_IS_CLANGCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions")
-endif()
-
-#-----------------------------------------------------------------------------
-# Common warning flags
-#-----------------------------------------------------------------------------
-set(QTXDG_COMMON_WARNING_FLAGS "-Wall -Wextra -Wchar-subscripts -Wno-long-long -Wpointer-arith -Wundef -Wformat-security")
-
-
-#-----------------------------------------------------------------------------
-# Warning flags
-#-----------------------------------------------------------------------------
-if (CMAKE_COMPILER_IS_GNUCXX OR QTXDG_COMPILER_IS_CLANGCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${__QTXDG_COMMON_WARNING_FLAGS} -Wnon-virtual-dtor -Woverloaded-virtual -Wpedantic")
-endif()
-
-if (QTXDG_COMPILER_IS_CLANGCXX)
-    # qCDebug(), qCWarning, etc trigger a very verbose warning, about.... nothing. Disable it.
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-gnu-zero-variadic-macro-arguments")
-endif()
-
-list(APPEND QTXDG_WARNING_FLAGS ${QTXDG_COMMON_WARNING_FLAGS})
 
 #-----------------------------------------------------------------------------
 # String conversion flags
 #-----------------------------------------------------------------------------
 add_definitions(
-    -DQT_USE_QSTRINGBUILDER
     -DQT_NO_CAST_FROM_ASCII
     -DQT_NO_CAST_TO_ASCII
     -DQT_NO_URL_CAST_FROM_STRING
     -DQT_NO_CAST_FROM_BYTEARRAY
-    -DQT_NO_FOREACH
 )
-
-#-----------------------------------------------------------------------------
-# Linker flags
-# Do not allow undefined symbols
-#-----------------------------------------------------------------------------
-if (CMAKE_COMPILER_IS_GNUCXX OR QTXDG_COMPILER_IS_CLANGCXX)
-    # -Bsymbolic-functions: replace dynamic symbols used internally in
-    #                       shared libs with direct addresses.
-    set(SYMBOLIC_FLAGS
-        "-Wl,-Bsymbolic-functions -Wl,-Bsymbolic"
-    )
-    set(CMAKE_SHARED_LINKER_FLAGS
-        "-Wl,--no-undefined ${SYMBOLIC_FLAGS} ${CMAKE_SHARED_LINKER_FLAGS}"
-    )
-    set(CMAKE_MODULE_LINKER_FLAGS
-        "-Wl,--no-undefined ${SYMBOLIC_FLAGS} ${CMAKE_MODULE_LINKER_FLAGS}"
-    )
-    set(CMAKE_EXE_LINKER_FLAGS
-        "${SYMBOLIC_FLAGS} ${CMAKE_EXE_LINKER_FLAGS}"
-    )
-
-endif()
 
 #-----------------------------------------------------------------------------
 # Turn on more aggrassive optimizations not supported by CMake
 # References: https://wiki.qt.io/Performance_Tip_Startup_Time
 #-----------------------------------------------------------------------------
-if (CMAKE_COMPILER_IS_GNUCXX OR QTXDG_COMPILER_IS_CLANGCXX)
+if (CMAKE_COMPILER_IS_GNUCXX OR LXQT_COMPILER_IS_CLANGCXX)
     # -flto: use link-time optimizations to generate more efficient code
     if (CMAKE_COMPILER_IS_GNUCXX)
         set(LTO_FLAGS "-flto -fuse-linker-plugin")
@@ -161,7 +80,7 @@ if (CMAKE_COMPILER_IS_GNUCXX OR QTXDG_COMPILER_IS_CLANGCXX)
             set(CMAKE_AR "gcc-ar")
             set(CMAKE_RANLIB "gcc-ranlib")
         endif()
-    elseif (QTXDG_COMPILER_IS_CLANGCXX)
+    elseif (LXQT_COMPILER_IS_CLANGCXX)
         # The link-time optimization of clang++/llvm seems to be too aggrassive.
         # After testing, it breaks the signal/slots of QObject sometimes.
         # So disable it for now until there is a solution.

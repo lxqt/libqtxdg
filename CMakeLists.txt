@@ -12,27 +12,31 @@ option(BUILD_DEV_UTILS "Builds and install development utils" OFF)
 # additional cmake files
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-set(CMAKE_CXX_STANDARD 14 CACHE STRING "C++ ISO Standard")
-
 set(QTXDG_MAJOR_VERSION 3)
 set(QTXDG_MINOR_VERSION 3)
 set(QTXDG_PATCH_VERSION 0)
 set(QTXDG_VERSION_STRING ${QTXDG_MAJOR_VERSION}.${QTXDG_MINOR_VERSION}.${QTXDG_PATCH_VERSION})
 
+set(LXQTBT_MINIMUM_VERSION "0.6.0")
 set(QT_MINIMUM_VERSION "5.7.1")
+
+find_package(lxqt-build-tools ${LXQTBT_MINIMUM_VERSION} REQUIRED)
+find_package(Qt5 ${QT_MINIMUM_VERSION} CONFIG REQUIRED Widgets Svg Xml DBus)
 
 include(GNUInstallDirs)             # Standard directories for installation
 include(CMakePackageConfigHelpers)
 include(GenerateExportHeader)
-include(prevent_in_source_builds)
-include(create_portable_headers)
-include(create_pkgconfig_file)
+
+include(LXQtPreventInSourceBuilds)
+include(LXQtCreatePkgConfigFile)
+include(LXQtCreatePortableHeaders)
+include(LXQtCompilerSettings NO_POLICY_SCOPE)
+
+# Add link optimizations. It make the .so around 33% smaller without any known
+# drawback.
 include(compiler_settings NO_POLICY_SCOPE)
 
 set(CMAKE_AUTOMOC ON)
-
-find_package(Qt5 ${QT_MINIMUM_VERSION} CONFIG REQUIRED Widgets Svg Xml DBus)
 
 if (BUILD_TESTS)
     find_package(Qt5 ${QT_MINIMUM_VERSION} CONFIG REQUIRED Test)
@@ -102,7 +106,7 @@ write_basic_package_version_file(
     COMPATIBILITY AnyNewerVersion
 )
 
-create_pkgconfig_file(
+lxqt_create_pkgconfig_file(
     PACKAGE_NAME ${QTXDGX_LIBRARY_NAME}
     DESCRIPTIVE_NAME ${QTXDGX_LIBRARY_NAME}
     DESCRIPTION ${QTXDGX_PKG_CONFIG_DESCRIPTION}
@@ -114,7 +118,7 @@ create_pkgconfig_file(
     INSTALL
 )
 
-create_pkgconfig_file(
+lxqt_create_pkgconfig_file(
     PACKAGE_NAME ${QTXDGX_ICONLOADER_LIBRARY_NAME}
     DESCRIPTIVE_NAME ${QTXDGX_ICONLOADER_LIBRARY_NAME}
     DESCRIPTION ${QTXDGX_ICONLOADER_PKG_CONFIG_DESCRIPTION}

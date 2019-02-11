@@ -114,5 +114,3 @@ void tst_xdgdesktopfile::testReadLocalized()
 
     QCOMPARE(df.localizedValue("Name").toString(), translation);
 }
-
-#include "test/tst_xdgdesktopfile.moc"

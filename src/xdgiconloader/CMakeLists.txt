@@ -11,9 +11,6 @@ set(xdgiconloader_CPP_FILES
     xdgiconloader.cpp
 )
 
-set(xdgiconloader_MOCS
-)
-
 set(xdgiconloader_PRIVATE_INSTALLABLE_H_FILES
     xdgiconloader_p.h
 )

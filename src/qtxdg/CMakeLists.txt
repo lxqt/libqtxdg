@@ -50,21 +50,10 @@ set(libqtxdg_CPP_FILES
     xdgmimetype.cpp
 )
 
-set(libqtxdg_MOCS
-    xdgaction.h
-    xdgmenuapplinkprocessor.h
-    xdgmenu.h
-    xdgmenu_p.h
-    xdgmenureader.h
-    xdgmenurules.h
-    xdgmenuwidget.h
-)
-
 add_library(${QTXDGX_LIBRARY_NAME} SHARED
     ${libqtxdg_PUBLIC_H_FILES}
     ${libqtxdg_PRIVATE_H_FILES}
     ${libqtxdg_CPP_FILES}
-    ${libqtxdg_MOCS}
 )
 
 target_link_libraries(${QTXDGX_LIBRARY_NAME}

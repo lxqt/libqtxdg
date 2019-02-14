@@ -750,6 +750,9 @@ QIconLoaderEngineEntry *XdgIconLoaderEngine::entryForSize(const QSize &size, int
 QSize XdgIconLoaderEngine::actualSize(const QSize &size, QIcon::Mode mode,
                                    QIcon::State state)
 {
+    Q_UNUSED(mode);
+    Q_UNUSED(state);
+
     ensureLoaded();
 
     QIconLoaderEngineEntry *entry = entryForSize(size);

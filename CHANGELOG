@@ -1,3 +1,13 @@
+libqtxdg-3.3.1 / 2019-02-24
+===========================
+
+  * Bumped version to 3.3.1
+  * Silenced compiler warnings about not used variables.
+  * Dropped not needed MOC stuff, we already use CMAKE_AUTOMOC.
+  * Dropped using libqtxdg's own versions of things that are in
+    lxqt-build-tools
+  * Updated translations
+  * Note to maintainers: lxqt-build-tools is now a build dependency
 
 libqtxdg-3.3.0 / 2019-01-25
 ===========================
@@ -11,14 +21,14 @@ libqtxdg-3.3.0 / 2019-01-25
   * Implementation fixes:
     - XdgDesktopFile: Simplify scheme handling
     - XdgDesktopFile: Clear internal data before loading a new file
-    - XdgDesktopFile: Don't try read non existent files 
+    - XdgDesktopFile: Don't try read non existent files
     - xdgaction: Set icon in updateIcon() only if needed
     - xdgiconloader: Support more classes for "FollowColors" icons
     - xdgiconloader: Consider device pixel ratio when painting
     - xdgiconloader: Cover all KDE colors schemes for symbolic icons
     - xdgiconloader: Fixes pedantic warning
-    - xdgmenuwidget: Fix menu-item drag url 
-    
+    - xdgmenuwidget: Fix menu-item drag url
+
 libqtxdg-3.2.0 / 2018-05-21
 ===========================
 

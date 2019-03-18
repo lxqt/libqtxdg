@@ -3,6 +3,7 @@ add_executable(qtxdg-mat
     matcommandinterface.cpp
     defappmatcommand.cpp
     openmatcommand.cpp
+    mimetypematcommand.cpp
 
     qtxdg-mat.cpp
 )

@@ -43,7 +43,7 @@ class XdgMenuRule : public QObject
 {
     Q_OBJECT
 public:
-    explicit XdgMenuRule(const QDomElement& element, QObject* parent = 0);
+    explicit XdgMenuRule(const QDomElement& element, QObject* parent = nullptr);
     virtual ~XdgMenuRule();
 
     virtual bool check(const QString& desktopFileId, const XdgDesktopFile& desktopFile) = 0;
@@ -54,7 +54,7 @@ class XdgMenuRuleOr : public XdgMenuRule
 {
     Q_OBJECT
 public:
-    explicit XdgMenuRuleOr(const QDomElement& element, QObject* parent = 0);
+    explicit XdgMenuRuleOr(const QDomElement& element, QObject* parent = nullptr);
 
     bool check(const QString& desktopFileId, const XdgDesktopFile& desktopFile);
 
@@ -67,7 +67,7 @@ class XdgMenuRuleAnd : public XdgMenuRuleOr
 {
     Q_OBJECT
 public:
-    explicit XdgMenuRuleAnd(const QDomElement& element, QObject* parent = 0);
+    explicit XdgMenuRuleAnd(const QDomElement& element, QObject* parent = nullptr);
     bool check(const QString& desktopFileId, const XdgDesktopFile& desktopFile);
 };
 
@@ -76,7 +76,7 @@ class XdgMenuRuleNot : public XdgMenuRuleOr
 {
     Q_OBJECT
 public:
-    explicit XdgMenuRuleNot(const QDomElement& element, QObject* parent = 0);
+    explicit XdgMenuRuleNot(const QDomElement& element, QObject* parent = nullptr);
     bool check(const QString& desktopFileId, const XdgDesktopFile& desktopFile);
 };
 
@@ -85,7 +85,7 @@ class XdgMenuRuleFileName : public XdgMenuRule
 {
     Q_OBJECT
 public:
-    explicit XdgMenuRuleFileName(const QDomElement& element, QObject* parent = 0);
+    explicit XdgMenuRuleFileName(const QDomElement& element, QObject* parent = nullptr);
     bool check(const QString& desktopFileId, const XdgDesktopFile& desktopFile);
 private:
     QString mId;
@@ -96,7 +96,7 @@ class XdgMenuRuleCategory : public XdgMenuRule
 {
     Q_OBJECT
 public:
-    explicit XdgMenuRuleCategory(const QDomElement& element, QObject* parent = 0);
+    explicit XdgMenuRuleCategory(const QDomElement& element, QObject* parent = nullptr);
     bool check(const QString& desktopFileId, const XdgDesktopFile& desktopFile);
 private:
     QString mCategory;
@@ -107,7 +107,7 @@ class XdgMenuRuleAll : public XdgMenuRule
 {
     Q_OBJECT
 public:
-    explicit XdgMenuRuleAll(const QDomElement& element, QObject* parent = 0);
+    explicit XdgMenuRuleAll(const QDomElement& element, QObject* parent = nullptr);
     bool check(const QString& desktopFileId, const XdgDesktopFile& desktopFile);
 };
 
@@ -117,7 +117,7 @@ class XdgMenuRules : public QObject
 {
     Q_OBJECT
 public:
-    explicit XdgMenuRules(QObject* parent = 0);
+    explicit XdgMenuRules(QObject* parent = nullptr);
     virtual ~XdgMenuRules();
 
     void addInclude(const QDomElement& element);

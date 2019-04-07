@@ -63,13 +63,13 @@ class QTXDG_API XdgMenuWidget : public QMenu
     Q_OBJECT
 public:
     /// Constructs a menu for root documentElement in xdgMenu with some text and parent.
-    XdgMenuWidget(const XdgMenu& xdgMenu, const QString& title = QString(), QWidget* parent=0);
+    XdgMenuWidget(const XdgMenu& xdgMenu, const QString& title = QString(), QWidget* parent=nullptr);
 
     /// Constructs a menu for menuElement with parent.
-    explicit XdgMenuWidget(const QDomElement& menuElement, QWidget* parent=0);
+    explicit XdgMenuWidget(const QDomElement& menuElement, QWidget* parent=nullptr);
 
     /// Constructs a copy of other.
-    XdgMenuWidget(const XdgMenuWidget& other, QWidget* parent=0);
+    XdgMenuWidget(const XdgMenuWidget& other, QWidget* parent=nullptr);
 
     /// Assigns other to this menu.
     XdgMenuWidget& operator=(const XdgMenuWidget& other);

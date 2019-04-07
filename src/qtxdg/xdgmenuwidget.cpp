@@ -185,7 +185,7 @@ void XdgMenuWidgetPrivate::buildMenu()
 {
     Q_Q(XdgMenuWidget);
 
-    QAction* first = 0;
+    QAction* first = nullptr;
     if (!q->actions().isEmpty())
         first = q->actions().constLast();
 

@@ -55,12 +55,12 @@ class QTXDG_API XdgAction : public QAction
 {
     Q_OBJECT
 public:
-    explicit XdgAction(QObject *parent=0);
-    explicit XdgAction(const XdgDesktopFile& desktopFile, QObject *parent=0);
-    explicit XdgAction(const XdgDesktopFile* desktopFile, QObject *parent=0);
-    explicit XdgAction(const QString& desktopFileName, QObject *parent=0);
+    explicit XdgAction(QObject *parent=nullptr);
+    explicit XdgAction(const XdgDesktopFile& desktopFile, QObject *parent=nullptr);
+    explicit XdgAction(const XdgDesktopFile* desktopFile, QObject *parent=nullptr);
+    explicit XdgAction(const QString& desktopFileName, QObject *parent=nullptr);
     // Constructs a XdgAction that is a copy of the given XdgAction.
-    explicit XdgAction(const XdgAction& other, QObject *parent=0);
+    explicit XdgAction(const XdgAction& other, QObject *parent=nullptr);
 
     /// Destroys the object and frees allocated resources.
     virtual ~XdgAction();

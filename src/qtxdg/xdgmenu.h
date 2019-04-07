@@ -67,7 +67,7 @@ Q_OBJECT
     friend class XdgMenuApplinkProcessor;
 
 public:
-    explicit XdgMenu(QObject *parent = 0);
+    explicit XdgMenu(QObject *parent = nullptr);
     virtual ~XdgMenu();
 
     bool read(const QString& menuFileName);

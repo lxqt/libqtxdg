@@ -75,10 +75,10 @@ public:
     XdgMenuWidget& operator=(const XdgMenuWidget& other);
 
     /// Destroys the menu.
-    virtual ~XdgMenuWidget();
+    ~XdgMenuWidget() override;
 
 protected:
-    bool event(QEvent* event);
+    bool event(QEvent* event) override;
 
 private:
     XdgMenuWidgetPrivate* const d_ptr;

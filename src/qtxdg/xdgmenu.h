@@ -68,7 +68,7 @@ Q_OBJECT
 
 public:
     explicit XdgMenu(QObject *parent = nullptr);
-    virtual ~XdgMenu();
+    ~XdgMenu() override;
 
     bool read(const QString& menuFileName);
     void save(const QString& fileName);

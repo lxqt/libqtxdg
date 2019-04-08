@@ -312,7 +312,7 @@ namespace
         {}
 
     protected:
-        virtual QString prefix() const { return m_prefix; }
+        QString prefix() const override { return m_prefix; }
 
     private:
         const QString m_prefix;

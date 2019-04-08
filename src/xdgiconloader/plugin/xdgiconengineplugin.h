@@ -33,6 +33,6 @@ class XdgIconEnginePlugin : public QIconEnginePlugin
     Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QIconEngineFactoryInterface" FILE "xdgiconengineplugin.json")
 public:
     using QIconEnginePlugin::QIconEnginePlugin;
-    virtual QIconEngine * create(const QString & filename = QString{}) override;
+    QIconEngine * create(const QString & filename = QString{}) override;
 };
 

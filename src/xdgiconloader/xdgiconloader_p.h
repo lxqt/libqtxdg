@@ -71,7 +71,7 @@ class XDGICONLOADER_EXPORT XdgIconLoaderEngine : public QIconEngine
 {
 public:
     XdgIconLoaderEngine(const QString& iconName = QString());
-    ~XdgIconLoaderEngine();
+    ~XdgIconLoaderEngine() override;
 
     void paint(QPainter *painter, const QRect &rect, QIcon::Mode mode, QIcon::State state) Q_DECL_OVERRIDE;
     QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state) Q_DECL_OVERRIDE;

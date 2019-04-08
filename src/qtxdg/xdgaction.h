@@ -63,7 +63,7 @@ public:
     explicit XdgAction(const XdgAction& other, QObject *parent=nullptr);
 
     /// Destroys the object and frees allocated resources.
-    virtual ~XdgAction();
+    ~XdgAction() override;
     XdgAction& operator=(const XdgAction& other);
 
     //! Returns true if the XdgAction is valid; otherwise returns false.

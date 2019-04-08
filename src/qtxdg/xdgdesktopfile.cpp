@@ -32,7 +32,7 @@
 #include "xdgicon.h"
 #include "application_interface.h"
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <unistd.h>
 
 #include <QDebug>

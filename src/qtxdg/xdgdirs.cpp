@@ -26,7 +26,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "xdgdirs.h"
-#include <stdlib.h>
+#include <cstdlib>
 #include <QDir>
 #include <QDebug>
 #include <QStandardPaths>

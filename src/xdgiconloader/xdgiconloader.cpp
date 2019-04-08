@@ -771,7 +771,7 @@ QSize XdgIconLoaderEngine::actualSize(const QSize &size, QIcon::Mode mode,
                 dir_size = qMin(pix_size.width(), pix_size.height());
             }
             int result = qMin(dir_size, qMin(size.width(), size.height()));
-            return QSize(result, result);
+            return {result, result};
         }
     }
     return {0, 0};

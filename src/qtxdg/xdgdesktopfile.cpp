@@ -191,7 +191,7 @@ QString &escapeExec(QString& str)
 QString &doUnEscape(QString& str, const QHash<QChar,QChar> &repl)
 {
     int n = 0;
-    while (1)
+    while (true)
     {
         n=str.indexOf(QLatin1String("\\"), n);
         if (n < 0 || n > str.length() - 2)

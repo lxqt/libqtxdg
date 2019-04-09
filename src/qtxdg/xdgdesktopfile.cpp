@@ -985,7 +985,7 @@ static QStringList parseCombinedArgString(const QString &program)
 
 void replaceVar(QString &str, const QString &varName, const QString &after)
 {
-    str.replace(QRegExp(QString::fromLatin1("\\$%1(?!\\w)").arg(varName)), after);
+    str.replace(QRegExp(QString::fromLatin1(R"regexp(\$%1(?!\w))regexp").arg(varName)), after);
     str.replace(QRegExp(QString::fromLatin1(R"(\$\{%1\})").arg(varName)), after);
 }
 

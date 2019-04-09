@@ -30,6 +30,7 @@
 #include "xdgdesktopfile_p.h"
 #include "xdgdirs.h"
 #include "xdgicon.h"
+#include "application_interface.h"
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -100,6 +101,27 @@ QString &unEscape(QString& str);
 QString &unEscapeExec(QString& str);
 void loadMimeCacheDir(const QString& dirName, QHash<QString, QList<XdgDesktopFile*> > & cache);
 
+namespace
+{
+    //! Simple helper for getting timeout for starting of DBus activatable applications
+    class DBusActivateTimeout
+    {
+    private:
+        int mTimeoutMs;
+        DBusActivateTimeout()
+        {
+            bool ok;
+            mTimeoutMs = qgetenv("QTXDG_DBUSACTIVATE_TIMEOUT").toInt(&ok);
+            if (!ok)
+                mTimeoutMs = 1500;
+        }
+        static DBusActivateTimeout msInstance;
+    public:
+        static const DBusActivateTimeout & instance() { return msInstance; }
+        operator int() const { return mTimeoutMs; }
+    };
+    DBusActivateTimeout DBusActivateTimeout::msInstance;
+}
 
 QString &doEscape(QString& str, const QHash<QChar,QChar> &repl)
 {
@@ -533,7 +555,7 @@ bool XdgDesktopFileData::startByDBus(const QString & action, const QStringList& 
                 ", assembled DBus object path" << path << "is invalid!";
         return false;
     }
-    QDBusInterface app(f.completeBaseName(), path, QLatin1String("org.freedesktop.Application"));
+    org::freedesktop::Application app{f.completeBaseName(), path, QDBusConnection::sessionBus()};
     //Note: after the QDBusInterface construction, it can *invalid* (has reasonable lastError())
     // but this can be due to some intermediate DBus call(s) which doesn't need to be fatal and
     // our next call() can succeed
@@ -543,19 +565,28 @@ bool XdgDesktopFileData::startByDBus(const QString & action, const QStringList& 
         qWarning().noquote() << "XdgDesktopFileData::startByDBus: invalid interface:" << app.lastError().message()
             << ", but trying to continue...";
     }
-    QDBusMessage reply;
+    app.setTimeout(DBusActivateTimeout::instance());
+    QDBusPendingReply<> reply;
     if (!action.isEmpty())
     {
         QList<QVariant> v_urls;
         for (const auto & url : urls)
              v_urls.append(url);
-        reply = app.call(QLatin1String("ActivateAction"), action, v_urls, platformData);
+        reply = app.ActivateAction(action, v_urls, platformData);
     } else if (urls.isEmpty())
-        reply = app.call(QLatin1String("Activate"), platformData);
+        reply = app.Activate(platformData);
     else
-        reply = app.call(QLatin1String("Open"), urls, platformData);
+        reply = app.Open(urls, platformData);
 
-    return QDBusMessage::ErrorMessage != reply.type();
+    reply.waitForFinished();
+    if (QDBusMessage::ErrorMessage == reply.reply().type())
+    {
+        qWarning().noquote().nospace() << "XdgDesktopFileData::startByDBus(timeout=" << DBusActivateTimeout::instance()
+            << "): failed to start org.freedesktop.Application" << mFileName << ": " << reply.reply();
+        return false;
+    }
+
+    return true;
 }
 
 QStringList XdgDesktopFileData::getListValue(const XdgDesktopFile * q, const QString & key, bool tryExtendPrefix) const

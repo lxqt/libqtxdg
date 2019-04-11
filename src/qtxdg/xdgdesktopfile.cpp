@@ -48,6 +48,7 @@
 #include <QMimeDatabase>
 #include <QMimeType>
 #include <QProcess>
+#include <QRegularExpression>
 #include <QSettings>
 #include <QStandardPaths>
 #include <QTextStream>
@@ -1016,8 +1017,8 @@ static QStringList parseCombinedArgString(const QString &program)
 
 void replaceVar(QString &str, const QString &varName, const QString &after)
 {
-    str.replace(QRegExp(QString::fromLatin1(R"regexp(\$%1(?!\w))regexp").arg(varName)), after);
-    str.replace(QRegExp(QString::fromLatin1(R"(\$\{%1\})").arg(varName)), after);
+    str.replace(QRegularExpression(QString::fromLatin1(R"regexp(\$%1(?!\w))regexp").arg(varName)), after);
+    str.replace(QRegularExpression(QString::fromLatin1(R"(\$\{%1\})").arg(varName)), after);
 }
 
 
@@ -1041,7 +1042,7 @@ QString expandEnvVariables(const QString str)
     const QString homeDir = QFile::decodeName(qgetenv("HOME"));
 
     QString res = str;
-    res.replace(QRegExp(QString::fromLatin1("~(?=$|/)")), homeDir);
+    res.replace(QRegularExpression(QString::fromLatin1("~(?=$|/)")), homeDir);
 
     replaceVar(res, QLatin1String("HOME"), homeDir);
     replaceVar(res, QLatin1String("USER"), QString::fromLocal8Bit(qgetenv("USER")));

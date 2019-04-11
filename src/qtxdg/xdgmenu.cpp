@@ -537,12 +537,12 @@ void XdgMenuPrivate::processDirectoryEntries(QDomElement& element, const QString
     dirs << parentDirs;
 
     bool found = false;
-    for (const QString &file : const_cast<const QStringList&>(files)){
+    for (const QString &file : qAsConst(files)){
         if (file.startsWith(QLatin1Char('/')))
             found = loadDirectoryFile(file, element);
         else
         {
-            for (const QString &dir : const_cast<const QStringList&>(dirs))
+            for (const QString &dir : qAsConst(dirs))
             {
                 found = loadDirectoryFile(dir + QLatin1Char('/') + file, element);
                 if (found) break;
@@ -671,7 +671,7 @@ QString XdgMenu::getMenuFileName(const QString& baseName)
 
     for (const QString &configDir : configDirs)
     {
-        for (const QString &f : const_cast<const QStringList&>(wellKnownFiles))
+        for (const QString &f : qAsConst(wellKnownFiles))
         {
             QFileInfo file(QString::fromLatin1("%1/menus/%2").arg(configDir, f));
             if (file.exists())

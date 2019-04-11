@@ -96,7 +96,7 @@ QString XdgMimeType::iconName() const
         names.append(QMimeType::iconName());
         names.append(QMimeType::genericIconName());
 
-        for (const QString &s : const_cast<const QStringList&>(names)) {
+        for (const QString &s : qAsConst(names)) {
             if (!XdgIcon::fromTheme(s).isNull()) {
                 dx->iconName = s;
                 break;

@@ -215,7 +215,7 @@ void XdgMenuReader::processMergeFileTag(QDomElement& element, QStringList* merge
         QString relativeName;
         QStringList configDirs = XdgDirs::configDirs();
 
-        for (const QString &configDir : const_cast<const QStringList&>(configDirs))
+        for (const QString &configDir : qAsConst(configDirs))
         {
             if (mFileName.startsWith(configDir))
             {
@@ -295,7 +295,7 @@ void XdgMenuReader::processDefaultMergeDirsTag(QDomElement& element, QStringList
     QStringList dirs = XdgDirs::configDirs();
     dirs << XdgDirs::configHome();
 
-    for (const QString &dir : const_cast<const QStringList&>(dirs))
+    for (const QString &dir : qAsConst(dirs))
     {
         mergeDir(QString::fromLatin1("%1/menus/%2-merged").arg(dir, menuBaseName), element, mergedFiles);
     }
@@ -329,7 +329,7 @@ void XdgMenuReader::processDefaultAppDirsTag(QDomElement& element)
     QStringList dirs = XdgDirs::dataDirs();
     dirs.prepend(XdgDirs::dataHome(false));
 
-    for (const QString &dir : const_cast<const QStringList&> (dirs))
+    for (const QString &dir : qAsConst(dirs))
     {
         //qDebug() << "Add AppDir: " << dir + "/applications/";
         addDirTag(element, QLatin1String("AppDir"), dir + QLatin1String("/applications/"));
@@ -360,7 +360,7 @@ void XdgMenuReader::processDefaultDirectoryDirsTag(QDomElement& element)
     QStringList dirs = XdgDirs::dataDirs();
     dirs.prepend(XdgDirs::dataHome(false));
 
-    for (const QString &dir : const_cast<const QStringList&>(dirs))
+    for (const QString &dir : qAsConst(dirs))
         addDirTag(element, QLatin1String("DirectoryDir"), dir + QLatin1String("/desktop-directories/"));
 }
 

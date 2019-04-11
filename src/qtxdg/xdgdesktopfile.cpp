@@ -469,7 +469,7 @@ bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const
     bool nonDetach = false;
     for (const QString &s : nonDetachExecs)
     {
-        for (const QString &a : const_cast<const QStringList&>(args))
+        for (const QString &a : qAsConst(args))
         {
             if (a.contains(s))
             {
@@ -1383,7 +1383,7 @@ QString findDesktopFile(const QString& desktopName)
     QStringList dataDirs = XdgDirs::dataDirs();
     dataDirs.prepend(XdgDirs::dataHome(false));
 
-    for (const QString &dirName : const_cast<const QStringList&>(dataDirs))
+    for (const QString &dirName : qAsConst(dataDirs))
     {
         QString f = findDesktopFile(dirName + QLatin1String("/applications"), desktopName);
         if (!f.isEmpty())
@@ -1710,7 +1710,7 @@ void XdgDesktopFileCache::initialize()
     QStringList dataDirs = XdgDirs::dataDirs();
     dataDirs.prepend(XdgDirs::dataHome(false));
 
-    for (const QString &dirname : const_cast<const QStringList&>(dataDirs))
+    for (const QString &dirname : qAsConst(dataDirs))
     {
         initialize(dirname + QLatin1String("/applications"));
 //        loadMimeCacheDir(dirname + "/applications", m_defaultAppsCache);
@@ -1752,7 +1752,7 @@ XdgDesktopFile* XdgDesktopFileCache::getDefaultApp(const QString& mimetype)
     mimeDirsList.append(XdgDirs::dataHome(false) + QLatin1String("/applications"));
     mimeDirsList.append(XdgDirs::dataDirs(QLatin1String("/applications")));
 
-    for (const QString &mimeDir : const_cast<const QStringList&>(mimeDirsList))
+    for (const QString &mimeDir : qAsConst(mimeDirsList))
     {
         QString defaultsListPath = mimeDir + QLatin1String("/mimeapps.list");
         if (QFileInfo::exists(defaultsListPath))

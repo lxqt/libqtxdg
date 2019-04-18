@@ -112,7 +112,7 @@ namespace
         DBusActivateTimeout()
         {
             bool ok;
-            mTimeoutMs = qgetenv("QTXDG_DBUSACTIVATE_TIMEOUT").toInt(&ok);
+            mTimeoutMs = qEnvironmentVariableIntValue("QTXDG_DBUSACTIVATE_TIMEOUT", &ok);
             if (!ok)
                 mTimeoutMs = 1500;
         }

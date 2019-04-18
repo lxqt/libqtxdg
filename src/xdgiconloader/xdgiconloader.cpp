@@ -848,8 +848,8 @@ QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, Q
             const QPalette pal = qApp->palette();
             // Note: indexes are assembled as in qtsvg (QSvgIconEnginePrivate::hashKey())
             QMap<int, QString> style_sheets;
-            style_sheets[(QIcon::Normal<<4)|QIcon::Off] = STYLE.arg(pal.windowText().color().name()).arg(pal.window().color().name()).arg(pal.highlight().color().name());
-            style_sheets[(QIcon::Selected<<4)|QIcon::Off] = STYLE.arg(pal.highlightedText().color().name()).arg(pal.highlight().color().name()).arg(pal.highlightedText().color().name());
+            style_sheets[(QIcon::Normal<<4)|QIcon::Off] = STYLE.arg(pal.windowText().color().name(), pal.window().color().name(), pal.highlight().color().name());
+            style_sheets[(QIcon::Selected<<4)|QIcon::Off] = STYLE.arg(pal.highlightedText().color().name(), pal.highlight().color().name(), pal.highlightedText().color().name());
             QMap<int, QSharedPointer<QXmlStreamWriter> > writers;
             for (auto i = style_sheets.cbegin(); i != style_sheets.cend(); ++i)
             {

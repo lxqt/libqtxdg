@@ -30,7 +30,7 @@
 #include "xdgdesktopfile_p.h"
 #include "xdgdirs.h"
 #include "xdgicon.h"
-#include "application_interface.h"
+#include "application_interface.h" // generated interface for DBus org.freedesktop.Application
 
 #include <cstdlib>
 #include <unistd.h>

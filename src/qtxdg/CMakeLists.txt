@@ -52,18 +52,18 @@ set(libqtxdg_CPP_FILES
     xdgmimetype.cpp
 )
 
-QT5_ADD_DBUS_INTERFACE(DBUS_INTERFACE_SRCS
+QT5_ADD_DBUS_INTERFACE(libqtxdg_DBUS_INTERFACE_SRCS
     dbus/org.freedesktop.Application.xml
     application_interface
 )
 
-set_property(SOURCE ${DBUS_INTERFACE_SRCS} PROPERTY SKIP_AUTOGEN ON)
+set_property(SOURCE ${libqtxdg_DBUS_INTERFACE_SRCS} PROPERTY SKIP_AUTOGEN ON)
 
 add_library(${QTXDGX_LIBRARY_NAME} SHARED
     ${libqtxdg_PUBLIC_H_FILES}
     ${libqtxdg_PRIVATE_H_FILES}
     ${libqtxdg_CPP_FILES}
-    ${DBUS_INTERFACE_SRCS}
+    ${libqtxdg_DBUS_INTERFACE_SRCS}
 )
 
 target_link_libraries(${QTXDGX_LIBRARY_NAME}

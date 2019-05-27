@@ -49,9 +49,9 @@ void QtXdgTest::testDefaultApp()
     mimedirs.prepend(XdgDirs::dataHome(false));
     for (const QString &mimedir : const_cast<const QStringList&>(mimedirs))
     {
-        QDir dir(mimedir + "/mime");
+        QDir dir(mimedir + QStringLiteral("/mime"));
         qDebug() << dir.path();
-        QStringList filters = (QStringList() << "*.xml");
+        QStringList filters = (QStringList() << QStringLiteral("*.xml"));
         const QFileInfoList &mediaDirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
         for (const QFileInfo &mediaDir : mediaDirs)
         {
@@ -59,7 +59,7 @@ void QtXdgTest::testDefaultApp()
             const QStringList mimeXmlFileNames = QDir(mediaDir.absoluteFilePath()).entryList(filters, QDir::Files);
             for (const QString &mimeXmlFileName : mimeXmlFileNames)
             {
-                QString mimetype = mediaDir.fileName() + "/" + mimeXmlFileName.left(mimeXmlFileName.length() - 4);
+                QString mimetype = mediaDir.fileName() + QLatin1Char('/') + mimeXmlFileName.left(mimeXmlFileName.length() - 4);
                 QString xdg_utils_default = xdgUtilDefaultApp(mimetype);
                 QString desktop_file_default = xdgDesktopFileDefaultApp(mimetype);
 
@@ -90,48 +90,48 @@ void QtXdgTest::compare(QString mimetype)
 
 void QtXdgTest::testTextHtml()
 {
-    compare("text/html");
+    compare(QStringLiteral("text/html"));
 }
 
 void QtXdgTest::testMeldComparison()
 {
-    compare("application/x-meld-comparison");
+    compare(QStringLiteral("application/x-meld-comparison"));
 }
 
 void QtXdgTest::testCustomFormat()
 {
-    QSettings::Format desktopFormat = QSettings::registerFormat("list", readDesktopFile, writeDesktopFile);
-    QFile::remove("/tmp/test.list");
-    QFile::remove("/tmp/test2.list");
-    QSettings test("/tmp/test.list", desktopFormat);
-    test.beginGroup("Default Applications");
-    test.setValue("text/plain", QString("gvim.desktop"));
-    test.setValue("text/html", QString("firefox.desktop"));
+    QSettings::Format desktopFormat = QSettings::registerFormat(QStringLiteral("list"), readDesktopFile, writeDesktopFile);
+    QFile::remove(QStringLiteral("/tmp/test.list"));
+    QFile::remove(QStringLiteral("/tmp/test2.list"));
+    QSettings test(QStringLiteral("/tmp/test.list"), desktopFormat);
+    test.beginGroup(QStringLiteral("Default Applications"));
+    test.setValue(QStringLiteral("text/plain"), QStringLiteral("gvim.desktop"));
+    test.setValue(QStringLiteral("text/html"), QStringLiteral("firefox.desktop"));
     test.endGroup();
-    test.beginGroup("Other Applications");
-    test.setValue("application/pdf", QString("qpdfview.desktop"));
-    test.setValue("image/svg+xml", QString("inkscape.desktop"));
+    test.beginGroup(QStringLiteral("Other Applications"));
+    test.setValue(QStringLiteral("application/pdf"), QStringLiteral("qpdfview.desktop"));
+    test.setValue(QStringLiteral("image/svg+xml"), QStringLiteral("inkscape.desktop"));
     test.sync();
 
-    QFile::copy("/tmp/test.list", "/tmp/test2.list");
+    QFile::copy(QStringLiteral("/tmp/test.list"), QStringLiteral("/tmp/test2.list"));
 
-    QSettings test2("/tmp/test2.list", desktopFormat);
+    QSettings test2(QStringLiteral("/tmp/test2.list"), desktopFormat);
     QVERIFY(test2.allKeys().size() == 4);
 
-    test2.beginGroup("Default Applications");
+    test2.beginGroup(QStringLiteral("Default Applications"));
 //    qDebug() << test2.value("text/plain");
-    QVERIFY(test2.value("text/plain") == QString("gvim.desktop"));
+    QVERIFY(test2.value(QStringLiteral("text/plain")) == QLatin1String("gvim.desktop"));
 
 //    qDebug() << test2.value("text/html");
-    QVERIFY(test2.value("text/html") == QString("firefox.desktop"));
+    QVERIFY(test2.value(QStringLiteral("text/html")) == QLatin1String("firefox.desktop"));
     test2.endGroup();
 
-    test2.beginGroup("Other Applications");
+    test2.beginGroup(QStringLiteral("Other Applications"));
 //    qDebug() << test2.value("application/pdf");
-    QVERIFY(test2.value("application/pdf") == QString("qpdfview.desktop"));
+    QVERIFY(test2.value(QStringLiteral("application/pdf")) == QLatin1String("qpdfview.desktop"));
 
 //    qDebug() << test2.value("image/svg+xml");
-    QVERIFY(test2.value("image/svg+xml") == QString("inkscape.desktop"));
+    QVERIFY(test2.value(QStringLiteral("image/svg+xml")) == QStringLiteral("inkscape.desktop"));
     test2.endGroup();
 }
 
@@ -152,12 +152,12 @@ QString QtXdgTest::xdgDesktopFileDefaultApp(QString mimetype)
 QString QtXdgTest::xdgUtilDefaultApp(QString mimetype)
 {
     QProcess xdg_mime;
-    QString program = "xdg-mime";
-    QStringList args = (QStringList() << "query" << "default" << mimetype);
-    qDebug() << "running" << program << args.join(" ");
+    QString program = QStringLiteral("xdg-mime");
+    QStringList args = (QStringList() << QStringLiteral("query") << QStringLiteral("default") << mimetype);
+    qDebug() << "running" << program << args.join(QLatin1Char(' '));
     xdg_mime.start(program, args);
     xdg_mime.waitForFinished(1000);
-    return QString(xdg_mime.readAll()).trimmed();
+    return QString::fromUtf8(xdg_mime.readAll()).trimmed();
 }
 
 #if 0

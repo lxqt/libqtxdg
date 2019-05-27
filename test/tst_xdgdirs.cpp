@@ -66,8 +66,8 @@ private:
 
 void tst_xdgdirs::initTestCase()
 {
-    QCoreApplication::instance()->setOrganizationName("QtXdg");
-    QCoreApplication::instance()->setApplicationName("tst_xdgdirs");
+    QCoreApplication::instance()->setOrganizationName(QStringLiteral("QtXdg"));
+    QCoreApplication::instance()->setApplicationName(QStringLiteral("tst_xdgdirs"));
 }
 
 void tst_xdgdirs::cleanupTestCase()
@@ -175,7 +175,7 @@ void tst_xdgdirs::testConfigDirs()
 void tst_xdgdirs::testCacheHome()
 {
     setDefaultLocations();
-    const QString expectedCacheHome = QDir::homePath() + QString("/.cache");
+    const QString expectedCacheHome = QDir::homePath() + QStringLiteral("/.cache");
     QCOMPARE(XdgDirs::cacheHome(), expectedCacheHome);
     QCOMPARE(XdgDirs::cacheHome(false), expectedCacheHome);
 

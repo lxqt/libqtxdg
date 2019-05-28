@@ -47,7 +47,7 @@ void QtXdgTest::testDefaultApp()
 {
     QStringList mimedirs = XdgDirs::dataDirs();
     mimedirs.prepend(XdgDirs::dataHome(false));
-    for (const QString &mimedir : const_cast<const QStringList&>(mimedirs))
+    for (const QString &mimedir : qAsConst(mimedirs))
     {
         QDir dir(mimedir + "/mime");
         qDebug() << dir.path();

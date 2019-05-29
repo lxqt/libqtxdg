@@ -100,7 +100,6 @@ bool read(const QString &prefix);
 void replaceVar(QString &str, const QString &varName, const QString &after);
 QString &unEscape(QString& str);
 QString &unEscapeExec(QString& str);
-void loadMimeCacheDir(const QString& dirName, QHash<QString, QList<XdgDesktopFile*> > & cache);
 
 namespace
 {
@@ -1640,47 +1639,6 @@ XdgDesktopFile* XdgDesktopFileCache::load(const QString& fileName)
 }
 
 
-void loadMimeCacheDir(const QString& dirName, QHash<QString, QList<XdgDesktopFile*> > & cache)
-{
-    QDir dir(dirName);
-    // Directories have the type "application/x-directory", but in the desktop file
-    // are shown as "inode/directory". To handle these cases, we use this hash.
-    QHash<QString, QString> specials;
-    specials.insert(QLatin1String("inode/directory"), QLatin1String("application/x-directory"));
-
-
-    // Working recursively ............
-    const QFileInfoList files = dir.entryInfoList(QStringList(), QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
-    for (const QFileInfo &f : files)
-    {
-        if (f.isDir())
-        {
-            loadMimeCacheDir(f.absoluteFilePath(), cache);
-            continue;
-        }
-
-
-        XdgDesktopFile* df = XdgDesktopFileCache::getFile(f.absoluteFilePath());
-        if (!df)
-            continue;
-
-        const QStringList mimes = df->value(mimeTypeKey).toString().split(QLatin1Char(';'), QString::SkipEmptyParts);
-
-        for (const QString &mime : mimes)
-        {
-            int pref = df->value(initialPreferenceKey, 0).toInt();
-            // We move the desktopFile forward in the list for this mime, so that
-            // no desktopfile in front of it have a lower initialPreference.
-            int position = cache[mime].length();
-            while (position > 0 && cache[mime][position - 1]->value(initialPreferenceKey, 0).toInt() < pref)
-            {
-                position--;
-            }
-            cache[mime].insert(position, df);
-        }
-    }
-}
-
 QSettings::Format XdgDesktopFileCache::desktopFileSettingsFormat()
 {
     static QSettings::Format format = QSettings::InvalidFormat;
@@ -1713,7 +1671,6 @@ void XdgDesktopFileCache::initialize()
     for (const QString &dirname : qAsConst(dataDirs))
     {
         initialize(dirname + QLatin1String("/applications"));
-//        loadMimeCacheDir(dirname + "/applications", m_defaultAppsCache);
     }
 }
 

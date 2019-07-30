@@ -89,17 +89,18 @@ QIcon XdgIcon::fromTheme(const QString& iconName, const QIcon& fallback)
 
     QIcon icon;
 
-    if (qtIconCache()->contains(name)) {
-        icon = *qtIconCache()->object(name);
+    if (!isAbsolute ? qtIconCache()->contains(name) : qtIconCache()->contains(iconName)) {
+        icon = *qtIconCache()->object(!isAbsolute ? name : iconName);
     } else {
         QIcon *cachedIcon;
-        if (!isAbsolute)
+        if (!isAbsolute) {
             cachedIcon = new QIcon(new XdgIconLoaderEngine(name));
-        else
+            qtIconCache()->insert(name, cachedIcon);
+        } else {
             cachedIcon = new QIcon(iconName);
+            qtIconCache()->insert(iconName, cachedIcon);
+        }
         icon = *cachedIcon;
-
-        qtIconCache()->insert(name, cachedIcon);
     }
 
     // Note the qapp check is to allow lazy loading of static icons

@@ -53,16 +53,6 @@
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# String conversion flags
-#-----------------------------------------------------------------------------
-add_definitions(
-    -DQT_NO_CAST_FROM_ASCII
-    -DQT_NO_CAST_TO_ASCII
-    -DQT_NO_URL_CAST_FROM_STRING
-    -DQT_NO_CAST_FROM_BYTEARRAY
-)
-
-#-----------------------------------------------------------------------------
 # Turn on more aggrassive optimizations not supported by CMake
 # References: https://wiki.qt.io/Performance_Tip_Startup_Time
 #-----------------------------------------------------------------------------

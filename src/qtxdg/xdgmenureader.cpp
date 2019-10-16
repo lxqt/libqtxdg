@@ -236,7 +236,7 @@ void XdgMenuReader::processMergeFileTag(QDomElement& element, QStringList* merge
         if (relativeName.isEmpty())
             return;
 
-        for (const QString &configDir : configDirs)
+        for (const QString &configDir : qAsConst(configDirs))
         {
             if (QFileInfo::exists(configDir + relativeName))
             {

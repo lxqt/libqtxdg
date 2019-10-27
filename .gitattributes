@@ -4,6 +4,7 @@
 .gitattributes export-ignore
 .github        export-ignore
 .gitignore     export-ignore
+.mailmap       export-ignore
 
 
 # several files and directories we never want to export 

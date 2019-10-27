@@ -1,3 +1,37 @@
+libqtxdg-3.4.0 / 2019-10-27
+===========================
+
+  * Adds an command line MimeType (mimetype) tool
+  * Adds a command line Open (open) Tool
+  * Adds a command line Default App (defapp) Tool
+  * Adds a MIME Applications Associations (XdgMimeApps) class
+  * XdgDesktopFile:
+    - Deprecates XdgDesktopFileCache and drop XdgDesktopFileCache use
+    - Add explanation comment
+    - Avoid freeze for DBusActivatable apps
+  * CMake:
+    - Remove string conversion flags
+    - Removes not used helper function
+  * test:
+    - Use qAsConst()
+  * Build and Implementation:
+    - Don't use automatic string conversion
+    - Prevent a c++11 range-loop possible detach
+    - Fixed icon cache with absolute paths
+    - Use more precise wording
+    - Use the QString multi-arg overload
+    - Use qEnvironmentVariableIntValue()
+    - Use qAsConst
+    - Drop QRegExp.
+    - Port even more towards C++ raw string literal
+    - Port towards return with a braced init list
+    - Port towards raw string literal use.
+    - Use bool literals
+    - Ports towards C++11 override specifiers
+    - Port towards C++ headers
+    - Port towards C++11 nullptr
+  * Reworded github issue template
+
 libqtxdg-3.3.1 / 2019-02-24
 ===========================
 

@@ -50,10 +50,6 @@
 #include <QXmlStreamReader>
 #include <QFileSystemWatcher>
 
-#ifdef Q_DEAD_CODE_FROM_QT4_MAC
-#include <private/qt_cocoa_helpers_mac_p.h>
-#endif
-
 #include <private/qhexstring_p.h>
 
 //QT_BEGIN_NAMESPACE
@@ -626,9 +622,6 @@ void XdgIconLoaderEngine::paint(QPainter *painter, const QRect &rect,
                              QIcon::Mode mode, QIcon::State state)
 {
     QSize pixmapSize = rect.size();
-#if defined(Q_DEAD_CODE_FROM_QT4_MAC)
-    pixmapSize *= qt_mac_get_scalefactor();
-#endif
     const qreal dpr = painter->device()->devicePixelRatioF();
     painter->drawPixmap(rect, pixmap(pixmapSize * dpr, mode, state));
 }

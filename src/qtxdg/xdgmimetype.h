@@ -29,6 +29,8 @@
 
 #include <QDebug>
 
+#include <algorithm>
+
 class XdgMimeTypePrivate;
 
 //! Describes types of file or data, represented by a MIME type string.
@@ -83,7 +85,7 @@ public:
     void swap(XdgMimeType &other)
     {
         QMimeType::swap(other);
-        qSwap(dx, other.dx);
+        std::swap(dx, other.dx);
     }
 
     //! Destructs the mimetype

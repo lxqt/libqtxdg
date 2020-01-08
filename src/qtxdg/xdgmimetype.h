@@ -80,12 +80,7 @@ public:
         return !QMimeType::operator==(other);
     }
 
-    void swap(XdgMimeType &other)
-    {
-        QMimeType::swap(other);
-        // Not using std::swap here as that does not work with Qt 5.14
-        dx.swap(other.dx);
-    }
+    void swap(XdgMimeType &other) noexcept;
 
     //! Destructs the mimetype
     ~XdgMimeType();

@@ -22,6 +22,7 @@
 
 #include "xdgicon.h"
 
+#include <algorithm>
 
 class XdgMimeTypePrivate : public QSharedData {
 public:
@@ -79,6 +80,11 @@ XdgMimeType &XdgMimeType::operator=(const XdgMimeType &other)
     return *this;
 }
 
+void XdgMimeType::swap(XdgMimeType &other) noexcept
+{
+    QMimeType::swap(other);
+    std::swap(dx, other.dx);
+}
 
 XdgMimeType::~XdgMimeType()
 {

@@ -29,6 +29,8 @@
 #define QTXDG_XDGMENUAPPLINKPROCESSOR_H
 
 #include "xdgmenurules.h"
+#include <memory>
+#include <vector>
 #include <QObject>
 #include <QtXml/QDomElement>
 #include <QLinkedList>
@@ -68,6 +70,7 @@ private:
     QLinkedList<XdgMenuApplinkProcessor*> mChilds;
     XdgMenuAppFileInfoHash mAppFileInfoHash;
     XdgMenuAppFileInfoList mSelected;
+    std::vector<std::unique_ptr<XdgDesktopFile>> mDesktopFiles;
     QDomElement mElement;
     bool mOnlyUnallocated;
 

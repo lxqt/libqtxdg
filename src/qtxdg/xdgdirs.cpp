@@ -265,7 +265,7 @@ QStringList XdgDirs::dataDirs(const QString &postfix)
 
     if (dirs.isEmpty()) {
         dirs.append(QString::fromLatin1("/usr/local/share"));
-        dirs.append(QString::fromLatin1("/usr/share"));
+        dirs.append(QString::fromLatin1("${PREFIX}/share"));
     } else {
         QMutableListIterator<QString> it(dirs);
         while (it.hasNext()) {
@@ -287,7 +287,7 @@ QStringList XdgDirs::configDirs(const QString &postfix)
     QStringList dirs;
     const QString env = QFile::decodeName(qgetenv("XDG_CONFIG_DIRS"));
     if (env.isEmpty())
-        dirs.append(QString::fromLatin1("/etc/xdg"));
+        dirs.append(QString::fromLatin1("${PREFIX}/etc/xdg"));
     else
         dirs = env.split(QLatin1Char(':'), QString::SkipEmptyParts);
 

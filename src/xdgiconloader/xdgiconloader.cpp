@@ -623,7 +623,7 @@ void XdgIconLoaderEngine::paint(QPainter *painter, const QRect &rect,
 {
     QSize pixmapSize = rect.size();
     const qreal dpr = painter->device()->devicePixelRatioF();
-    painter->drawPixmap(rect, pixmap(pixmapSize * dpr, mode, state));
+    painter->drawPixmap(rect, pixmap(QSizeF(pixmapSize * dpr).toSize(), mode, state));
 }
 
 /*
@@ -815,7 +815,17 @@ QPixmap ScalableEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State 
         svgIcon = QIcon(filename);
 
     // Simply reuse svg icon engine
-    return svgIcon.pixmap(size, mode, state);
+    QPixmap pm = svgIcon.pixmap(size, mode, state);
+    // WARNING: The SVG icon engine gives a too big pixmap with scale factors > 1,
+    // so that the final drawing will not be sharp if the pixmap is not scaled here.
+    // The cause of this old behavior is unknown to me (@tsujan).
+    if (!pm.isNull())
+    {
+        const auto actualSize = svgIcon.actualSize(size, mode, state);
+        if (actualSize != pm.size())
+            pm = pm.scaled(actualSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    }
+    return pm;
 }
 
 static const QString STYLE = QStringLiteral("\n.ColorScheme-Text, .ColorScheme-NeutralText {color:%1;}\
@@ -913,6 +923,14 @@ QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, Q
             svgIcon = QIcon(filename);
             pm = svgIcon.pixmap(size, mode, state);
         }
+    }
+
+    // see ScalableEntry::pixmap() for the reason
+    if (!pm.isNull())
+    {
+        const auto actualSize = svgIcon.actualSize(size, mode, state);
+        if (actualSize != pm.size())
+            pm = pm.scaled(actualSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     }
 
     return pm;

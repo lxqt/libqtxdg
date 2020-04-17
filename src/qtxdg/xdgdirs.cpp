@@ -25,6 +25,8 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
+// clazy:excludeall=non-pod-global-static
+
 #include "xdgdirs.h"
 #include <cstdlib>
 #include <QDir>

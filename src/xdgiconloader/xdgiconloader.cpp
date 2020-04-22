@@ -30,6 +30,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+// clazy:excludeall=non-pod-global-static
+
 #ifndef QT_NO_ICON
 #include "xdgiconloader_p.h"
 

@@ -25,6 +25,8 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
+// clazy:excludeall=non-pod-global-static
+
 #include "desktopenvironment_p.cpp"
 #include "xdgdesktopfile.h"
 #include "xdgdesktopfile_p.h"

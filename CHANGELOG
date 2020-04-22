@@ -1,3 +1,10 @@
+libqtxdg-3.5.0 / 2020-04-22
+===========================
+  * Removed dead Qt4 Mac code from XdgIconLoader.
+  * Removed obsolete qSwap.
+  * Silenced clazy warnings
+  * Sharp SVG icons with scale factors > 1.
+
 libqtxdg-3.4.0 / 2019-10-27
 ===========================
 

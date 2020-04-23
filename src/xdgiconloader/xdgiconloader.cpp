@@ -767,6 +767,9 @@ QSize XdgIconLoaderEngine::actualSize(const QSize &size, QIcon::Mode mode,
             PixmapEntry * pix_e;
             if (0 == dir_size && nullptr != (pix_e = dynamic_cast<PixmapEntry *>(entry)))
             {
+                // Ensure that basePixmap is lazily initialized
+                if (pix_e->basePixmap.isNull())
+                    pix_e->basePixmap.load(pix_e->filename);
                 QSize pix_size = pix_e->basePixmap.size();
                 dir_size = qMin(pix_size.width(), pix_size.height());
             }

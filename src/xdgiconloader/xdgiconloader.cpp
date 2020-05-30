@@ -95,6 +95,8 @@ XdgIconLoader *XdgIconLoader::instance()
    return iconLoaderInstance();
 }
 
+namespace XdgIconLoaderUtils {
+
 /*!
     \class QIconCacheGtkReader
     \internal
@@ -267,6 +269,8 @@ QVector<const char *> QIconCacheGtkReader::lookup(const QStringRef &name)
     return ret;
 }
 
+} // namespace XdgIconLoaderUtils
+
 XdgIconTheme::XdgIconTheme(const QString &themeName)
         : m_valid(false)
         , m_followsColorScheme(false)
@@ -281,7 +285,7 @@ XdgIconTheme::XdgIconTheme(const QString &themeName)
 
         if (themeDirInfo.isDir()) {
             m_contentDirs << themeDir;
-            m_gtkCaches << QSharedPointer<QIconCacheGtkReader>::create(themeDir);
+            m_gtkCaches << QSharedPointer<XdgIconLoaderUtils::QIconCacheGtkReader>::create(themeDir);
         }
 
         if (!m_valid) {

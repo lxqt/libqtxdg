@@ -94,7 +94,9 @@ private:
     friend class XdgIconLoader;
 };
 
+namespace XdgIconLoaderUtils {
 class QIconCacheGtkReader;
+} // namespace XdgIconLoaderUtils
 
 // Note: We can't simply reuse the QIconTheme from Qt > 5.7 because
 // the QIconTheme constructor symbol isn't exported.
@@ -115,7 +117,7 @@ private:
     bool m_valid = false;
     bool m_followsColorScheme = false;
 public:
-    QVector<QSharedPointer<QIconCacheGtkReader>> m_gtkCaches;
+    QVector<QSharedPointer<XdgIconLoaderUtils::QIconCacheGtkReader>> m_gtkCaches;
 };
 
 class XDGICONLOADER_EXPORT XdgIconLoader

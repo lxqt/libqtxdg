@@ -752,6 +752,7 @@ QSize XdgIconLoaderEngine::actualSize(const QSize &size, QIcon::Mode mode,
     return {0, 0};
 }
 
+#ifndef QTXDG_STATIC_BUILD
 // XXX: duplicated from qiconloader.cpp, because this symbol isn't exported :(
 QPixmap PixmapEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state)
 {
@@ -809,6 +810,7 @@ QPixmap ScalableEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State 
     }
     return pm;
 }
+#endif // QTXDG_STATIC_BUILD
 
 static const QString STYLE = QStringLiteral("\n.ColorScheme-Text, .ColorScheme-NeutralText {color:%1;}\
 \n.ColorScheme-Background {color:%2;}\

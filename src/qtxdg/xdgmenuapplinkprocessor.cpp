@@ -46,7 +46,7 @@ XdgMenuApplinkProcessor::XdgMenuApplinkProcessor(QDomElement& element,  XdgMenu*
     while(i.hasNext())
     {
         QDomElement e = i.next();
-        mChilds.append(new XdgMenuApplinkProcessor(e, mMenu, this));
+        mChilds.push_back(new XdgMenuApplinkProcessor(e, mMenu, this));
     }
 
 }
@@ -83,7 +83,7 @@ void XdgMenuApplinkProcessor::step1()
 
             if (!mRules.checkExclude(i.key(), *file))
             {
-                mSelected.append(i.value());
+                mSelected.push_back(i.value());
             }
 
         }

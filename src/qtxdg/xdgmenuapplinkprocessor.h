@@ -31,15 +31,16 @@
 #include "xdgmenurules.h"
 #include <QObject>
 #include <QtXml/QDomElement>
-#include <QLinkedList>
 #include <QString>
 #include <QHash>
+
+#include <list>
 
 class XdgMenu;
 class XdgMenuAppFileInfo;
 class XdgDesktopFile;
 
-typedef QLinkedList<XdgMenuAppFileInfo*> XdgMenuAppFileInfoList;
+typedef std::list<XdgMenuAppFileInfo*> XdgMenuAppFileInfoList;
 
 typedef QHash<QString, XdgMenuAppFileInfo*> XdgMenuAppFileInfoHash;
 typedef QHashIterator<QString, XdgMenuAppFileInfo*> XdgMenuAppFileInfoHashIterator;
@@ -65,7 +66,7 @@ protected:
 
 private:
     XdgMenuApplinkProcessor* mParent;
-    QLinkedList<XdgMenuApplinkProcessor*> mChilds;
+    std::list<XdgMenuApplinkProcessor*> mChilds;
     XdgMenuAppFileInfoHash mAppFileInfoHash;
     XdgMenuAppFileInfoList mSelected;
     QDomElement mElement;

@@ -30,7 +30,8 @@
 
 #include <QObject>
 #include <QtXml/QDomElement>
-#include <QLinkedList>
+
+#include <list>
 
 #include "xdgdesktopfile.h"
 
@@ -59,7 +60,7 @@ public:
     bool check(const QString& desktopFileId, const XdgDesktopFile& desktopFile) override;
 
 protected:
-    QLinkedList<XdgMenuRule*> mChilds;
+    std::list<XdgMenuRule*> mChilds;
 };
 
 
@@ -127,8 +128,8 @@ public:
     bool checkExclude(const QString& desktopFileId, const XdgDesktopFile& desktopFile);
 
 protected:
-    QLinkedList<XdgMenuRule*> mIncludeRules;
-    QLinkedList<XdgMenuRule*> mExcludeRules;
+    std::list<XdgMenuRule*> mIncludeRules;
+    std::list<XdgMenuRule*> mExcludeRules;
 };
 
 #endif // QTXDG_XDGMENURULES_H

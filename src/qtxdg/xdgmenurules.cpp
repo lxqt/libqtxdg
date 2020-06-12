@@ -64,22 +64,22 @@ XdgMenuRuleOr::XdgMenuRuleOr(const QDomElement& element, QObject* parent) :
         QDomElement e = iter.next();
 
         if (e.tagName() == QLatin1String("Or"))
-            mChilds.append(new XdgMenuRuleOr(e, this));
+            mChilds.push_back(new XdgMenuRuleOr(e, this));
 
         else if (e.tagName() == QLatin1String("And"))
-            mChilds.append(new XdgMenuRuleAnd(e, this));
+            mChilds.push_back(new XdgMenuRuleAnd(e, this));
 
         else if (e.tagName() == QLatin1String("Not"))
-            mChilds.append(new XdgMenuRuleNot(e, this));
+            mChilds.push_back(new XdgMenuRuleNot(e, this));
 
         else if (e.tagName() == QLatin1String("Filename"))
-            mChilds.append(new XdgMenuRuleFileName(e, this));
+            mChilds.push_back(new XdgMenuRuleFileName(e, this));
 
         else if (e.tagName() == QLatin1String("Category"))
-            mChilds.append(new XdgMenuRuleCategory(e, this));
+            mChilds.push_back(new XdgMenuRuleCategory(e, this));
 
         else if (e.tagName() == QLatin1String("All"))
-            mChilds.append(new XdgMenuRuleAll(e, this));
+            mChilds.push_back(new XdgMenuRuleAll(e, this));
 
         else
             qWarning() << QString::fromLatin1("Unknown rule") << e.tagName();
@@ -90,7 +90,7 @@ XdgMenuRuleOr::XdgMenuRuleOr(const QDomElement& element, QObject* parent) :
 
 bool XdgMenuRuleOr::check(const QString& desktopFileId, const XdgDesktopFile& desktopFile)
 {
-    for (QLinkedList<XdgMenuRule*>::Iterator i=mChilds.begin(); i!=mChilds.end(); ++i)
+    for (std::list<XdgMenuRule*>::const_iterator i=mChilds.cbegin(); i!=mChilds.cend(); ++i)
         if ((*i)->check(desktopFileId, desktopFile))  return true;
 
     return false;
@@ -111,10 +111,11 @@ XdgMenuRuleAnd::XdgMenuRuleAnd(const QDomElement& element, QObject *parent) :
 
 bool XdgMenuRuleAnd::check(const QString& desktopFileId, const XdgDesktopFile& desktopFile)
 {
-    for (QLinkedList<XdgMenuRule*>::Iterator i=mChilds.begin(); i!=mChilds.end(); ++i)
+    for (std::list<XdgMenuRule*>::const_iterator i=mChilds.cbegin(); i!=mChilds.cend(); ++i)
         if (!(*i)->check(desktopFileId, desktopFile))  return false;
 
-    return mChilds.count();
+    //FIXME: Doon't use implicit casts
+    return mChilds.size();
 }
 
 
@@ -206,19 +207,19 @@ XdgMenuRules::~XdgMenuRules()
 
 void XdgMenuRules::addInclude(const QDomElement& element)
 {
-    mIncludeRules.append(new XdgMenuRuleOr(element, this));
+    mIncludeRules.push_back(new XdgMenuRuleOr(element, this));
 }
 
 
 void XdgMenuRules::addExclude(const QDomElement& element)
 {
-    mExcludeRules.append(new XdgMenuRuleOr(element, this));
+    mExcludeRules.push_back(new XdgMenuRuleOr(element, this));
 }
 
 
 bool XdgMenuRules::checkInclude(const QString& desktopFileId, const XdgDesktopFile& desktopFile)
 {
-    for (QLinkedList<XdgMenuRule*>::Iterator i=mIncludeRules.begin(); i!=mIncludeRules.end(); ++i)
+    for (std::list<XdgMenuRule*>::const_iterator i=mIncludeRules.cbegin(); i!=mIncludeRules.cend(); ++i)
         if ((*i)->check(desktopFileId, desktopFile))  return true;
 
     return false;
@@ -227,7 +228,7 @@ bool XdgMenuRules::checkInclude(const QString& desktopFileId, const XdgDesktopFi
 
 bool XdgMenuRules::checkExclude(const QString& desktopFileId, const XdgDesktopFile& desktopFile)
 {
-    for (QLinkedList<XdgMenuRule*>::Iterator i=mExcludeRules.begin(); i!=mExcludeRules.end(); ++i)
+    for (std::list<XdgMenuRule*>::const_iterator i=mExcludeRules.cbegin(); i!=mExcludeRules.cend(); ++i)
         if ((*i)->check(desktopFileId, desktopFile))  return true;
 
     return false;

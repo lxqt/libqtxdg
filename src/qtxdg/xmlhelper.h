@@ -37,9 +37,9 @@ class QTXDG_API DomElementIterator
 {
 public:
     explicit DomElementIterator(const QDomNode& parentNode, const QString& tagName = QString())
+        : mTagName(tagName),
+          mParent(parentNode)
     {
-        mTagName = tagName;
-        mParent = parentNode;
         toFront();
     }
 
@@ -96,9 +96,9 @@ class MutableDomElementIterator
 {
 public:
     explicit MutableDomElementIterator(QDomNode& parentNode, const QString& tagName = QString())
+        : mTagName(tagName),
+          mParent(parentNode)
     {
-        mTagName = tagName;
-        mParent = parentNode;
         toFront();
     }
 

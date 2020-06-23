@@ -33,13 +33,12 @@
 #include <QDir>
 
 
-XdgMenuApplinkProcessor::XdgMenuApplinkProcessor(QDomElement& element,  XdgMenu* menu, XdgMenuApplinkProcessor *parent) :
-    QObject(parent)
+XdgMenuApplinkProcessor::XdgMenuApplinkProcessor(QDomElement& element,  XdgMenu* menu, XdgMenuApplinkProcessor *parent)
+    : QObject(parent),
+      mParent(parent),
+      mElement(element),
+      mMenu(menu)
 {
-    mElement = element;
-    mParent = parent;
-    mMenu = menu;
-
     mOnlyUnallocated = element.attribute(QLatin1String("onlyUnallocated")) == QLatin1String("1");
 
     MutableDomElementIterator i(element, QLatin1String("Menu"));

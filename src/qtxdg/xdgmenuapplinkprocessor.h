@@ -82,11 +82,11 @@ class XdgMenuAppFileInfo: public QObject
     Q_OBJECT
 public:
     explicit XdgMenuAppFileInfo(XdgDesktopFile* desktopFile, const QString& id,  QObject *parent)
-        : QObject(parent)
+        : QObject(parent),
+          mDesktopFile(desktopFile),
+          mAllocated(false),
+          mId(id)
     {
-        mDesktopFile = desktopFile;
-        mAllocated = false;
-        mId = id;
     }
 
     XdgDesktopFile* desktopFile() const { return mDesktopFile; }

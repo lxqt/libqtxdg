@@ -143,10 +143,10 @@ bool XdgMenuRuleNot::check(const QString& desktopFileId, const XdgDesktopFile& d
  if the desktop entry has the given desktop-file id. See Desktop-File Id.
  ************************************************/
 XdgMenuRuleFileName::XdgMenuRuleFileName(const QDomElement& element, QObject *parent) :
-    XdgMenuRule(element, parent)
+    XdgMenuRule(element, parent),
+    mId(element.text())
 {
     //qDebug() << "Create FILENAME rule";
-    mId = element.text();
 }
 
 
@@ -163,9 +163,9 @@ bool XdgMenuRuleFileName::check(const QString& desktopFileId, const XdgDesktopFi
  if the desktop entry has the given category in its Categories field.
  ************************************************/
 XdgMenuRuleCategory::XdgMenuRuleCategory(const QDomElement& element, QObject *parent) :
-    XdgMenuRule(element, parent)
+    XdgMenuRule(element, parent),
+    mCategory(element.text())
 {
-    mCategory = element.text();
 }
 
 

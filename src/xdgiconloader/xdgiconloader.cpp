@@ -325,11 +325,9 @@ XdgIconTheme::XdgIconTheme(const QString &themeName)
                     dirInfo.maxSize = indexReader.value(directoryKey +
                                                         QLatin1String("/MaxSize"),
                                                         size).toInt();
-#if QT_VERSION >= QT_VERSION_CHECK(5, 9, 0)
                     dirInfo.scale = indexReader.value(directoryKey +
                                                       QLatin1String("/Scale"),
                                                       1).toInt();
-#endif
                     m_keyList.append(dirInfo);
                 }
             }
@@ -635,10 +633,8 @@ void XdgIconLoaderEngine::paint(QPainter *painter, const QRect &rect,
  */
 static bool directoryMatchesSize(const QIconDirInfo &dir, int iconsize, int iconscale)
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 9, 0)
     if (dir.scale != iconscale)
         return false;
-#endif
     if (dir.type == QIconDirInfo::Fixed) {
         return dir.size == iconsize;
 
@@ -661,7 +657,6 @@ static bool directoryMatchesSize(const QIconDirInfo &dir, int iconsize, int icon
  */
 static int directorySizeDistance(const QIconDirInfo &dir, int iconsize, int iconscale)
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 9, 0)
     const int scaledIconSize = iconsize * iconscale;
     if (dir.type == QIconDirInfo::Fixed) {
         return qAbs(dir.size * dir.scale - scaledIconSize);
@@ -681,26 +676,6 @@ static int directorySizeDistance(const QIconDirInfo &dir, int iconsize, int icon
             return scaledIconSize - dir.maxSize * dir.scale;
         else return 0;
     }
-#else
-    if (dir.type == QIconDirInfo::Fixed) {
-        return qAbs(dir.size - iconsize);
-
-    } else if (dir.type == QIconDirInfo::Scalable) {
-        if (iconsize < dir.minSize)
-            return dir.minSize - iconsize;
-        else if (iconsize > dir.maxSize)
-            return iconsize - dir.maxSize;
-        else
-            return 0;
-
-    } else if (dir.type == QIconDirInfo::Threshold) {
-        if (iconsize < dir.size - dir.threshold)
-            return dir.minSize - iconsize;
-        else if (iconsize > dir.size + dir.threshold)
-            return iconsize - dir.maxSize;
-        else return 0;
-    }
-#endif
 
     Q_ASSERT(1); // Not a valid value
     return INT_MAX;
@@ -983,14 +958,11 @@ void XdgIconLoaderEngine::virtual_hook(int id, void *data)
             name = m_info.iconName;
         }
         break;
-#if QT_VERSION >= QT_VERSION_CHECK(5, 7, 0)
     case QIconEngine::IsNullHook:
         {
             *reinterpret_cast<bool*>(data) = m_info.entries.isEmpty();
         }
         break;
-#endif
-#if QT_VERSION >= QT_VERSION_CHECK(5, 9, 0)
     case QIconEngine::ScaledPixmapHook:
         {
             QIconEngine::ScaledPixmapArgument &arg = *reinterpret_cast<QIconEngine::ScaledPixmapArgument*>(data);
@@ -1000,7 +972,6 @@ void XdgIconLoaderEngine::virtual_hook(int id, void *data)
             arg.pixmap = entry ? entry->pixmap(arg.size, arg.mode, arg.state) : QPixmap();
         }
         break;
-#endif
     default:
         QIconEngine::virtual_hook(id, data);
     }

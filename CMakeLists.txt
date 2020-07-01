@@ -8,6 +8,14 @@ project(libqtxdg)
 
 option(BUILD_TESTS "Builds tests" OFF)
 option(BUILD_DEV_UTILS "Builds and install development utils" OFF)
+option(BUILD_SHARED_LIBS "Builds shared libs instead of static" ON)
+
+if (NOT BUILD_SHARED_LIBS)
+    set(QTXDG_STATIC_BUILD TRUE)
+    message(WARNING "A static build requires a Qt static build. It will fail otherwise.")
+else()
+    set(QTXDG_STATIC_BUILD FALSE)
+endif()
 
 # additional cmake files
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -160,6 +168,10 @@ configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
     "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
     IMMEDIATE @ONLY)
+
+mark_as_advanced(
+    BUILD_SHARED_LIBS
+)
 
 #add_custom_target(uninstall
 #    COMMAND ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")

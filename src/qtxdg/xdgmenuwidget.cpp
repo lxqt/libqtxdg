@@ -158,7 +158,13 @@ bool XdgMenuWidget::event(QEvent* event)
 
 void XdgMenuWidgetPrivate::mouseMoveEvent(QMouseEvent *event)
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(5,15,0))
+    // NOTE: Because of a bug in Qt 5.15.0, "event->buttons()"
+    // always returns "Qt::NoButton" with "QEvent::MouseMove".
+    if (!(QGuiApplication::mouseButtons() & Qt::LeftButton))
+#else
     if (!(event->buttons() & Qt::LeftButton))
+#endif
         return;
 
     if ((event->pos() - mDragStartPosition).manhattanLength() < QApplication::startDragDistance())

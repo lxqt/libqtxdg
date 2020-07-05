@@ -100,7 +100,7 @@ int OpenMatCommand::run(const QStringList &arguments)
 
     XdgMimeApps appsDb;
     QMimeDatabase mimeDb;
-    XdgDesktopFile *df;
+    XdgDesktopFile *df = nullptr;
     bool isLocalFile = false;
     QString localFilename;
     for (const QString &urlString : qAsConst(files)) {
@@ -134,6 +134,8 @@ int OpenMatCommand::run(const QStringList &arguments)
                         QSL("Error while running the default application (%1) for %2\n").arg(df->name(), urlString));
                 success = false;
             }
+            delete df;
+            df = nullptr;
         } else { // no default app found
             std::cout << qPrintable(QSL("No default application for '%1'\n").arg(urlString));
         }

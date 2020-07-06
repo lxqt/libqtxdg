@@ -41,8 +41,7 @@ static QList<XdgDesktopFile *> GAppInfoGListToXdgDesktopQList(GList *list)
                 XdgDesktopFile *df = new XdgDesktopFile;
                 if (df->load(file) && df->isValid()) {
                     dl.append(df);
-                }
-                else {
+                } else {
                     delete df;
                 }
             }

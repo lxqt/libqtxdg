@@ -119,8 +119,9 @@ QList<XdgDesktopFile *> XdgMimeAppsGLibBackend::allApps()
 
 QList<XdgDesktopFile *> XdgMimeAppsGLibBackend::apps(const QString &mimeType)
 {
-    QList<XdgDesktopFile *> dl = recommendedApps(mimeType);
-    dl.append(fallbackApps(mimeType));
+    GList *list = g_app_info_get_all_for_type(mimeType.toUtf8().constData());
+    QList<XdgDesktopFile *> dl = GAppInfoGListToXdgDesktopQList(list);
+    g_list_free_full(list, g_object_unref);
     return dl;
 }
 
@@ -136,22 +137,7 @@ QList<XdgDesktopFile *> XdgMimeAppsGLibBackend::fallbackApps(const QString &mime
 
 QList<XdgDesktopFile *> XdgMimeAppsGLibBackend::recommendedApps(const QString &mimeType)
 {
-    QByteArray ba = mimeType.toUtf8();
-    const char *contentType = ba.constData();
-
-    GAppInfo *defaultApp = g_app_info_get_default_for_type(contentType, FALSE);
-    GList *list = g_app_info_get_recommended_for_type(contentType);
-
-    if (list != nullptr && defaultApp != nullptr) {
-        GAppInfo *first = G_APP_INFO(g_list_nth_data(list, 0));
-        GAppInfo *second = G_APP_INFO(g_list_nth_data(list, 1));
-        if (!g_app_info_equal(defaultApp, first) && g_app_info_equal(defaultApp, second)) {
-            // we are sure that the first element comes from
-            // g_app_info_set_as_last_used(). We remove it becouse it's not
-            // part on the standard
-            list = g_list_remove(list, first);
-        }
-    }
+    GList *list = g_app_info_get_recommended_for_type(mimeType.toUtf8().constData());
     QList<XdgDesktopFile *> dl = GAppInfoGListToXdgDesktopQList(list);
     g_list_free_full(list, g_object_unref);
     return dl;

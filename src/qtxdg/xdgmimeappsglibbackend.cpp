@@ -108,6 +108,7 @@ bool XdgMimeAppsGLibBackend::addAssociation(const QString &mimeType, const XdgDe
         g_object_unref(gApp);
         return false;
     }
+    g_object_unref(gApp);
     return true;
 }
 
@@ -175,6 +176,7 @@ bool XdgMimeAppsGLibBackend::removeAssociation(const QString &mimeType, const Xd
         g_object_unref(gApp);
         return false;
     }
+    g_object_unref(gApp);
     return true;
 }
 

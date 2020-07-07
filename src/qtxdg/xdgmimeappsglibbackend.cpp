@@ -23,6 +23,7 @@
 
 #include "qtxdglogging.h"
 #include "xdgdesktopfile.h"
+#include "xdgdirs.h"
 
 #include <gio/gio.h>
 #include <gio/gdesktopappinfo.h>
@@ -209,20 +210,42 @@ XdgDesktopFile *XdgMimeAppsGLibBackend::defaultApp(const QString &mimeType)
 
 bool XdgMimeAppsGLibBackend::setDefaultApp(const QString &mimeType, const XdgDesktopFile &app)
 {
+    // NOTE: "g_app_info_set_as_default_for_type()" writes to "~/.config/mimeapps.list"
+    // but we want to set the default app only for the DE (e.g., LXQt).
+
+    if (!addAssociation(mimeType, app))
+        return false;
+
     GDesktopAppInfo *gApp = XdgDesktopFileToGDesktopAppinfo(app);
     if (gApp == nullptr)
         return false;
 
+    // first find the DE's mimeapps list file
+    QByteArray mimeappsList = "mimeapps.list";
+    QList<QByteArray> desktopsList = qgetenv("XDG_CURRENT_DESKTOP").toLower().split(':');
+    if (!desktopsList.isEmpty()) {
+        mimeappsList = desktopsList.at(0) + "-" + mimeappsList;
+    }
+    char *mimeappsListPath = g_build_filename(XdgDirs::configHome(true).toUtf8().constData(),
+                                              mimeappsList.constData(),
+                                              nullptr);
+
+    const char *desktop_id = g_app_info_get_id(G_APP_INFO(gApp));
+    GKeyFile *kf = g_key_file_new();
+    g_key_file_load_from_file(kf, mimeappsListPath, G_KEY_FILE_NONE, nullptr);
+    g_key_file_set_string(kf, "Default Applications", mimeType.toUtf8().constData(), desktop_id);
     GError *error = nullptr;
-    if (g_app_info_set_as_default_for_type(G_APP_INFO(gApp),
-                                           mimeType.toUtf8().constData(), &error) == FALSE) {
+    if (g_key_file_save_to_file(kf, mimeappsListPath, &error) == false) {
         qCWarning(QtXdgMimeAppsGLib, "Failed to set '%s' as the default for '%s'. %s",
                   g_desktop_app_info_get_filename(gApp), qPrintable(mimeType), error->message);
-
         g_error_free(error);
+        g_key_file_free(kf);
+        g_free(mimeappsListPath);
         g_object_unref(gApp);
         return false;
     }
+    g_key_file_free(kf);
+    g_free(mimeappsListPath);
 
     qCDebug(QtXdgMimeAppsGLib, "Set '%s' as the default for '%s'",
             g_desktop_app_info_get_filename(gApp), qPrintable(mimeType));

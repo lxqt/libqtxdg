@@ -14,6 +14,7 @@ set(libqtxdg_PUBLIC_H_FILES
     xdgmacros.h
     xdgmimetype.h
     xdgmimeapps.h
+    xdgdefaultapps.h
 )
 
 set(libqtxdg_PUBLIC_CLASSES
@@ -27,6 +28,7 @@ set(libqtxdg_PUBLIC_CLASSES
     XdgAutoStart
     XdgMimeType
     XdgMimeApps
+    XdgDefaultApps
 )
 
 set(libqtxdg_PRIVATE_H_FILES
@@ -58,6 +60,7 @@ set(libqtxdg_CPP_FILES
     xdgmimeapps.cpp
     xdgmimeappsbackendinterface.cpp
     xdgmimeappsglibbackend.cpp
+    xdgdefaultapps.cpp
 )
 
 QT5_ADD_DBUS_INTERFACE(libqtxdg_DBUS_INTERFACE_SRCS

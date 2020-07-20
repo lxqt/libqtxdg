@@ -33,6 +33,7 @@
 #include <QtXml/QDomElement>
 #include <QString>
 #include <QHash>
+#include <memory>
 
 #include <list>
 
@@ -81,20 +82,20 @@ class XdgMenuAppFileInfo: public QObject
 {
     Q_OBJECT
 public:
-    explicit XdgMenuAppFileInfo(XdgDesktopFile* desktopFile, const QString& id,  QObject *parent)
+    explicit XdgMenuAppFileInfo(std::unique_ptr<XdgDesktopFile> desktopFile, const QString& id,  QObject *parent)
         : QObject(parent),
-          mDesktopFile(desktopFile),
+          mDesktopFile{std::move(desktopFile)},
           mAllocated(false),
           mId(id)
     {
     }
 
-    XdgDesktopFile* desktopFile() const { return mDesktopFile; }
+    XdgDesktopFile* desktopFile() const { return mDesktopFile.get(); }
     bool allocated() const { return mAllocated; }
     void setAllocated(bool value) { mAllocated = value; }
     QString id() const { return mId; }
 private:
-    XdgDesktopFile* mDesktopFile;
+    std::unique_ptr<XdgDesktopFile> mDesktopFile;
     bool mAllocated;
     QString mId;
 };

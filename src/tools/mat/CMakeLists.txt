@@ -4,6 +4,7 @@ add_executable(qtxdg-mat
     defappmatcommand.cpp
     openmatcommand.cpp
     mimetypematcommand.cpp
+    defwebbrowsermatcommand.cpp
 
     qtxdg-mat.cpp
 )

@@ -69,6 +69,15 @@ static bool setDefaultApp(const QString &protocol, const XdgDesktopFile &app)
     return db.setDefaultApp(protocol, app);
 }
 
+XdgDesktopFile *XdgDefaultApps::emailClient()
+{
+    return defaultApp(QL1S("x-scheme-handler/mailto"));
+}
+
+bool XdgDefaultApps::setEmailClient(const XdgDesktopFile &app)
+{
+    return setDefaultApp(QL1S("x-scheme-handler/mailto"), app);
+}
 
 bool XdgDefaultApps::setWebBrowser(const XdgDesktopFile &app)
 {

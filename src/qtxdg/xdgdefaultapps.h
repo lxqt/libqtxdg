@@ -32,6 +32,19 @@ class QTXDG_API XdgDefaultApps {
 
 public:
     /*!
+     * \brief Sets the default email client
+     * \return The default email client. nullptr if it's not set or a error ocurred.
+     */
+    static XdgDesktopFile *emailClient();
+
+    /*!
+     * \brief Sets the default email client
+     * \param The app to be set as the default email client
+     * \return True if successful, false otherwise
+     */
+    static bool setEmailClient(const XdgDesktopFile &app);
+
+    /*!
      * \brief Sets the default web browser
      * \param The app to be set as the default web browser
      * \return True if successful, false otherwise

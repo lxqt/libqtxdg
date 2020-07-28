@@ -6,6 +6,7 @@ add_executable(qtxdg-mat
     mimetypematcommand.cpp
     defwebbrowsermatcommand.cpp
     defemailclientmatcommand.cpp
+    deffilemanagermatcommand.cpp
 
     qtxdg-mat.cpp
 )

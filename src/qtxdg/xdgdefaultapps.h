@@ -38,11 +38,24 @@ public:
     static XdgDesktopFile *emailClient();
 
     /*!
+     * \brief Sets the default file manager
+     * \return The default file manager. nullptr if it's not set or a error ocurred.
+     */
+    static XdgDesktopFile *fileManager();
+
+    /*!
      * \brief Sets the default email client
      * \param The app to be set as the default email client
      * \return True if successful, false otherwise
      */
     static bool setEmailClient(const XdgDesktopFile &app);
+
+    /*!
+     * \brief Sets the default file manager
+     * \param The app to be set as the default file manager
+     * \return True if successful, false otherwise
+     */
+    static bool setFileManager(const XdgDesktopFile &app);
 
     /*!
      * \brief Sets the default web browser

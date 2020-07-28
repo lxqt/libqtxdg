@@ -74,9 +74,19 @@ XdgDesktopFile *XdgDefaultApps::emailClient()
     return defaultApp(QL1S("x-scheme-handler/mailto"));
 }
 
+XdgDesktopFile *XdgDefaultApps::fileManager()
+{
+    return defaultApp(QL1S("inode/directory"));
+}
+
 bool XdgDefaultApps::setEmailClient(const XdgDesktopFile &app)
 {
     return setDefaultApp(QL1S("x-scheme-handler/mailto"), app);
+}
+
+bool XdgDefaultApps::setFileManager(const XdgDesktopFile &app)
+{
+    return setDefaultApp(QL1S("inode/directory"), app);
 }
 
 bool XdgDefaultApps::setWebBrowser(const XdgDesktopFile &app)

@@ -792,18 +792,12 @@ QPixmap ScalableEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State 
     if (svgIcon.isNull())
         svgIcon = QIcon(filename);
 
-    // Simply reuse svg icon engine
-    QPixmap pm = svgIcon.pixmap(size, mode, state);
-    // WARNING: The SVG icon engine gives a too big pixmap with scale factors > 1,
-    // so that the final drawing will not be sharp if the pixmap is not scaled here.
-    // The cause of this old behavior is unknown to me (@tsujan).
-    if (!pm.isNull())
-    {
-        const auto actualSize = svgIcon.actualSize(size, mode, state);
-        if (actualSize != pm.size())
-            pm = pm.scaled(actualSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    }
-    return pm;
+    // Bypass QIcon API, as that will scale by device pixel ratio of the
+    // highest DPR screen since we're not passing on any QWindow.
+    if (QIconEngine *engine = svgIcon.data_ptr() ? svgIcon.data_ptr()->engine : nullptr)
+        return engine->pixmap(size, mode, state);
+
+    return QPixmap();
 }
 
 static const QString STYLE = QStringLiteral("\n.ColorScheme-Text, .ColorScheme-NeutralText {color:%1;}\
@@ -814,7 +808,11 @@ static const QString STYLE = QStringLiteral("\n.ColorScheme-Text, .ColorScheme-N
 
 QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state)
 {
-    QPixmap pm = svgIcon.pixmap(size, mode, state);
+    QPixmap pm;
+    // see ScalableEntry::pixmap() for the reason
+    if (QIconEngine *engine = svgIcon.data_ptr() ? svgIcon.data_ptr()->engine : nullptr)
+        pm = engine->pixmap(size, mode, state);
+
     // Note: not checking the QIcon::isNull(), because in Qt5.10 the isNull() is not reliable
     // for svg icons desierialized from stream (see https://codereview.qt-project.org/#/c/216086/)
     if (pm.isNull())
@@ -893,22 +891,16 @@ QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, Q
         str_read.setVersion(QDataStream::Qt_4_4);
 
         str_read >> svgIcon;
-        pm = svgIcon.pixmap(size, mode, state);
+        if (QIconEngine *engine = svgIcon.data_ptr() ? svgIcon.data_ptr()->engine : nullptr)
+            pm = engine->pixmap(size, mode, state);
 
         // load the icon directly from file, if still null
         if (pm.isNull())
         {
             svgIcon = QIcon(filename);
-            pm = svgIcon.pixmap(size, mode, state);
+            if (QIconEngine *engine = svgIcon.data_ptr() ? svgIcon.data_ptr()->engine : nullptr)
+                pm = engine->pixmap(size, mode, state);
         }
-    }
-
-    // see ScalableEntry::pixmap() for the reason
-    if (!pm.isNull())
-    {
-        const auto actualSize = svgIcon.actualSize(size, mode, state);
-        if (actualSize != pm.size())
-            pm = pm.scaled(actualSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     }
 
     return pm;

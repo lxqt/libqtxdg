@@ -23,6 +23,7 @@
 #include "xdgdesktopfile.h"
 #include "xdgmimeapps.h"
 
+#include <QSet>
 #include <QString>
 #include <QStringList>
 
@@ -51,6 +52,26 @@ static QStringList getWebBrowserProtocolsSet()
     return webBrowserProtocolsSet;
 }
 
+// returns the list of apps that are from category and support protocols
+static QList<XdgDesktopFile *> categoryAndMimeTypeApps(const QString &category, const QStringList &protocols)
+{
+    XdgMimeApps db;
+    QList<XdgDesktopFile *> apps = db.categoryApps(category);
+    const QSet<QString> protocolsSet = QSet<QString>(protocols.begin(), protocols.end());
+    QList<XdgDesktopFile*>::iterator it = apps.begin();
+    while (it != apps.end()) {
+        const auto list = (*it)->mimeTypes();
+        const QSet<QString> appSupportsSet = QSet<QString>(list.begin(), list.end());
+        if (appSupportsSet.contains(protocolsSet)) {
+            ++it;
+        } else {
+            delete *it;
+            it = apps.erase(it);
+        }
+    }
+    return apps;
+}
+
 static XdgDesktopFile *defaultApp(const QString &protocol)
 {
     XdgMimeApps db;
@@ -74,9 +95,19 @@ XdgDesktopFile *XdgDefaultApps::emailClient()
     return defaultApp(QL1S("x-scheme-handler/mailto"));
 }
 
+QList<XdgDesktopFile *> XdgDefaultApps::emailClients()
+{
+    return categoryAndMimeTypeApps(QSL("Email"), QStringList() << QL1S("x-scheme-handler/mailto"));
+}
+
 XdgDesktopFile *XdgDefaultApps::fileManager()
 {
     return defaultApp(QL1S("inode/directory"));
+}
+
+QList<XdgDesktopFile *> XdgDefaultApps::fileManagers()
+{
+    return categoryAndMimeTypeApps(QSL("FileManager"), QStringList() << QL1S("inode/directory"));
 }
 
 bool XdgDefaultApps::setEmailClient(const XdgDesktopFile &app)
@@ -122,4 +153,9 @@ XdgDesktopFile *XdgDefaultApps::webBrowser()
             return nullptr;
     }
     return new XdgDesktopFile(*apps.at(0).get());
+}
+
+QList<XdgDesktopFile *> XdgDefaultApps::webBrowsers()
+{
+    return categoryAndMimeTypeApps(QSL("WebBrowser"), getWebBrowserProtocolsGet());
 }

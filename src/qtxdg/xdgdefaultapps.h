@@ -38,10 +38,22 @@ public:
     static XdgDesktopFile *emailClient();
 
     /*!
+     * \brief Gets the installed email clients
+     * \return A list of installed email clients
+     */
+    static QList<XdgDesktopFile *> emailClients();
+
+    /*!
      * \brief Sets the default file manager
      * \return The default file manager. nullptr if it's not set or a error ocurred.
      */
     static XdgDesktopFile *fileManager();
+
+    /*!
+     * \brief Gets the installed file managers
+     * \return A list of installed file managers
+     */
+    static QList<XdgDesktopFile *> fileManagers();
 
     /*!
      * \brief Sets the default email client
@@ -69,6 +81,12 @@ public:
      * \return The default web browser. nullptr if it's not set or a error ocurred.
      */
     static XdgDesktopFile *webBrowser();
+
+    /*!
+     * \brief Gets the installed web browsers
+     * \return A list of installed web browsers
+     */
+    static QList<XdgDesktopFile *> webBrowsers();
 };
 
 #endif // XDGDEFAULTAPPS_H

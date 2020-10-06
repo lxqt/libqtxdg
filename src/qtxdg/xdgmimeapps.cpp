@@ -95,6 +95,8 @@ QList<XdgDesktopFile *> XdgMimeApps::categoryApps(const QString &category)
         const QStringList categories = df->value(QL1S("Categories")).toString().toUpper().split(QL1C(';'));
         if (!categories.isEmpty() && (categories.contains(cat) || categories.contains(QL1S("X-") + cat)))
             dl.append(df);
+        else
+            delete df;
     }
     return dl;
 }

@@ -62,7 +62,7 @@ static QList<XdgDesktopFile *> categoryAndMimeTypeApps(const QString &category, 
     while (it != apps.end()) {
         const auto list = (*it)->mimeTypes();
         const QSet<QString> appSupportsSet = QSet<QString>(list.begin(), list.end());
-        if (appSupportsSet.contains(protocolsSet)) {
+        if (appSupportsSet.contains(protocolsSet) && (*it)->isShown()) {
             ++it;
         } else {
             delete *it;

@@ -36,7 +36,8 @@
 
 enum DefEmailClientCommandMode {
     CommandModeGetDefEmailClient,
-    CommandModeSetDefEmailClient
+    CommandModeSetDefEmailClient,
+    CommandModeListAvailableEmailClients
 };
 
 struct DefEmailClientData {
@@ -56,7 +57,11 @@ static CommandLineParseResult parseCommandLine(QCommandLineParser *parser, DefEm
     const QCommandLineOption defEmailClientNameOption(QStringList() << QSL("s") << QSL("set"),
                 QSL("Email Client to be set as default"), QSL("email client"));
 
+    const QCommandLineOption listAvailableOption(QStringList() << QSL("l") << QSL("list-available"),
+                QSL("List available email clients"));
+
     parser->addOption(defEmailClientNameOption);
+    parser->addOption(listAvailableOption);
     const QCommandLineOption helpOption = parser->addHelpOption();
     const QCommandLineOption versionOption = parser->addVersionOption();
 
@@ -73,6 +78,7 @@ static CommandLineParseResult parseCommandLine(QCommandLineParser *parser, DefEm
         return CommandLineHelpRequested;
     }
 
+    const bool isListAvailableSet = parser->isSet(listAvailableOption);
     const bool isDefEmailClientNameSet = parser->isSet(defEmailClientNameOption);
     QString defEmailClientName;
 
@@ -88,12 +94,17 @@ static CommandLineParseResult parseCommandLine(QCommandLineParser *parser, DefEm
         return CommandLineError;
     }
 
-    if (!isDefEmailClientNameSet && posArgs.size() > 0) {
-        *errorMessage = QSL("To set the default email client use the -s/--set option");
+    if (isListAvailableSet && (isDefEmailClientNameSet || posArgs.size() > 0)) {
+        *errorMessage = QSL("list-available can't be used with other options and doesn't take arguments");
         return CommandLineError;
     }
-    data->mode = isDefEmailClientNameSet ? CommandModeSetDefEmailClient: CommandModeGetDefEmailClient;
-    data->defEmailClientName = defEmailClientName;
+
+    if (isListAvailableSet) {
+        data->mode = CommandModeListAvailableEmailClients;
+    } else {
+        data->mode = isDefEmailClientNameSet ? CommandModeSetDefEmailClient: CommandModeGetDefEmailClient;
+        data->defEmailClientName = defEmailClientName;
+    }
 
     return CommandLineOk;
 }
@@ -132,6 +143,15 @@ int DefEmailClientMatCommand::run(const QStringList & /*arguments*/)
     case CommandLineHelpRequested:
         showHelp();
         Q_UNREACHABLE();
+    }
+
+    if (data.mode == CommandModeListAvailableEmailClients) {
+        const auto emailClients = XdgDefaultApps::emailClients();
+        for (const auto *app : emailClients)
+            std::cout << qPrintable(XdgDesktopFile::id(app->fileName())) << "\n";
+
+        qDeleteAll(emailClients);
+        return EXIT_SUCCESS;
     }
 
     if (data.mode == CommandModeGetDefEmailClient) { // Get default email client

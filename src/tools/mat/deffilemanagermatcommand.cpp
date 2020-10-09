@@ -36,7 +36,8 @@
 
 enum DefFileManagerCommandMode {
     CommandModeGetDefFileManager,
-    CommandModeSetDefFileManager
+    CommandModeSetDefFileManager,
+    CommandModeListAvailableFileManagers,
 };
 
 struct DefFileManagerData {
@@ -56,7 +57,11 @@ static CommandLineParseResult parseCommandLine(QCommandLineParser *parser, DefFi
     const QCommandLineOption defFileManagerNameOption(QStringList() << QSL("s") << QSL("set"),
                 QSL("File Manager to be set as default"), QSL("file manager"));
 
+    const QCommandLineOption listAvailableOption(QStringList() << QSL("l") << QSL("list-available"),
+                QSL("List available file managers"));
+
     parser->addOption(defFileManagerNameOption);
+    parser->addOption(listAvailableOption);
     const QCommandLineOption helpOption = parser->addHelpOption();
     const QCommandLineOption versionOption = parser->addVersionOption();
 
@@ -73,6 +78,7 @@ static CommandLineParseResult parseCommandLine(QCommandLineParser *parser, DefFi
         return CommandLineHelpRequested;
     }
 
+    const bool isListAvailableSet = parser->isSet(listAvailableOption);
     const bool isDefFileManagerNameSet = parser->isSet(defFileManagerNameOption);
     QString defFileManagerName;
 
@@ -88,12 +94,17 @@ static CommandLineParseResult parseCommandLine(QCommandLineParser *parser, DefFi
         return CommandLineError;
     }
 
-    if (!isDefFileManagerNameSet && posArgs.size() > 0) {
-        *errorMessage = QSL("To set the default file manager use the -s/--set option");
+    if (isListAvailableSet && (isDefFileManagerNameSet || posArgs.size() > 0)) {
+        *errorMessage = QSL("list-available can't be used with other options and doesn't take arguments");
         return CommandLineError;
     }
-    data->mode = isDefFileManagerNameSet ? CommandModeSetDefFileManager: CommandModeGetDefFileManager;
-    data->defFileManagerName = defFileManagerName;
+
+    if (isListAvailableSet) {
+        data->mode = CommandModeListAvailableFileManagers;
+    } else {
+        data->mode = isDefFileManagerNameSet ? CommandModeSetDefFileManager: CommandModeGetDefFileManager;
+        data->defFileManagerName = defFileManagerName;
+    }
 
     return CommandLineOk;
 }
@@ -132,6 +143,15 @@ int DefFileManagerMatCommand::run(const QStringList & /*arguments*/)
     case CommandLineHelpRequested:
         showHelp();
         Q_UNREACHABLE();
+    }
+
+    if (data.mode == CommandModeListAvailableFileManagers) {
+        const auto fileManagers = XdgDefaultApps::fileManagers();
+        for (const auto *app : fileManagers)
+            std::cout << qPrintable(XdgDesktopFile::id(app->fileName())) << "\n";
+
+        qDeleteAll(fileManagers);
+        return EXIT_SUCCESS;
     }
 
     if (data.mode == CommandModeGetDefFileManager) { // Get default file manager

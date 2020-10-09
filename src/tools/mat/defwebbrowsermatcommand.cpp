@@ -36,7 +36,8 @@
 
 enum DefWebBrowserCommandMode {
     CommandModeGetDefWebBrowser,
-    CommandModeSetDefWebBrowser
+    CommandModeSetDefWebBrowser,
+    CommandModeListAvailableWebBrowsers
 };
 
 struct DefWebBrowserData {
@@ -56,7 +57,11 @@ static CommandLineParseResult parseCommandLine(QCommandLineParser *parser, DefWe
     const QCommandLineOption defWebBrowserNameOption(QStringList() << QSL("s") << QSL("set"),
                 QSL("Web Browser to be set as default"), QSL("web bowser"));
 
+    const QCommandLineOption listAvailableOption(QStringList() << QSL("l") << QSL("list-available"),
+                QSL("List available web browsers"));
+
     parser->addOption(defWebBrowserNameOption);
+    parser->addOption(listAvailableOption);
     const QCommandLineOption helpOption = parser->addHelpOption();
     const QCommandLineOption versionOption = parser->addVersionOption();
 
@@ -73,6 +78,7 @@ static CommandLineParseResult parseCommandLine(QCommandLineParser *parser, DefWe
         return CommandLineHelpRequested;
     }
 
+    const bool isListAvailableSet = parser->isSet(listAvailableOption);
     const bool isDefWebBrowserNameSet = parser->isSet(defWebBrowserNameOption);
     QString defWebBrowserName;
 
@@ -92,8 +98,18 @@ static CommandLineParseResult parseCommandLine(QCommandLineParser *parser, DefWe
         *errorMessage = QSL("To set the default browser use the -s/--set option");
         return CommandLineError;
     }
-    data->mode = isDefWebBrowserNameSet ? CommandModeSetDefWebBrowser: CommandModeGetDefWebBrowser;
-    data->defWebBrowserName = defWebBrowserName;
+
+    if (isListAvailableSet && (isDefWebBrowserNameSet || posArgs.size() > 0)) {
+        *errorMessage = QSL("list-available can't be used with other options and doesn't take arguments");
+        return CommandLineError;
+    }
+
+    if (isListAvailableSet) {
+        data->mode = CommandModeListAvailableWebBrowsers;
+    } else {
+        data->mode = isDefWebBrowserNameSet ? CommandModeSetDefWebBrowser : CommandModeGetDefWebBrowser;
+        data->defWebBrowserName = defWebBrowserName;
+    }
 
     return CommandLineOk;
 }
@@ -132,6 +148,15 @@ int DefWebBrowserMatCommand::run(const QStringList & /*arguments*/)
     case CommandLineHelpRequested:
         showHelp();
         Q_UNREACHABLE();
+    }
+
+    if (data.mode == CommandModeListAvailableWebBrowsers) {
+        const auto webBrowsers = XdgDefaultApps::webBrowsers();
+        for (const auto *app : webBrowsers)
+            std::cout << qPrintable(XdgDesktopFile::id(app->fileName())) << "\n";
+
+        qDeleteAll(webBrowsers);
+        return EXIT_SUCCESS;
     }
 
     if (data.mode == CommandModeGetDefWebBrowser) { // Get default web browser

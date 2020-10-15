@@ -1118,7 +1118,12 @@ QStringList XdgDesktopFile::expandExecString(const QStringList& urls) const
             {
                 QUrl url;
                 url.setUrl(expandEnvVariables(urls.at(0)));
-                result << ((!url.toLocalFile().isEmpty()) ? url.toLocalFile() : QString::fromUtf8(url.toEncoded()));
+                const QString localFile = url.toLocalFile();
+                if (localFile.isEmpty()) {
+                    result << ((!url.scheme().isEmpty()) ? QString::fromUtf8(url.toEncoded()) : urls.at(0));
+                } else {
+                    result << localFile;
+                }
             }
             continue;
         }
@@ -1131,7 +1136,12 @@ QStringList XdgDesktopFile::expandExecString(const QStringList& urls) const
             for (const QString &s : urls)
             {
                 QUrl url(expandEnvVariables(s));
-                result << ((!url.toLocalFile().isEmpty()) ? url.toLocalFile() : QString::fromUtf8(url.toEncoded()));
+                const QString localFile = url.toLocalFile();
+                if (localFile.isEmpty()) {
+                    result << ((!url.scheme().isEmpty()) ? QString::fromUtf8(url.toEncoded()) : s);
+                } else {
+                    result << localFile;
+                }
             }
             continue;
         }

@@ -76,7 +76,7 @@ void QtXdgTest::testDefaultApp()
     }
 }
 
-void QtXdgTest::compare(QString mimetype)
+void QtXdgTest::compare(const QString &mimetype)
 {
     QString xdgUtilDefault = xdgUtilDefaultApp(mimetype);
     QString xdgDesktopDefault = xdgDesktopFileDefaultApp(mimetype);
@@ -137,7 +137,7 @@ void QtXdgTest::testCustomFormat()
 }
 
 
-QString QtXdgTest::xdgDesktopFileDefaultApp(QString mimetype)
+QString QtXdgTest::xdgDesktopFileDefaultApp(const QString &mimetype)
 {
     XdgMimeApps appsDb;
     XdgDesktopFile *defaultApp = appsDb.defaultApp(mimetype);
@@ -151,7 +151,7 @@ QString QtXdgTest::xdgDesktopFileDefaultApp(QString mimetype)
 
 
 
-QString QtXdgTest::xdgUtilDefaultApp(QString mimetype)
+QString QtXdgTest::xdgUtilDefaultApp(const QString &mimetype)
 {
     QProcess xdg_mime;
     QString program = QStringLiteral("xdg-mime");

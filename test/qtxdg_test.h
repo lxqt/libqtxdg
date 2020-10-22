@@ -49,9 +49,9 @@ private:
 
     void testTextHtml();
     void testMeldComparison();
-    void compare(QString mimetype);
-    QString xdgDesktopFileDefaultApp(QString mimetype);
-    QString xdgUtilDefaultApp(QString mimetype);
+    void compare(const QString &mimetype);
+    QString xdgDesktopFileDefaultApp(const QString &mimetype);
+    QString xdgUtilDefaultApp(const QString &mimetype);
 
 };
 

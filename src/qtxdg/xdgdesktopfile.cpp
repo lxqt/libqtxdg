@@ -94,8 +94,8 @@ QString &doUnEscape(QString& str, const QHash<QChar,QChar> &repl);
 QString &escape(QString& str);
 QString &escapeExec(QString& str);
 QString expandDynamicUrl(QString url);
-QString expandEnvVariables(const QString str);
-QStringList expandEnvVariables(const QStringList strs);
+QString expandEnvVariables(const QString &str);
+QStringList expandEnvVariables(const QStringList &strs);
 QString findDesktopFile(const QString& dirName, const QString& desktopName);
 QString findDesktopFile(const QString& desktopName);
 static QStringList parseCombinedArgString(const QString &program);
@@ -1025,7 +1025,7 @@ void replaceVar(QString &str, const QString &varName, const QString &after)
 }
 
 
-QString expandEnvVariables(const QString str)
+QString expandEnvVariables(const QString &str)
 {
     QString scheme = QUrl(str).scheme();
 
@@ -1062,7 +1062,7 @@ QString expandEnvVariables(const QString str)
 }
 
 
-QStringList expandEnvVariables(const QStringList strs)
+QStringList expandEnvVariables(const QStringList &strs)
 {
     QStringList res;
     for (const QString &s : strs)

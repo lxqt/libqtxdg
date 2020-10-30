@@ -1,3 +1,15 @@
+libqtxdg-3.6.0 / 2020-11-01
+===========================
+  * ￼Dropped deprecated QLinkedList.
+  * ￼Code cleanup.
+  * Memory leaks are fixed.
+  * ￼Fixed setting of default apps with GLib backend.
+  * ￼Fixed (recommended) apps list given by GLib backend.
+  * ￼Added a XdgDefaultApps class with email client, file manager and web browser set/get methods.
+  * ￼Used Qt's fix for too big SVG icons with scale factors > 1.
+  * ￼Added methods to ￼XdgDefaultApps for getting special applications.
+  * ￼Fixed unneeded URL encoding for %U/%u in "xdgdesktopfile.cpp".
+
 libqtxdg-3.5.0 / 2020-04-22
 ===========================
   * Removed dead Qt4 Mac code from XdgIconLoader.

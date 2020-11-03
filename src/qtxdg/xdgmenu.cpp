@@ -410,7 +410,11 @@ QDomElement XdgMenu::findMenu(QDomElement& baseElement, const QString& path, boo
         return QDomElement();
 
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5,15,0))
+    const QStringList names = path.split(QLatin1Char('/'), Qt::SkipEmptyParts);
+#else
     const QStringList names = path.split(QLatin1Char('/'), QString::SkipEmptyParts);
+#endif
     QDomElement el = baseElement;
     for (const QString &name : names)
     {

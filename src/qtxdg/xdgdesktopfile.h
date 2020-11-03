@@ -257,37 +257,4 @@ private:
 /// Synonym for QList<XdgDesktopFile>
 typedef QList<XdgDesktopFile> XdgDesktopFileList;
 
-
-class QTXDG_API QTXDG_DEPRECATED XdgDesktopFileCache
-{
-public:
-    static XdgDesktopFile* getFile(const QString& fileName);
-    static QList<XdgDesktopFile*> getAllFiles();
-    static QList<XdgDesktopFile*> getApps(const QString & mimeType);
-    static XdgDesktopFile* getDefaultApp(const QString& mimeType);
-    static QSettings::Format desktopFileSettingsFormat();
-
-    /*! Return all desktop apps that have category for their Categories key
-     * Note that, according to xdg's spec, for non-standard categories "X-"
-     * is added to the beginning of the category's name. This method takes care
-     * of both cases.
-     * See http://standards.freedesktop.org/menu-spec/menu-spec-latest.html#desktop-entry-extensions
-     */
-    static QList<XdgDesktopFile*> getAppsOfCategory(const QString &category);
-
-private:
-    static XdgDesktopFileCache & instance();
-    static XdgDesktopFile* load(const QString & fileName);
-
-    XdgDesktopFileCache();
-    ~XdgDesktopFileCache();
-
-    void initialize();
-    void initialize(const QString & dirName);
-    bool m_IsInitialized;
-    QHash<QString, QList<XdgDesktopFile*> > m_defaultAppsCache;
-    QHash<QString, XdgDesktopFile*> m_fileCache;
- };
-
-
 #endif // QTXDG_XDGDESKTOPFILE_H

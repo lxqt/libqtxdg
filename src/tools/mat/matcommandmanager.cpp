@@ -27,9 +27,7 @@
 #include <QDebug>
 
 
-MatCommandManager::MatCommandManager()
-{
-}
+MatCommandManager::MatCommandManager() = default;
 
 MatCommandManager::~MatCommandManager()
 {

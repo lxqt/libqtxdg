@@ -117,9 +117,7 @@ DefFileManagerMatCommand::DefFileManagerMatCommand(QCommandLineParser *parser)
    Q_CHECK_PTR(parser);
 }
 
-DefFileManagerMatCommand::~DefFileManagerMatCommand()
-{
-}
+DefFileManagerMatCommand::~DefFileManagerMatCommand() = default;
 
 int DefFileManagerMatCommand::run(const QStringList & /*arguments*/)
 {

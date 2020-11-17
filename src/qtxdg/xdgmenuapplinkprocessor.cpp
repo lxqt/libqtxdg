@@ -51,9 +51,7 @@ XdgMenuApplinkProcessor::XdgMenuApplinkProcessor(QDomElement& element,  XdgMenu*
 }
 
 
-XdgMenuApplinkProcessor::~XdgMenuApplinkProcessor()
-{
-}
+XdgMenuApplinkProcessor::~XdgMenuApplinkProcessor() = default;
 
 
 void XdgMenuApplinkProcessor::run()

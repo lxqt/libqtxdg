@@ -67,9 +67,7 @@ XdgAction::XdgAction(const XdgAction& other, QObject *parent):
 }
 
 
-XdgAction::~XdgAction()
-{
-}
+XdgAction::~XdgAction() = default;
 
 
 XdgAction& XdgAction::operator=(const XdgAction& other)

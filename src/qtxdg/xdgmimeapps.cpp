@@ -42,9 +42,7 @@ void XdgMimeAppsPrivate::init()
     });
 }
 
-XdgMimeAppsPrivate::~XdgMimeAppsPrivate()
-{
-}
+XdgMimeAppsPrivate::~XdgMimeAppsPrivate() = default;
 
 XdgMimeApps::XdgMimeApps(QObject *parent)
     : QObject(*new XdgMimeAppsPrivate, parent)
@@ -52,9 +50,7 @@ XdgMimeApps::XdgMimeApps(QObject *parent)
     d_func()->init();
 }
 
-XdgMimeApps::~XdgMimeApps()
-{
-}
+XdgMimeApps::~XdgMimeApps() = default;
 
 bool XdgMimeApps::addSupport(const QString &mimeType, const XdgDesktopFile &app)
 {

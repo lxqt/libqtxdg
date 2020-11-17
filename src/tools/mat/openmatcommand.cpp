@@ -45,9 +45,7 @@ OpenMatCommand::OpenMatCommand(QCommandLineParser *parser)
 {
 }
 
-OpenMatCommand::~OpenMatCommand()
-{
-}
+OpenMatCommand::~OpenMatCommand() = default;
 
 static CommandLineParseResult parseCommandLine(QCommandLineParser *parser, QStringList *files, QString *errorMessage)
 {

@@ -645,9 +645,7 @@ XdgDesktopFile::XdgDesktopFile(Type type, const QString& name, const QString &va
 }
 
 
-XdgDesktopFile::~XdgDesktopFile()
-{
-}
+XdgDesktopFile::~XdgDesktopFile() = default;
 
 
 XdgDesktopFile& XdgDesktopFile::operator=(const XdgDesktopFile& other)

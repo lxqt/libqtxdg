@@ -43,9 +43,7 @@ XdgMenuRule::XdgMenuRule(const QDomElement& element, QObject* parent) :
 }
 
 
-XdgMenuRule::~XdgMenuRule()
-{
-}
+XdgMenuRule::~XdgMenuRule() = default;
 
 
 /************************************************
@@ -200,9 +198,7 @@ XdgMenuRules::XdgMenuRules(QObject* parent) :
 }
 
 
-XdgMenuRules::~XdgMenuRules()
-{
-}
+XdgMenuRules::~XdgMenuRules() = default;
 
 
 void XdgMenuRules::addInclude(const QDomElement& element)

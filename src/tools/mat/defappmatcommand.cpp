@@ -113,9 +113,7 @@ DefAppMatCommand::DefAppMatCommand(QCommandLineParser *parser)
    Q_CHECK_PTR(parser);
 }
 
-DefAppMatCommand::~DefAppMatCommand()
-{
-}
+DefAppMatCommand::~DefAppMatCommand() = default;
 
 int DefAppMatCommand::run(const QStringList & /*arguments*/)
 {

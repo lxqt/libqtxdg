@@ -32,9 +32,7 @@ MatCommandInterface::MatCommandInterface(const QString &name, const QString &des
     Q_CHECK_PTR(parser);
 }
 
-MatCommandInterface::~MatCommandInterface()
-{
-}
+MatCommandInterface::~MatCommandInterface() = default;
 
 void MatCommandInterface::showHelp(int exitCode) const
 {

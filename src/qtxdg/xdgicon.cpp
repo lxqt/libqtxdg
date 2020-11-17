@@ -58,14 +58,10 @@ static void qt_cleanup_icon_cache()
 }
 
 
-XdgIcon::XdgIcon()
-{
-}
+XdgIcon::XdgIcon() = default;
 
 
-XdgIcon::~XdgIcon()
-{
-}
+XdgIcon::~XdgIcon() = default;
 
 
 /************************************************

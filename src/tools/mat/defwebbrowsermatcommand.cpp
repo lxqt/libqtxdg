@@ -122,9 +122,7 @@ DefWebBrowserMatCommand::DefWebBrowserMatCommand(QCommandLineParser *parser)
    Q_CHECK_PTR(parser);
 }
 
-DefWebBrowserMatCommand::~DefWebBrowserMatCommand()
-{
-}
+DefWebBrowserMatCommand::~DefWebBrowserMatCommand() = default;
 
 int DefWebBrowserMatCommand::run(const QStringList & /*arguments*/)
 {

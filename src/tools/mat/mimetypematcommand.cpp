@@ -44,9 +44,7 @@ MimeTypeMatCommand::MimeTypeMatCommand(QCommandLineParser *parser)
 {
 }
 
-MimeTypeMatCommand::~MimeTypeMatCommand()
-{
-}
+MimeTypeMatCommand::~MimeTypeMatCommand() = default;
 
 static CommandLineParseResult parseCommandLine(QCommandLineParser *parser, QString *file, QString *errorMessage)
 {

@@ -86,9 +86,7 @@ void XdgMimeType::swap(XdgMimeType &other) noexcept
     std::swap(dx, other.dx);
 }
 
-XdgMimeType::~XdgMimeType()
-{
-}
+XdgMimeType::~XdgMimeType() = default;
 
 
 QString XdgMimeType::iconName() const

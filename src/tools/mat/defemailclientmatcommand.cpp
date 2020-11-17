@@ -117,9 +117,7 @@ DefEmailClientMatCommand::DefEmailClientMatCommand(QCommandLineParser *parser)
    Q_CHECK_PTR(parser);
 }
 
-DefEmailClientMatCommand::~DefEmailClientMatCommand()
-{
-}
+DefEmailClientMatCommand::~DefEmailClientMatCommand() = default;
 
 int DefEmailClientMatCommand::run(const QStringList & /*arguments*/)
 {

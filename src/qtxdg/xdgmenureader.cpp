@@ -49,10 +49,7 @@ XdgMenuReader::XdgMenuReader(XdgMenu* menu, XdgMenuReader*  parentReader, QObjec
 }
 
 
-XdgMenuReader::~XdgMenuReader()
-{
-
-}
+XdgMenuReader::~XdgMenuReader() = default;
 
 
 bool XdgMenuReader::load(const QString& fileName, const QString& baseDir)

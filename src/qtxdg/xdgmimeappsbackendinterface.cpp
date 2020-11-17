@@ -25,6 +25,4 @@ XdgMimeAppsBackendInterface::XdgMimeAppsBackendInterface(QObject *parent)
 {
 }
 
-XdgMimeAppsBackendInterface::~XdgMimeAppsBackendInterface()
-{
-}
+XdgMimeAppsBackendInterface::~XdgMimeAppsBackendInterface() = default;

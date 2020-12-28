@@ -613,7 +613,7 @@ void XdgIconLoaderEngine::ensureLoaded()
         m_info.entries.clear();
         m_info.iconName.clear();
 
-        Q_ASSERT(m_info.entries.size() == 0);
+        Q_ASSERT(m_info.entries.empty());
         m_info = XdgIconLoader::instance()->loadIcon(m_iconName);
         m_key = QIconLoader::instance()->themeKey();
     }

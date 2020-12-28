@@ -112,8 +112,7 @@ bool XdgMenuRuleAnd::check(const QString& desktopFileId, const XdgDesktopFile& d
     for (std::list<XdgMenuRule*>::const_iterator i=mChilds.cbegin(); i!=mChilds.cend(); ++i)
         if (!(*i)->check(desktopFileId, desktopFile))  return false;
 
-    //FIXME: Doon't use implicit casts
-    return mChilds.size();
+    return !mChilds.empty();
 }
 
 

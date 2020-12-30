@@ -63,7 +63,7 @@ class XdgIconLoader;
 
 struct ScalableFollowsColorEntry : public ScalableEntry
 {
-    QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state) Q_DECL_OVERRIDE;
+    QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state) override;
 };
 
 //class QIconLoaderEngine : public QIconEngine
@@ -73,18 +73,18 @@ public:
     XdgIconLoaderEngine(const QString& iconName = QString());
     ~XdgIconLoaderEngine() override;
 
-    void paint(QPainter *painter, const QRect &rect, QIcon::Mode mode, QIcon::State state) Q_DECL_OVERRIDE;
-    QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state) Q_DECL_OVERRIDE;
-    QSize actualSize(const QSize &size, QIcon::Mode mode, QIcon::State state) Q_DECL_OVERRIDE;
-    QIconEngine *clone() const Q_DECL_OVERRIDE;
-    bool read(QDataStream &in) Q_DECL_OVERRIDE;
-    bool write(QDataStream &out) const Q_DECL_OVERRIDE;
+    void paint(QPainter *painter, const QRect &rect, QIcon::Mode mode, QIcon::State state) override;
+    QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state) override;
+    QSize actualSize(const QSize &size, QIcon::Mode mode, QIcon::State state) override;
+    QIconEngine *clone() const override;
+    bool read(QDataStream &in) override;
+    bool write(QDataStream &out) const override;
 
 private:
-    QString key() const Q_DECL_OVERRIDE;
+    QString key() const override;
     bool hasIcon() const;
     void ensureLoaded();
-    void virtual_hook(int id, void *data) Q_DECL_OVERRIDE;
+    void virtual_hook(int id, void *data) override;
     QIconLoaderEngineEntry *entryForSize(const QSize &size, int scale = 1);
     XdgIconLoaderEngine(const XdgIconLoaderEngine &other);
     QThemeIconInfo m_info;

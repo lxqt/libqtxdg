@@ -37,7 +37,7 @@ class QStringList;
 class QString;
 class QDomDocument;
 
-class XdgMenuPrivate: QObject
+class XdgMenuPrivate : public QObject
 {
 Q_OBJECT
 public:

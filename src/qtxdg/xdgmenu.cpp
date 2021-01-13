@@ -75,12 +75,12 @@ XdgMenuPrivate::XdgMenuPrivate(XdgMenu *parent):
     mRebuildDelayTimer.setSingleShot(true);
     mRebuildDelayTimer.setInterval(REBUILD_DELAY);
 
-    connect(&mRebuildDelayTimer, SIGNAL(timeout()), this, SLOT(rebuild()));
-    connect(&mWatcher, SIGNAL(fileChanged(QString)), &mRebuildDelayTimer, SLOT(start()));
-    connect(&mWatcher, SIGNAL(directoryChanged(QString)), &mRebuildDelayTimer, SLOT(start()));
+    connect(&mRebuildDelayTimer, &QTimer::timeout, this, &XdgMenuPrivate::rebuild);
+    connect(&mWatcher, &QFileSystemWatcher::fileChanged, &mRebuildDelayTimer, QOverload<>::of(&QTimer::start));
+    connect(&mWatcher, &QFileSystemWatcher::directoryChanged, &mRebuildDelayTimer, QOverload<>::of(&QTimer::start));
 
 
-    connect(this, SIGNAL(changed()), q_ptr, SIGNAL(changed()));
+    connect(this, &XdgMenuPrivate::changed, q_ptr, &XdgMenu::changed);
 }
 
 

@@ -24,6 +24,7 @@ set(GLIB_MINIMUM_VERSION "2.41.0") # Mime Apps new implementation
 find_package(lxqt-build-tools ${LXQTBT_MINIMUM_VERSION} REQUIRED)
 find_package(Qt5 ${QT_MINIMUM_VERSION} CONFIG REQUIRED Widgets Svg Xml DBus)
 find_package(GLIB ${GLIB_MINIMUM_VERSION} REQUIRED COMPONENTS gobject gio gio-unix)
+find_package(XTerm)
 
 include(GNUInstallDirs)             # Standard directories for installation
 include(CMakePackageConfigHelpers)

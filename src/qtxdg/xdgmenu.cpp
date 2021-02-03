@@ -416,12 +416,12 @@ QDomElement XdgMenu::findMenu(QDomElement& baseElement, const QString& path, boo
     const QStringList names = path.split(QLatin1Char('/'), QString::SkipEmptyParts);
 #endif
     QDomElement el = baseElement;
-    for (const QString &name : names)
+    for (const QString &n : names)
     {
         QDomElement p = el;
         el = d->mXml.createElement(QLatin1String("Menu"));
         p.appendChild(el);
-        el.setAttribute(QLatin1String("name"), name);
+        el.setAttribute(QLatin1String("name"), n);
     }
     return el;
 

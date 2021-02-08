@@ -57,6 +57,7 @@
 #include <QTextStream>
 #include <QUrl>
 #include <QtAlgorithms>
+#include <QCoreApplication>
 
 
 /**
@@ -104,24 +105,33 @@ QString &unEscapeExec(QString& str);
 
 namespace
 {
-    //! Simple helper for getting timeout for starting of DBus activatable applications
-    class DBusActivateTimeout
+    //! Simple helper for getting values based on env variables
+    template <typename Value_t, char const * EnvVariable, Value_t DefaultValue>
+        class EnvDrivenValue
     {
     private:
-        int mTimeoutMs;
-        DBusActivateTimeout()
+        Value_t mValue;
+        EnvDrivenValue()
         {
             bool ok;
-            mTimeoutMs = qEnvironmentVariableIntValue("QTXDG_DBUSACTIVATE_TIMEOUT", &ok);
+            mValue = qEnvironmentVariableIntValue(EnvVariable, &ok);
             if (!ok)
-                mTimeoutMs = 1500;
+                mValue = DefaultValue;
         }
-        static DBusActivateTimeout msInstance;
+        static EnvDrivenValue msInstance;
     public:
-        static const DBusActivateTimeout & instance() { return msInstance; }
-        operator int() const { return mTimeoutMs; }
+        static const EnvDrivenValue & instance() { return msInstance; }
+        operator Value_t() const { return mValue; }
     };
-    DBusActivateTimeout DBusActivateTimeout::msInstance;
+    template <typename Value_t, char const * EnvVariable, Value_t DefaultValue>
+        EnvDrivenValue<Value_t, EnvVariable, DefaultValue> EnvDrivenValue<Value_t, EnvVariable, DefaultValue>::msInstance;
+
+    //! Timeout [miliseconds] for starting of DBus activatable applications
+    constexpr char DBusActivateTimeoutEnv[] = "QTXDG_DBUSACTIVATE_TIMEOUT";
+    using DBusActivateTimeout = EnvDrivenValue<int, DBusActivateTimeoutEnv, 1500>;
+    //! Flag [1/0] if "startDetached" processes should be truly detached (become child of root process)
+    constexpr char StartDetachTrulyEnv[] = "QTXDG_START_DETACH_TRULY";
+    using StartDetachTruly = EnvDrivenValue<bool, StartDetachTrulyEnv, true>;
 }
 
 QString &doEscape(QString& str, const QHash<QChar,QChar> &repl)
@@ -466,14 +476,17 @@ bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const
         args.prepend(term);
     }
 
-    bool nonDetach = false;
-    for (const QString &s : nonDetachExecs)
+    bool detach = StartDetachTruly::instance();
+    if (detach)
     {
-        for (const QString &a : qAsConst(args))
+        for (const QString &s : nonDetachExecs)
         {
-            if (a.contains(s))
+            for (const QString &a : qAsConst(args))
             {
-                nonDetach = true;
+                if (a.contains(s))
+                {
+                    detach = false;
+                }
             }
         }
     }
@@ -483,7 +496,10 @@ bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const
     if (!workingDir.isEmpty() && !QDir(workingDir).exists())
 	    workingDir = QString();
 
-    if (nonDetach)
+    if (detach)
+    {
+        return QProcess::startDetached(cmd, args, workingDir);
+    } else
     {
         QScopedPointer<QProcess> p(new QProcess);
         p->setStandardInputFile(QProcess::nullDevice());
@@ -497,12 +513,9 @@ bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const
             QProcess* proc = p.take(); //release the pointer(will be selfdestroyed upon finish)
             QObject::connect(proc, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
                 proc, &QProcess::deleteLater);
+            QObject::connect(QCoreApplication::instance(), &QCoreApplication::aboutToQuit, proc, &QProcess::terminate);
         }
         return started;
-    }
-    else
-    {
-        return QProcess::startDetached(cmd, args, workingDir);
     }
 }
 

@@ -53,6 +53,7 @@
 #include <QImageReader>
 #include <QXmlStreamReader>
 #include <QFileSystemWatcher>
+#include <QSvgRenderer>
 
 #include <private/qhexstring_p.h>
 
@@ -787,121 +788,143 @@ QPixmap PixmapEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State st
     return cachedPixmap;
 }
 
-// XXX: duplicated from qiconloader.cpp, because this symbol isn't exported :(
+// NOTE: For SVG, QSvgRenderer is used to prevent our icon handling from
+// being broken by icon engines that register themselves for SVG.
 QPixmap ScalableEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state)
 {
-    if (svgIcon.isNull())
-        svgIcon = QIcon(filename);
+    QPixmap pm;
+    if (size.isEmpty())
+        return pm;
 
-    // Bypass QIcon API, as that will scale by device pixel ratio of the
-    // highest DPR screen since we're not passing on any QWindow.
-    if (QIconEngine *engine = svgIcon.data_ptr() ? svgIcon.data_ptr()->engine : nullptr)
-        return engine->pixmap(size, mode, state);
+    QString key = QLatin1String("lxqt_")
+                  % filename
+                  % HexString<int>(mode)
+                  % HexString<int>(state)
+                  % HexString<int>(size.width())
+                  % HexString<int>(size.height());
+    if (!QPixmapCache::find(key, &pm))
+    {
+        int icnSize = qMin(size.width(), size.height());
+        pm = QPixmap(icnSize, icnSize);
+        pm.fill(Qt::transparent);
 
-    return QPixmap();
+        QSvgRenderer renderer;
+        if (renderer.load(filename))
+        {
+            QPainter p;
+            p.begin(&pm);
+            renderer.render(&p, QRect(0, 0, icnSize, icnSize));
+            p.end();
+        }
+
+        svgIcon = QIcon(pm);
+        if (QIconEngine *engine = svgIcon.data_ptr() ? svgIcon.data_ptr()->engine : nullptr)
+            pm = engine->pixmap(size, mode, state);
+        QPixmapCache::insert(key, pm);
+    }
+
+    return pm;
 }
 
 static const QString STYLE = QStringLiteral("\n.ColorScheme-Text, .ColorScheme-NeutralText {color:%1;}\
 \n.ColorScheme-Background {color:%2;}\
 \n.ColorScheme-Highlight {color:%3;}");
-// Note: Qt palette does not have any colors for positive/negative text
+// NOTE: Qt palette does not have any colors for positive/negative text
 // .ColorScheme-PositiveText,ColorScheme-NegativeText {color:%4;}
 
 QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state)
 {
     QPixmap pm;
-    // see ScalableEntry::pixmap() for the reason
-    if (QIconEngine *engine = svgIcon.data_ptr() ? svgIcon.data_ptr()->engine : nullptr)
-        pm = engine->pixmap(size, mode, state);
+    if (size.isEmpty())
+        return pm;
 
-    // Note: not checking the QIcon::isNull(), because in Qt5.10 the isNull() is not reliable
-    // for svg icons desierialized from stream (see https://codereview.qt-project.org/#/c/216086/)
-    if (pm.isNull())
+    const QPalette pal = qApp->palette();
+    QString txtCol, bgCol, hCol;
+    if (mode == QIcon::Disabled)
     {
-        // The following lines are adapted and updated from KDE's "kiconloader.cpp" ->
-        // KIconLoaderPrivate::processSvg() and KIconLoaderPrivate::createIconImage().
-        // They read the SVG color scheme of SVG icons and give images based on the icon mode.
-        QHash<int, QByteArray> svg_buffers;
+        txtCol = pal.color(QPalette::Disabled, QPalette::WindowText).name();
+        bgCol = pal.color(QPalette::Disabled, QPalette::Window).name();
+        hCol = pal.color(QPalette::Disabled, QPalette::Highlight).name();
+    }
+    else
+    {
+        if (mode == QIcon::Selected)
+        {
+            txtCol = pal.highlightedText().color().name();
+            bgCol = pal.highlight().color().name();
+        }
+        else // normal or active
+        {
+            txtCol = pal.windowText().color().name();
+            bgCol = pal.window().color().name();
+        }
+        hCol = pal.highlight().color().name();
+    }
+    QString styleSheet = STYLE.arg(txtCol, bgCol, hCol);
+
+    QString key = QLatin1String("lxqt_")
+                  % filename
+                  % HexString<int>(mode)
+                  % HexString<int>(state)
+                  % txtCol % bgCol % hCol
+                  % HexString<int>(size.width())
+                  % HexString<int>(size.height());
+
+    if (!QPixmapCache::find(key, &pm))
+    {
+        int icnSize = qMin(size.width(), size.height());
+        pm = QPixmap(icnSize, icnSize);
+        pm.fill(Qt::transparent);
+
         QFile device{filename};
         if (device.open(QIODevice::ReadOnly))
         {
-            const QPalette pal = qApp->palette();
-            // Note: indexes are assembled as in qtsvg (QSvgIconEnginePrivate::hashKey())
-            QMap<int, QString> style_sheets;
-            style_sheets[(QIcon::Normal<<4)|QIcon::Off] = STYLE.arg(pal.windowText().color().name(), pal.window().color().name(), pal.highlight().color().name());
-            style_sheets[(QIcon::Selected<<4)|QIcon::Off] = STYLE.arg(pal.highlightedText().color().name(), pal.highlight().color().name(), pal.highlightedText().color().name());
-            QMap<int, QSharedPointer<QXmlStreamWriter> > writers;
-            for (auto i = style_sheets.cbegin(); i != style_sheets.cend(); ++i)
-            {
-                writers[i.key()].reset(new QXmlStreamWriter{&svg_buffers[i.key()]});
-            }
-
+            QByteArray svgBuffer;
+            QXmlStreamWriter writer(&svgBuffer);
             QXmlStreamReader xmlReader(&device);
             while (!xmlReader.atEnd())
             {
                 if (xmlReader.readNext() == QXmlStreamReader::StartElement
-                        && xmlReader.qualifiedName() == QLatin1String("style")
-                        && xmlReader.attributes().value(QLatin1String("id")) == QLatin1String("current-color-scheme"))
+                    && xmlReader.qualifiedName() == QLatin1String("style")
+                    && xmlReader.attributes().value(QLatin1String("id")) == QLatin1String("current-color-scheme"))
                 {
                     const auto attribs = xmlReader.attributes();
                     // store original data/text of the <style> element
-                    QString original_data;
+                    QString origData;
                     while (xmlReader.tokenType() != QXmlStreamReader::EndElement)
                     {
                         if (xmlReader.tokenType() == QXmlStreamReader::Characters)
-                            original_data += xmlReader.text();
+                            origData += xmlReader.text();
                         xmlReader.readNext();
                     }
-                    for (auto i = style_sheets.cbegin(); i != style_sheets.cend(); ++i)
-                    {
-                        QXmlStreamWriter & writer = *writers[i.key()];
-                        writer.writeStartElement(QLatin1String("style"));
-                        writer.writeAttributes(attribs);
-                        // Note: We're writting the original style text to leave
-                        // there "defaults" for unknown/unsupported classes.
-                        // Then appending our "overrides"
-                        writer.writeCharacters(original_data);
-                        writer.writeCharacters(*i);
-                        writer.writeEndElement();
-                    }
-                } else if (xmlReader.tokenType() != QXmlStreamReader::Invalid)
-                {
-                    for (auto i = style_sheets.cbegin(); i != style_sheets.cend(); ++i)
-                    {
-                        writers[i.key()]->writeCurrentToken(xmlReader);
-                    }
+                    writer.writeStartElement(QLatin1String("style"));
+                    writer.writeAttributes(attribs);
+                    writer.writeCharacters(origData);
+                    writer.writeCharacters(styleSheet);
+                    writer.writeEndElement();
                 }
+                else if (xmlReader.tokenType() != QXmlStreamReader::Invalid)
+                    writer.writeCurrentToken(xmlReader);
             }
-            // duplicate the contets also for opposite state
-            svg_buffers[(QIcon::Normal<<4)|QIcon::On] = svg_buffers[(QIcon::Normal<<4)|QIcon::Off];
-            svg_buffers[(QIcon::Selected<<4)|QIcon::On] = svg_buffers[(QIcon::Selected<<4)|QIcon::Off];
+
+            if (!svgBuffer.isEmpty())
+            {
+                QSvgRenderer renderer;
+                renderer.load(svgBuffer);
+                QPainter p;
+                p.begin(&pm);
+                renderer.render(&p, QRect(0, 0, icnSize, icnSize));
+                p.end();
+            }
         }
-        // use the QSvgIconEngine
-        //  - assemble the content as it is done by the operator <<(QDataStream &s, const QIcon &icon)
-        //  (the QSvgIconEngine::key() + QSvgIconEngine::write())
-        //  - create the QIcon from the content by usage of the QIcon::operator >>(QDataStream &s, const QIcon &icon)
-        //  (icon with the (QSvgIconEngine) will be used)
-        QByteArray icon_arr;
-        QDataStream str{&icon_arr, QIODevice::WriteOnly};
-        str.setVersion(QDataStream::Qt_4_4);
-        QHash<int, QString> filenames;
-        filenames[0] = filename; // Note: filenames are ignored in the QSvgIconEngine::read()
-        str << QStringLiteral("svg") << filenames << static_cast<int>(0)/*isCompressed*/ << svg_buffers << static_cast<int>(0)/*hasAddedPimaps*/;
 
-        QDataStream str_read{&icon_arr, QIODevice::ReadOnly};
-        str_read.setVersion(QDataStream::Qt_4_4);
-
-        str_read >> svgIcon;
+        // Do not use this pixmap directly but first get the icon
+        // for QIcon::pixmap() to handle states and modes,
+        // especially the disabled mode.
+        svgIcon = QIcon(pm);
         if (QIconEngine *engine = svgIcon.data_ptr() ? svgIcon.data_ptr()->engine : nullptr)
             pm = engine->pixmap(size, mode, state);
-
-        // load the icon directly from file, if still null
-        if (pm.isNull())
-        {
-            svgIcon = QIcon(filename);
-            if (QIconEngine *engine = svgIcon.data_ptr() ? svgIcon.data_ptr()->engine : nullptr)
-                pm = engine->pixmap(size, mode, state);
-        }
+        QPixmapCache::insert(key, pm);
     }
 
     return pm;

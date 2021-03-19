@@ -860,8 +860,6 @@ QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, Q
         }
         hCol = pal.highlight().color().name();
     }
-    QString styleSheet = STYLE.arg(txtCol, bgCol, hCol);
-
     QString key = QLatin1String("lxqt_")
                   % filename
                   % HexString<int>(mode)
@@ -879,6 +877,7 @@ QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, Q
         QFile device{filename};
         if (device.open(QIODevice::ReadOnly))
         {
+            QString styleSheet = STYLE.arg(txtCol, bgCol, hCol);
             QByteArray svgBuffer;
             QXmlStreamWriter writer(&svgBuffer);
             QXmlStreamReader xmlReader(&device);

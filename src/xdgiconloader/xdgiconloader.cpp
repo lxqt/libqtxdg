@@ -864,10 +864,9 @@ QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, Q
                   % filename
                   % HexString<int>(mode)
                   % HexString<int>(state)
-                  % txtCol % bgCol % hCol
                   % HexString<int>(size.width())
-                  % HexString<int>(size.height());
-
+                  % HexString<int>(size.height())
+                  % txtCol % bgCol % hCol;
     if (!QPixmapCache::find(key, &pm))
     {
         int icnSize = qMin(size.width(), size.height());

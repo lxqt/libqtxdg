@@ -622,10 +622,11 @@ void XdgIconLoaderEngine::ensureLoaded()
 }
 
 void XdgIconLoaderEngine::paint(QPainter *painter, const QRect &rect,
-                             QIcon::Mode mode, QIcon::State state)
+                                QIcon::Mode mode, QIcon::State state)
 {
     QSize pixmapSize = rect.size();
-    const qreal dpr = painter->device()->devicePixelRatioF();
+    auto paintDevice = painter->device();
+    const qreal dpr = paintDevice ? paintDevice->devicePixelRatioF() : qApp->devicePixelRatio();
     painter->drawPixmap(rect, pixmap(QSizeF(pixmapSize * dpr).toSize(), mode, state));
 }
 

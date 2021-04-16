@@ -1,3 +1,8 @@
+libqtxdg-3.7.1 / 2021-04-16
+===========================
+ * Fixed compilation against Qt < 5.14.
+ * Added a nullity check for paint device.
+
 libqtxdg-3.7.0 / 2021-04-15
 ===========================
   * Removed deprecated XdgDesktopFileCache.

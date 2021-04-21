@@ -1230,9 +1230,9 @@ QString XdgDesktopFile::id(const QString &fileName, bool checkFileExists)
     }
 
     QString id = f.absoluteFilePath();
-    const QStringList dataDirs = XdgDirs::dataDirs();
+    const QStringList dirs = QStringList() << XdgDirs::dataHome() << XdgDirs::dataDirs();
 
-    for (const QString &d : dataDirs) {
+    for (const QString &d : dirs) {
         if (id.startsWith(d)) {
             // remove only the first occurence
             id.replace(id.indexOf(d), d.size(), QString());

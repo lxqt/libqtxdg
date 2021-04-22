@@ -613,11 +613,7 @@ QStringList XdgDesktopFileData::getListValue(const XdgDesktopFile * q, const QSt
         if (!q->contains(used_key))
             return QStringList();
     }
-#if (QT_VERSION >= QT_VERSION_CHECK(5,15,0))
     return q->value(used_key).toString().split(QLatin1Char(';'), Qt::SkipEmptyParts);
-#else
-    return q->value(used_key).toString().split(QLatin1Char(';'), QString::SkipEmptyParts);
-#endif
 }
 
 
@@ -710,18 +706,10 @@ bool XdgDesktopFile::save(QIODevice *device) const
         if (sect != section)
         {
             section = sect;
-#if (QT_VERSION >= QT_VERSION_CHECK(5,15,0))
             stream << QLatin1Char('[') << section << QLatin1Char(']') << Qt::endl;
-#else
-            stream << QLatin1Char('[') << section << QLatin1Char(']') << endl;
-#endif
         }
         QString key = path.section(QLatin1Char('/'), 1);
-#if (QT_VERSION >= QT_VERSION_CHECK(5,15,0))
         stream << key << QLatin1Char('=') << i.value().toString() << Qt::endl;
-#else
-        stream << key << QLatin1Char('=') << i.value().toString() << endl;
-#endif
         ++i;
     }
     return true;
@@ -934,11 +922,7 @@ QString const XdgDesktopFile::actionIconName(const QString & action) const
 
 QStringList XdgDesktopFile::mimeTypes() const
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(5,15,0))
     return value(mimeTypeKey).toString().split(QLatin1Char(';'), Qt::SkipEmptyParts);
-#else
-    return value(mimeTypeKey).toString().split(QLatin1Char(';'), QString::SkipEmptyParts);
-#endif
 }
 
 
@@ -1472,11 +1456,7 @@ bool readDesktopFile(QIODevice & device, QSettings::SettingsMap & map)
 
         if (value.contains(QLatin1Char(';')))
         {
-#if (QT_VERSION >= QT_VERSION_CHECK(5,15,0))
             map.insert(key, value.split(QLatin1Char(';'), Qt::SkipEmptyParts));
-#else
-            map.insert(key, value.split(QLatin1Char(';'), QString::SkipEmptyParts));
-#endif
         }
         else
         {

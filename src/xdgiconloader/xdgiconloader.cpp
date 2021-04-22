@@ -48,9 +48,7 @@
 #include <QtCore/QList>
 #include <QtCore/QDir>
 #include <QtCore/QSettings>
-#if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
 #include <QtCore/QStringView>
-#endif
 #include <QtGui/QPainter>
 #include <QImageReader>
 #include <QXmlStreamReader>
@@ -111,11 +109,7 @@ class QIconCacheGtkReader
 {
 public:
     explicit QIconCacheGtkReader(const QString &themeDir);
-#if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
     QVector<const char *> lookup(QStringView);
-#else
-    QVector<const char *> lookup(const QStringRef &);
-#endif
     bool isValid() const { return m_isValid; }
     bool reValid(bool infoRefresh);
 private:
@@ -226,11 +220,7 @@ static quint32 icon_name_hash(const char *p)
     For example, this would return { "32x32/apps", "24x24/apps" , ... }
  */
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
 QVector<const char *> QIconCacheGtkReader::lookup(QStringView name)
-#else
-QVector<const char *> QIconCacheGtkReader::lookup(const QStringRef &name)
-#endif
 {
     QVector<const char *> ret;
     if (!isValid() || name.isEmpty())
@@ -412,11 +402,7 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
     const QString xpmext(QLatin1String(".xpm"));
 
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5,14,0))
     QStringView iconNameFallback(iconName);
-#else
-    QStringRef iconNameFallback(&iconName);
-#endif
 
     // Iterate through all icon's fallbacks in current theme
     if (info.entries.isEmpty()) {

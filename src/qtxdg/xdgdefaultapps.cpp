@@ -57,19 +57,11 @@ static QList<XdgDesktopFile *> categoryAndMimeTypeApps(const QString &category, 
 {
     XdgMimeApps db;
     QList<XdgDesktopFile *> apps = db.categoryApps(category);
-#if (QT_VERSION < QT_VERSION_CHECK(5,14,0))
-    const QSet<QString> protocolsSet = QSet<QString>::fromList(protocols);
-#else
     const QSet<QString> protocolsSet = QSet<QString>(protocols.begin(), protocols.end());
-#endif
     QList<XdgDesktopFile*>::iterator it = apps.begin();
     while (it != apps.end()) {
         const auto list = (*it)->mimeTypes();
-#if (QT_VERSION < QT_VERSION_CHECK(5,14,0))
-        const QSet<QString> appSupportsSet = QSet<QString>::fromList(list);
-#else
         const QSet<QString> appSupportsSet = QSet<QString>(list.begin(), list.end());
-#endif
         if (appSupportsSet.contains(protocolsSet) && (*it)->isShown()) {
             ++it;
         } else {

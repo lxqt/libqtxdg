@@ -421,15 +421,17 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
                 const auto result = cache->lookup(iconNameFallback);
                 if (cache->isValid()) {
                     const QVector<QIconDirInfo> subDirsCopy = subDirs;
-                    subDirs.clear();
-                    subDirs.reserve(result.count());
-                    for (const char *s : result) {
-                        QString path = QString::fromUtf8(s);
-                        auto it = std::find_if(subDirsCopy.cbegin(), subDirsCopy.cend(),
-                                               [&](const QIconDirInfo &info) {
-                                                   return info.path == path; } );
-                        if (it != subDirsCopy.cend()) {
-                            subDirs.append(*it);
+                    if (result.count()) {
+                        subDirs.clear();
+                        subDirs.reserve(result.count());
+                        for (const char *s : result) {
+                            QString path = QString::fromUtf8(s);
+                            auto it = std::find_if(subDirsCopy.cbegin(), subDirsCopy.cend(),
+                                                   [&](const QIconDirInfo &info) {
+                                                       return info.path == path; } );
+                            if (it != subDirsCopy.cend()) {
+                                subDirs.append(*it);
+                            }
                         }
                     }
                 }

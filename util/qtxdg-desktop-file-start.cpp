@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     if (valid) {
         f.startDetached(userArgs);
     } else {
-        printErr(QString::fromLatin1("%1 is not a valid .desktop file\n").arg(userFileName));
+        printErr(QString::fromLatin1("%1 doesn't exist or isn't a valid .desktop file\n").arg(userFileName));
         return EXIT_FAILURE;
     }
 

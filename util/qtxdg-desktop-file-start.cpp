@@ -50,20 +50,21 @@ int main(int argc, char *argv[])
 
     QStringList userArgs = parser.positionalArguments();
     const QString userFileName = userArgs.takeFirst();
-    const QFileInfo fileInfo(userFileName);
-    const QString canonicalFileName = fileInfo.canonicalFilePath();
 
-    if (!fileInfo.exists()) {
-        printErr(QString::fromLatin1("File %1 does not exist\n").arg(userFileName));
-        return EXIT_FAILURE;
+    const QFileInfo fileInfo(userFileName);
+    if (fileInfo.isAbsolute()) {
+        if (!fileInfo.exists()) {
+            printErr(QString::fromLatin1("File %1 does not exist\n").arg(userFileName));
+            return EXIT_FAILURE;
+        }
     }
 
     XdgDesktopFile f;
-    const bool valid = f.load(canonicalFileName);
+    const bool valid = f.load(userFileName);
     if (valid) {
         f.startDetached(userArgs);
     } else {
-        printErr(QString::fromLatin1("%1 is not a valid .desktop file\n").arg(canonicalFileName));
+        printErr(QString::fromLatin1("%1 is not a valid .desktop file\n").arg(userFileName));
         return EXIT_FAILURE;
     }
 

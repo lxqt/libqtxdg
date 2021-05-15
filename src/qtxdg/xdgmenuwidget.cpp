@@ -165,7 +165,7 @@ void XdgMenuWidgetPrivate::mouseMoveEvent(QMouseEvent *event)
         return;
 
     Q_Q(XdgMenuWidget);
-    XdgAction *a = qobject_cast<XdgAction*>(q->actionAt(event->pos()));
+    XdgAction *a = qobject_cast<XdgAction*>(q->actionAt(mDragStartPosition));
     if (!a)
         return;
 

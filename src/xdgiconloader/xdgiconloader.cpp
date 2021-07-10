@@ -340,7 +340,6 @@ XdgIconTheme::XdgIconTheme(const QString &themeName)
         m_parents = indexReader.value(
                 QLatin1String("Icon Theme/Inherits")).toStringList();
         m_parents.removeAll(QString());
-        m_parents.removeAll(QLatin1String("hicolor"));
 
         // Ensure a default platform fallback for all themes
         if (m_parents.isEmpty()) {
@@ -485,6 +484,13 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
             if (!info.entries.isEmpty()) // success
                 break;
         }
+
+        // make sure that hicolor is also searched before dash fallbacks
+        if (info.entries.isEmpty()
+            && !parents.contains(QLatin1String("hicolor"))
+            && !visited.contains(QLatin1String("hicolor"))) {
+            info = findIconHelper(QLatin1String("hicolor"), iconName, visited);
+        }
     }
 
     if (dashFallback && info.entries.isEmpty()) {
@@ -540,23 +546,18 @@ QThemeIconInfo XdgIconLoader::loadIcon(const QString &name) const
         QStringList visited;
         auto info = findIconHelper(theme_name, name, visited, true);
         if (info.entries.isEmpty()) {
-            const auto hicolorInfo = findIconHelper(QLatin1String("hicolor"), name, visited, true);
-            if (hicolorInfo.entries.isEmpty()) {
-                const auto unthemedInfo = unthemedFallback(name, QIcon::themeSearchPaths());
-                if (unthemedInfo.entries.isEmpty()) {
-                    /* Freedesktop standard says to look in /usr/share/pixmaps last */
-                    const QStringList pixmapPath = (QStringList() << QString::fromLatin1("/usr/share/pixmaps"));
-                    const auto pixmapInfo = unthemedFallback(name, pixmapPath);
-                    if (pixmapInfo.entries.isEmpty()) {
-                        return QThemeIconInfo();
-                    } else {
-                        return pixmapInfo;
-                    }
+            const auto unthemedInfo = unthemedFallback(name, QIcon::themeSearchPaths());
+            if (unthemedInfo.entries.isEmpty()) {
+                /* Freedesktop standard says to look in /usr/share/pixmaps last */
+                const QStringList pixmapPath = (QStringList() << QString::fromLatin1("/usr/share/pixmaps"));
+                const auto pixmapInfo = unthemedFallback(name, pixmapPath);
+                if (pixmapInfo.entries.isEmpty()) {
+                    return QThemeIconInfo();
                 } else {
-                    return unthemedInfo;
+                    return pixmapInfo;
                 }
             } else {
-                return hicolorInfo;
+                return unthemedInfo;
             }
         } else {
             return info;

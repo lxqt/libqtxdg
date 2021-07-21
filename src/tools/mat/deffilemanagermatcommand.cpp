@@ -94,6 +94,11 @@ static CommandLineParseResult parseCommandLine(QCommandLineParser *parser, DefFi
         return CommandLineError;
     }
 
+    if (!isDefFileManagerNameSet && !posArgs.empty()) {
+        *errorMessage = QSL("To set the default file manager use the -s/--set option");
+        return CommandLineError;
+    }
+
     if (isListAvailableSet && (isDefFileManagerNameSet || !posArgs.empty())) {
         *errorMessage = QSL("list-available can't be used with other options and doesn't take arguments");
         return CommandLineError;

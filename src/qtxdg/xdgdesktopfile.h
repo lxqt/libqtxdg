@@ -242,6 +242,15 @@ public:
     */
     bool isSuitable(bool excludeHidden = true, const QString &environment = QString()) const;
 
+    /*! Check if the executable file on disk used to determine if the program
+        is actually installed. If the path is not an absolute path, the file
+        is looked up in the $PATH environment variable.
+        Check TryExec entry existence with contains().
+        @return false if the file is not present or if it is not executable.
+        If the TryExec entry isn't present returns false
+    */
+    bool tryExec() const;
+
 protected:
     virtual QString prefix() const { return QLatin1String("Desktop Entry"); }
     virtual bool check() const { return true; }

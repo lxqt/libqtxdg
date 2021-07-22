@@ -87,7 +87,6 @@ static const QLatin1String urlKey("URL");
 static const QLatin1String iconKey("Icon");
 
 // Helper functions prototypes
-bool checkTryExec(const QString& progName);
 QString &doEscape(QString& str, const QHash<QChar,QChar> &repl);
 QString &doUnEscape(QString& str, const QHash<QChar,QChar> &repl);
 QString &escape(QString& str);
@@ -1203,23 +1202,6 @@ QStringList XdgDesktopFile::expandExecString(const QStringList& urls) const
 }
 
 
-bool checkTryExec(const QString& progName)
-{
-    if (progName.startsWith(QDir::separator()))
-        return QFileInfo(progName).isExecutable();
-
-    const QStringList dirs = QFile::decodeName(qgetenv("PATH")).split(QLatin1Char(':'));
-
-    for (const QString &dir : dirs)
-    {
-        if (QFileInfo(QDir(dir), progName).isExecutable())
-            return true;
-    }
-
-    return false;
-}
-
-
 QString XdgDesktopFile::id(const QString &fileName, bool checkFileExists)
 {
     const QFileInfo f(fileName);
@@ -1330,11 +1312,20 @@ bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) 
     }
 
     // actually installed. If not, entry may not show in menus, etc.
-    QString s = value(QLatin1String("TryExec")).toString();
-    if (!s.isEmpty() && ! checkTryExec(s))
-        return false;
+    if (contains(QLatin1String("TryExec")))
+        return tryExec();
 
     return true;
+}
+
+
+bool XdgDesktopFile::tryExec() const
+{
+    const QString progName = value(QLatin1String("TryExec")).toString();
+    if (progName.isEmpty())
+        return false;
+
+    return (QStandardPaths::findExecutable(progName).isEmpty()) ? false : true;
 }
 
 

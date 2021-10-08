@@ -70,11 +70,30 @@ public:
     static bool setFileManager(const XdgDesktopFile &app);
 
     /*!
+     * \brief Sets the default terminal emulator
+     * \param The app to be set as the default terminal emulator
+     * \return True if successful, false otherwise
+     */
+    static bool setTerminal(const XdgDesktopFile &app);
+
+    /*!
      * \brief Sets the default web browser
      * \param The app to be set as the default web browser
      * \return True if successful, false otherwise
      */
     static bool setWebBrowser(const XdgDesktopFile &app);
+
+    /*!
+     * \brief Gets the default terminal emulator
+     * \return The default terminal emulator. nullptr if it's not set or an error ocurred.
+     */
+    static XdgDesktopFile *terminal();
+
+    /*!
+     * \brief Gets the installed terminal emulators
+     * \return A list of installed terminal emulators
+     */
+    static QList<XdgDesktopFile *> terminals();
 
     /*!
      * \brief Gets the default web browser

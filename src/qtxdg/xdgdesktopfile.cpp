@@ -34,6 +34,7 @@
 #include "xdgicon.h"
 #include "application_interface.h" // generated interface for DBus org.freedesktop.Application
 #include "xdgmimeapps.h"
+#include "xdgdefaultapps.h"
 
 #include <cstdlib>
 #include <unistd.h>
@@ -458,21 +459,37 @@ bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const
         if (startByDBus(action, urls))
             return true;
     }
-    QStringList args = action.isEmpty()
+    QStringList args;
+    QStringList appArgs = action.isEmpty()
         ? q->expandExecString(urls)
         : XdgDesktopAction{*q, action}.expandExecString(urls);
 
-    if (args.isEmpty())
+    if (appArgs.isEmpty())
         return false;
 
     if (q->value(QLatin1String("Terminal")).toBool())
     {
-        QString term = QString::fromLocal8Bit(qgetenv("TERM"));
-        if (term.isEmpty())
-            term = QLatin1String("xterm");
+        XdgDesktopFile *terminal = XdgDefaultApps::terminal();
+        QString terminalCommand;
+        if (terminal != nullptr && terminal->isValid())
+        {
+            terminalCommand = terminal->value(execKey).toString();
+        }
+        else
+        {
+            qWarning() << "XdgDesktopFileData::startApplicationDetached(): Using fallback terminal (xterm).";
+            terminalCommand = QStringLiteral("xterm");
+        }
 
-        args.prepend(QLatin1String("-e"));
-        args.prepend(term);
+        delete terminal;
+
+        args.append(QProcess::splitCommand(terminalCommand));
+        args.append(QLatin1String("-e"));
+        args.append(appArgs);
+    }
+    else
+    {
+        args = appArgs;
     }
 
     bool detach = StartDetachTruly::instance();

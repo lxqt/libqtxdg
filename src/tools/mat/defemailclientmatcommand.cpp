@@ -94,6 +94,11 @@ static CommandLineParseResult parseCommandLine(QCommandLineParser *parser, DefEm
         return CommandLineError;
     }
 
+    if (!isDefEmailClientNameSet && !posArgs.empty()) {
+        *errorMessage = QSL("To set the default email client use the -s/--set option");
+        return CommandLineError;
+    }
+
     if (isListAvailableSet && (isDefEmailClientNameSet || !posArgs.empty())) {
         *errorMessage = QSL("list-available can't be used with other options and doesn't take arguments");
         return CommandLineError;

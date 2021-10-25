@@ -493,6 +493,31 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
         }
     }
 
+    if (info.entries.isEmpty()) {
+        // Also, consider Qt's fallback search paths (which are not defined by Freedesktop)
+        // if the icon is not found in any inherited theme
+        const auto fallbackPaths = QIcon::fallbackSearchPaths();
+        for (const auto &fallbackPath : fallbackPaths) {
+            const QString pngPath = fallbackPath + QLatin1Char('/') + iconName + pngext;
+            if (QFile::exists(pngPath)) {
+                PixmapEntry *iconEntry = new PixmapEntry;
+                QIconDirInfo dirInfo(fallbackPath);
+                iconEntry->dir = dirInfo;
+                iconEntry->filename = pngPath;
+                info.entries.prepend(iconEntry);
+            } else {
+                const QString svgPath = fallbackPath + QLatin1Char('/') + iconName + svgext;
+                if (gSupportsSvg && QFile::exists(svgPath)) {
+                    ScalableEntry *iconEntry = new ScalableEntry;
+                    QIconDirInfo dirInfo(fallbackPath);
+                    iconEntry->dir = dirInfo;
+                    iconEntry->filename = svgPath;
+                    info.entries.append(iconEntry);
+                }
+            }
+        }
+    }
+
     if (dashFallback && info.entries.isEmpty()) {
         // If it's possible - find next fallback for the icon
         const int indexOfDash = iconNameFallback.lastIndexOf(QLatin1Char('-'));

@@ -1,7 +1,7 @@
 libqtxdg-3.8.0 / 2021-11-04
 ===========================
  * Handle relative paths in qtxdg-desktop-file-start.
- * Improveed error message.
+ * Improved error message.
  * Make sure hicolor is searched before dash fallbacks.
  * Improved file manager command line handling in qtxdg-mat.
  * Added default terminal.

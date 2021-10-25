@@ -1,3 +1,13 @@
+libqtxdg-3.8.0 / 2021-11-04
+===========================
+ * Handle relative paths in qtxdg-desktop-file-start.
+ * Improveed error message.
+ * Make sure hicolor is searched before dash fallbacks.
+ * Improved file manager command line handling in qtxdg-mat.
+ * Added default terminal.
+ * Consider XDG_DATA_HOME when computing desktop entry id.
+ * Consider Qt's fallback search paths when finding icons.
+
 libqtxdg-3.7.1 / 2021-04-16
 ===========================
  * Fixed compilation against Qt < 5.14.

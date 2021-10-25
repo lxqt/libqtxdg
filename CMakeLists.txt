@@ -63,6 +63,8 @@ set(QTXDGX_INTREE_INCLUDEDIR "${CMAKE_CURRENT_BINARY_DIR}/InTreeBuild/include")
 
 message(STATUS "Building ${PROJECT_NAME} with Qt ${Qt5Core_VERSION}")
 
+file(GLOB QTXDG_CONFIG_FILES config/*.conf)
+
 add_subdirectory(src)
 
 if(BUILD_TESTS)
@@ -154,6 +156,11 @@ install(EXPORT
     DESTINATION "${CMAKE_INSTALL_DATADIR}/cmake/${QTXDGX_ICONLOADER_FILE_NAME}"
     FILE "${QTXDGX_ICONLOADER_FILE_NAME}-targets.cmake"
     COMPONENT Devel
+)
+
+install(FILES ${QTXDG_CONFIG_FILES}
+    DESTINATION "${CMAKE_INSTALL_FULL_DATADIR}/lxqt"
+    COMPONENT Runtime
 )
 
 # uninstall target

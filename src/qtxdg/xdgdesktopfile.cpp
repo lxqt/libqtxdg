@@ -34,6 +34,7 @@
 #include "xdgicon.h"
 #include "application_interface.h" // generated interface for DBus org.freedesktop.Application
 #include "xdgmimeapps.h"
+#include "xdgdefaultapps.h"
 
 #include <cstdlib>
 #include <unistd.h>
@@ -87,7 +88,6 @@ static const QLatin1String urlKey("URL");
 static const QLatin1String iconKey("Icon");
 
 // Helper functions prototypes
-bool checkTryExec(const QString& progName);
 QString &doEscape(QString& str, const QHash<QChar,QChar> &repl);
 QString &doUnEscape(QString& str, const QHash<QChar,QChar> &repl);
 QString &escape(QString& str);
@@ -459,21 +459,37 @@ bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const
         if (startByDBus(action, urls))
             return true;
     }
-    QStringList args = action.isEmpty()
+    QStringList args;
+    QStringList appArgs = action.isEmpty()
         ? q->expandExecString(urls)
         : XdgDesktopAction{*q, action}.expandExecString(urls);
 
-    if (args.isEmpty())
+    if (appArgs.isEmpty())
         return false;
 
     if (q->value(QLatin1String("Terminal")).toBool())
     {
-        QString term = QString::fromLocal8Bit(qgetenv("TERM"));
-        if (term.isEmpty())
-            term = QLatin1String("xterm");
+        XdgDesktopFile *terminal = XdgDefaultApps::terminal();
+        QString terminalCommand;
+        if (terminal != nullptr && terminal->isValid())
+        {
+            terminalCommand = terminal->value(execKey).toString();
+        }
+        else
+        {
+            qWarning() << "XdgDesktopFileData::startApplicationDetached(): Using fallback terminal (xterm).";
+            terminalCommand = QStringLiteral("xterm");
+        }
 
-        args.prepend(QLatin1String("-e"));
-        args.prepend(term);
+        delete terminal;
+
+        args.append(QProcess::splitCommand(terminalCommand));
+        args.append(QLatin1String("-e"));
+        args.append(appArgs);
+    }
+    else
+    {
+        args = appArgs;
     }
 
     bool detach = StartDetachTruly::instance();
@@ -1203,23 +1219,6 @@ QStringList XdgDesktopFile::expandExecString(const QStringList& urls) const
 }
 
 
-bool checkTryExec(const QString& progName)
-{
-    if (progName.startsWith(QDir::separator()))
-        return QFileInfo(progName).isExecutable();
-
-    const QStringList dirs = QFile::decodeName(qgetenv("PATH")).split(QLatin1Char(':'));
-
-    for (const QString &dir : dirs)
-    {
-        if (QFileInfo(QDir(dir), progName).isExecutable())
-            return true;
-    }
-
-    return false;
-}
-
-
 QString XdgDesktopFile::id(const QString &fileName, bool checkFileExists)
 {
     const QFileInfo f(fileName);
@@ -1330,11 +1329,20 @@ bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) 
     }
 
     // actually installed. If not, entry may not show in menus, etc.
-    QString s = value(QLatin1String("TryExec")).toString();
-    if (!s.isEmpty() && ! checkTryExec(s))
-        return false;
+    if (contains(QLatin1String("TryExec")))
+        return tryExec();
 
     return true;
+}
+
+
+bool XdgDesktopFile::tryExec() const
+{
+    const QString progName = value(QLatin1String("TryExec")).toString();
+    if (progName.isEmpty())
+        return false;
+
+    return (QStandardPaths::findExecutable(progName).isEmpty()) ? false : true;
 }
 
 

@@ -95,9 +95,26 @@ int main(int argc, char *argv[])
     // Find out the positional arguments.
     parser.parse(QCoreApplication::arguments());
     const QStringList args = parser.positionalArguments();
-    const QString command = args.isEmpty() ? QString() : args.first();
-    bool cmdFound = false;
+    if (args.isEmpty()) {
+        const QCommandLineOption helpOption = parser.addHelpOption();
+        const QCommandLineOption versionOption = parser.addVersionOption();
+        parser.parse(QCoreApplication::arguments());
+        if (parser.isSet(helpOption)) {
+            showHelp(parser.helpText(), manager->descriptionsHelpText(), EXIT_SUCCESS);
+            Q_UNREACHABLE();
+        }
+        if (parser.isSet(versionOption)) {
+            parser.showVersion();
+            Q_UNREACHABLE();
+        }
+        showHelp(parser.helpText(), manager->descriptionsHelpText(), EXIT_FAILURE);
+        Q_UNREACHABLE();
+    }
 
+    // we got a command
+    const QString command = args.first();
+
+    bool cmdFound = false;
     const QList <MatCommandInterface *> commands = manager->commands();
     for (auto *const cmd : commands) {
         if (command == cmd->name()) {
@@ -112,14 +129,6 @@ int main(int argc, char *argv[])
         const QCommandLineOption helpOption = parser.addHelpOption();
         const QCommandLineOption versionOption = parser.addVersionOption();
         parser.parse(QCoreApplication::arguments());
-        if (parser.isSet(helpOption)) {
-            showHelp(parser.helpText(), manager->descriptionsHelpText(), EXIT_SUCCESS);
-            Q_UNREACHABLE();
-        }
-        if (parser.isSet(versionOption)) {
-            parser.showVersion();
-            Q_UNREACHABLE();
-        }
         showHelp(parser.helpText(), manager->descriptionsHelpText(), EXIT_FAILURE);
         Q_UNREACHABLE();
     } else {

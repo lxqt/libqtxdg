@@ -75,7 +75,7 @@ static CommandLineParseResult parseCommandLine(QCommandLineParser *parser, DefTe
         return CommandLineVersionRequested;
     }
 
-    if (parser->isSet(helpOption)) {
+    if (parser->isSet(helpOption) || parser->isSet(QSL("help-all"))) {
         return CommandLineHelpRequested;
     }
 

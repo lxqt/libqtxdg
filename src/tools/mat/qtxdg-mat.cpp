@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
         const QCommandLineOption helpOption = parser.addHelpOption();
         const QCommandLineOption versionOption = parser.addVersionOption();
         parser.parse(QCoreApplication::arguments());
-        if (parser.isSet(helpOption)) {
+        if (parser.isSet(helpOption) || parser.isSet(QSL("help-all"))) {
             showHelp(parser.helpText(), manager->descriptionsHelpText(), EXIT_SUCCESS);
             Q_UNREACHABLE();
         }

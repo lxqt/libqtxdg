@@ -54,10 +54,22 @@ static CommandLineParseResult parseCommandLine(QCommandLineParser *parser, QStri
     parser->addPositionalArgument(QL1S("mimetype"), QSL("file | URL"),
                                   QCoreApplication::tr("[file | URL]"));
 
-    parser->addHelpOption();
-    parser->addVersionOption();
+    const QCommandLineOption helpOption = parser->addHelpOption();
+    const QCommandLineOption versionOption = parser->addVersionOption();
 
-    parser->process(QCoreApplication::arguments());
+    if (!parser->parse(QCoreApplication::arguments())) {
+        *errorMessage = parser->errorText();
+        return CommandLineError;
+    }
+
+    if (parser->isSet(versionOption)) {
+        return CommandLineVersionRequested;
+    }
+
+    if (parser->isSet(helpOption) || parser->isSet(QSL("help-all"))) {
+        return CommandLineHelpRequested;
+    }
+
     QStringList fs = parser->positionalArguments();
     if (fs.size() < 2) {
         *errorMessage = QSL("No file given");

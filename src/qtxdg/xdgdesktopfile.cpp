@@ -1212,7 +1212,17 @@ QStringList XdgDesktopFile::expandExecString(const QStringList& urls) const
         }
 
         // ----------------------------------------------------------
-        result << expandEnvVariables(token);
+        if (token.startsWith(QLatin1Char('\'')) && token.endsWith(QLatin1Char('\'')))
+        {
+            // Consider 'XXX' to be a string literal.
+            // WARNING: This is beyond Desktop Entry Specification but,
+            // apparently, most DEs do it.
+            result << token.chopped(1).remove(0, 1);
+        }
+        else
+        {
+            result << expandEnvVariables(token);
+        }
     }
 
     return result;

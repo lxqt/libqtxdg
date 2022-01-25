@@ -1005,7 +1005,9 @@ static QStringList parseCombinedArgString(const QString &program)
     QStringList args;
     QString tmp;
     int quoteCount = 0;
+    int singleQuoteCount = 0;
     bool inQuote = false;
+    bool inSingleQuote = false;
 
     // handle quoting. tokens can be surrounded by double quotes
     // "hello world". three consecutive double quotes represent
@@ -1020,12 +1022,21 @@ static QStringList parseCombinedArgString(const QString &program)
             }
             continue;
         }
+        if (program.at(i) == QLatin1Char('\'')) {
+            ++singleQuoteCount;
+            continue;
+        }
         if (quoteCount) {
             if (quoteCount == 1)
                 inQuote = !inQuote;
             quoteCount = 0;
         }
-        if (!inQuote && program.at(i).isSpace()) {
+        if (singleQuoteCount) {
+            if (singleQuoteCount == 1)
+                inSingleQuote = !inSingleQuote;
+            singleQuoteCount = 0;
+        }
+        if (!inQuote && !inSingleQuote && program.at(i).isSpace()) {
             if (!tmp.isEmpty()) {
                 args += tmp;
                 tmp.clear();

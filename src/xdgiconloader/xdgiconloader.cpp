@@ -569,7 +569,7 @@ QThemeIconInfo XdgIconLoader::loadIcon(const QString &name) const
     const QString theme_name = QIconLoader::instance()->themeName();
     if (!theme_name.isEmpty()) {
         QStringList visited;
-        auto info = findIconHelper(theme_name, name, visited, true);
+        auto info = findIconHelper(theme_name, name, visited, m_dashFallback);
         if (info.entries.isEmpty()) {
             const auto unthemedInfo = unthemedFallback(name, QIcon::themeSearchPaths());
             if (unthemedInfo.entries.isEmpty()) {

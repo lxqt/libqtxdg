@@ -140,6 +140,8 @@ public:
      */
     inline bool followColorScheme() const { return m_followColorScheme; }
     void setFollowColorScheme(bool enable);
+    inline bool dashFallback() const { return m_dashFallback; }
+    void setDashFallback(bool fallback) { m_dashFallback = fallback; }
 
     XdgIconTheme theme() { return themeList.value(QIconLoader::instance()->themeName()); }
     static XdgIconLoader *instance();
@@ -152,6 +154,7 @@ private:
     QThemeIconInfo unthemedFallback(const QString &iconName, const QStringList &searchPaths) const;
     mutable QHash <QString, XdgIconTheme> themeList;
     bool m_followColorScheme = true;
+    bool m_dashFallback = true;
 };
 
 #endif // QT_NO_ICON

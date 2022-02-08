@@ -15,8 +15,7 @@ set(xdgiconloader_PRIVATE_INSTALLABLE_H_FILES
     xdgiconloader_p.h
 )
 
-
-add_library(${QTXDGX_ICONLOADER_LIBRARY_NAME} SHARED
+add_library(${QTXDGX_ICONLOADER_LIBRARY_NAME}
     ${xdgiconloader_CPP_FILES}
     ${xdgiconloader_PRIVATE_INSTALLABLE_H_FILES}
 )
@@ -34,6 +33,7 @@ configure_file(
 target_compile_definitions(${QTXDGX_ICONLOADER_LIBRARY_NAME}
     PRIVATE
         "QT_NO_KEYWORDS"
+         "$<$<BOOL:${QTXDG_STATIC_BUILD}>:QTXDG_STATIC_BUILD>"
 )
 
 target_include_directories(${QTXDGX_ICONLOADER_LIBRARY_NAME}

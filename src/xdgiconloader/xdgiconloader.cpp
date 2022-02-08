@@ -97,6 +97,8 @@ XdgIconLoader *XdgIconLoader::instance()
    return iconLoaderInstance();
 }
 
+namespace XdgIconLoaderUtils {
+
 /*!
     \class QIconCacheGtkReader
     \internal
@@ -270,6 +272,8 @@ QVector<const char *> QIconCacheGtkReader::lookup(QStringView name)
     return ret;
 }
 
+} // namespace XdgIconLoaderUtils
+
 XdgIconTheme::XdgIconTheme(const QString &themeName)
         : m_valid(false)
         , m_followsColorScheme(false)
@@ -284,7 +288,7 @@ XdgIconTheme::XdgIconTheme(const QString &themeName)
 
         if (themeDirInfo.isDir()) {
             m_contentDirs << themeDir;
-            m_gtkCaches << QSharedPointer<QIconCacheGtkReader>::create(themeDir);
+            m_gtkCaches << QSharedPointer<XdgIconLoaderUtils::QIconCacheGtkReader>::create(themeDir);
         }
 
         if (!m_valid) {
@@ -778,6 +782,7 @@ QSize XdgIconLoaderEngine::actualSize(const QSize &size, QIcon::Mode mode,
     return {0, 0};
 }
 
+#ifndef QTXDG_STATIC_BUILD
 // XXX: duplicated from qiconloader.cpp, because this symbol isn't exported :(
 QPixmap PixmapEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state)
 {
@@ -853,6 +858,7 @@ QPixmap ScalableEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State 
 
     return pm;
 }
+#endif // QTXDG_STATIC_BUILD
 
 static const QString STYLE = QStringLiteral("\n.ColorScheme-Text, .ColorScheme-NeutralText {color:%1;}\
 \n.ColorScheme-Background {color:%2;}\

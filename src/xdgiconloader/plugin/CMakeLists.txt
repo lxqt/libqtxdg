@@ -2,9 +2,15 @@ set(xdgiconengineplugin_CPP_FILES
     xdgiconengineplugin.cpp
 )
 
-add_library(${QTXDGX_ICONENGINEPLUGIN_LIBRARY_NAME} MODULE
-    ${xdgiconengineplugin_CPP_FILES}
-)
+if (BUILD_SHARED_LIBS)
+    add_library(${QTXDGX_ICONENGINEPLUGIN_LIBRARY_NAME} MODULE
+        ${xdgiconengineplugin_CPP_FILES}
+    )
+else()
+    add_library(${QTXDGX_ICONENGINEPLUGIN_LIBRARY_NAME}
+        ${xdgiconengineplugin_CPP_FILES}
+    )
+endif()
 
 target_compile_definitions(${QTXDGX_ICONENGINEPLUGIN_LIBRARY_NAME}
     PRIVATE

@@ -70,7 +70,7 @@ QT5_ADD_DBUS_INTERFACE(libqtxdg_DBUS_INTERFACE_SRCS
 
 set_property(SOURCE ${libqtxdg_DBUS_INTERFACE_SRCS} PROPERTY SKIP_AUTOGEN ON)
 
-add_library(${QTXDGX_LIBRARY_NAME} SHARED
+add_library(${QTXDGX_LIBRARY_NAME}
     ${libqtxdg_PUBLIC_H_FILES}
     ${libqtxdg_PRIVATE_H_FILES}
     ${libqtxdg_CPP_FILES}

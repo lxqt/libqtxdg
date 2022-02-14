@@ -13,7 +13,7 @@ The library is able to use GTK+ icon theme caches for faster icon lookup. The ca
 ### Sources
 
 At runtime qtbase is needed. gtk-update-icon-cache represents an optional runtime dependency for the reasons stated above.   
-Additional build dependencies are CMake, qtsvg, qttools and optionally Git to pull latest VCS checkouts.
+Additional build dependencies are CMake, qtsvg, qttools, [lxqt-build-tools](https://github.com/lxqt/lxqt-build-tools) and optionally Git to pull latest VCS checkouts.
 
 The code configuration is handled by CMake so all corresponding generic instructions apply. Specific CMake variables are
 * BUILD_TESTS to build tests. Disabled by default (`OFF`).

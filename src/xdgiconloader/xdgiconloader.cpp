@@ -768,7 +768,8 @@ QSize XdgIconLoaderEngine::actualSize(const QSize &size, QIcon::Mode mode,
 
     ensureLoaded();
 
-    QIconLoaderEngineEntry *entry = entryForSize(size);
+    const int scale = qCeil(qApp->devicePixelRatio());// Don't know which window to target
+    QIconLoaderEngineEntry *entry = entryForSize(size, scale);
     if (entry) {
         const QIconDirInfo &dir = entry->dir;
         if (dir.type == QIconDirInfo::Scalable || dynamic_cast<ScalableEntry *>(entry))
@@ -973,7 +974,8 @@ QPixmap XdgIconLoaderEngine::pixmap(const QSize &size, QIcon::Mode mode,
 {
     ensureLoaded();
 
-    QIconLoaderEngineEntry *entry = entryForSize(size);
+    const int scale = qCeil(qApp->devicePixelRatio());// Don't know which window to target
+    QIconLoaderEngineEntry *entry = entryForSize(size, scale);
     if (entry)
         return entry->pixmap(size, mode, state);
 

@@ -641,6 +641,7 @@ void XdgIconLoaderEngine::ensureLoaded()
         qDeleteAll(m_info.entries);
         m_info.entries.clear();
         m_info.iconName.clear();
+        m_entryForSize.clear();
 
         Q_ASSERT(m_info.entries.empty());
         m_info = XdgIconLoader::instance()->loadIcon(m_iconName);
@@ -714,6 +715,11 @@ static int directorySizeDistance(const QIconDirInfo &dir, int iconsize, int icon
 QIconLoaderEngineEntry *XdgIconLoaderEngine::entryForSize(const QSize &size, int scale)
 {
     int iconsize = qMin(size.width(), size.height());
+    const auto key = std::make_pair(iconsize, scale);
+    const auto i = m_entryForSize.find(key);
+    if (i != m_entryForSize.cend()) {
+        return i->second;
+    }
 
     // Note that m_info.entries are sorted so that png-files
     // come first
@@ -724,6 +730,7 @@ QIconLoaderEngineEntry *XdgIconLoaderEngine::entryForSize(const QSize &size, int
     for (int i = 0; i < numEntries; ++i) {
         QIconLoaderEngineEntry *entry = m_info.entries.at(i);
         if (directoryMatchesSize(entry->dir, iconsize, scale)) {
+            m_entryForSize.emplace(std::make_pair(std::move(key), entry));
             return entry;
         }
     }
@@ -739,6 +746,7 @@ QIconLoaderEngineEntry *XdgIconLoaderEngine::entryForSize(const QSize &size, int
             closestMatch = entry;
         }
     }
+    m_entryForSize.emplace(std::make_pair(std::move(key), closestMatch));
     return closestMatch;
 }
 

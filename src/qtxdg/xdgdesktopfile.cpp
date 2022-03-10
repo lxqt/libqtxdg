@@ -89,6 +89,7 @@ static const QLatin1String iconKey("Icon");
 
 // Helper functions prototypes
 QString &doEscape(QString& str, const QHash<QChar,QChar> &repl);
+QString &doSimpleUnEscape(QString& str, const QHash<QChar,QChar> &repl);
 QString &doUnEscape(QString& str, const QHash<QChar,QChar> &repl, QList<int> &literals);
 QString &escape(QString& str);
 QString &escapeExec(QString& str);
@@ -100,7 +101,7 @@ QString findDesktopFile(const QString& desktopName);
 static QStringList parseCombinedArgString(const QString &program, const QList<int> &literals);
 bool read(const QString &prefix);
 void replaceVar(QString &str, const QString &varName, const QString &after);
-QString &unEscape(QString& str);
+QString &unEscape(QString& str, bool exec);
 QString &unEscapeExec(QString& str, QList<int> &literals);
 
 namespace
@@ -199,6 +200,27 @@ QString &escapeExec(QString& str)
 }
 
 
+
+QString &doSimpleUnEscape(QString& str, const QHash<QChar,QChar> &repl)
+{
+    int n = 0;
+    while (true)
+    {
+        n=str.indexOf(QLatin1String("\\"), n);
+        if (n < 0 || n > str.length() - 2)
+            break;
+
+        if (repl.contains(str.at(n+1)))
+        {
+            str.replace(n, 2, repl.value(str.at(n+1)));
+        }
+
+        n++;
+    }
+
+    return str;
+}
+
 // The list of start and end positions of string literals is also found by this function.
 // It is assumed that a string literal starts with a non-escaped, non-quoted single/double
 // quote and ends with the next single/double quote.
@@ -258,7 +280,7 @@ QString &doUnEscape(QString& str, const QHash<QChar,QChar> &repl, QList<int> &li
  of type string and localestring, meaning ASCII space, newline, tab,
  carriage return, and backslash, respectively.
  ************************************************/
-QString &unEscape(QString& str)
+QString &unEscape(QString& str, bool exec)
 {
     QHash<QChar,QChar> repl;
     repl.insert(QLatin1Char('\\'), QLatin1Char('\\'));
@@ -267,8 +289,12 @@ QString &unEscape(QString& str)
     repl.insert(QLatin1Char('t'),  QLatin1Char('\t'));
     repl.insert(QLatin1Char('r'),  QLatin1Char('\r'));
 
-    QList<int> l;
-    return doUnEscape(str, repl, l);
+    if (exec)
+    {
+        QList<int> l;
+        return doUnEscape(str, repl, l);
+    }
+    return doSimpleUnEscape(str, repl);
 }
 
 
@@ -313,7 +339,7 @@ is unambiguously represented with ("\\$").
  ************************************************/
 QString &unEscapeExec(QString& str, QList<int> &literals)
 {
-    unEscape(str);
+    unEscape(str, true);
     QHash<QChar,QChar> repl;
     // The parseCombinedArgString() splits the string by the space symbols,
     // we temporarily replace them on the special characters.
@@ -783,7 +809,7 @@ QVariant XdgDesktopFile::value(const QString& key, const QVariant& defaultValue)
     if (res.type() == QVariant::String)
     {
         QString s = res.toString();
-        return unEscape(s);
+        return unEscape(s, false);
     }
 
     return res;

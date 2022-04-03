@@ -80,7 +80,7 @@ static QString qtxdgConfigFilename()
     // first find the DE's qtxdg.conf file
     QByteArray qtxdgConfig("qtxdg");
     QList<QByteArray> desktopsList = qgetenv("XDG_CURRENT_DESKTOP").toLower().split(':');
-    if (!desktopsList.isEmpty()) {
+    if (!desktopsList.isEmpty() && !desktopsList.at(0).isEmpty()) {
         qtxdgConfig = desktopsList.at(0) + '-' + qtxdgConfig;
     }
 

@@ -1,3 +1,11 @@
+libqtxdg-3.9.0 / 2022-04-15
+===========================
+ * Improved email client command line handling in qtxdg-mat.
+ * Handled '--help-all' option in qtxdg-mat.
+ * Supported string literals in Exec keys of desktop entries.
+ * Updated `README.md`.
+ * Fixed config file name with empty `XDG_CURRENT_DESKTOP`.
+
 libqtxdg-3.8.0 / 2021-11-04
 ===========================
  * Handle relative paths in qtxdg-desktop-file-start.

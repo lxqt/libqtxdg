@@ -1,3 +1,7 @@
+libqtxdg-3.9.1 / 2022-05-08
+===========================
+ * Separated `qtxdg-mat` and made installation of config files optional (to prepare for Qt6).
+
 libqtxdg-3.9.0 / 2022-04-15
 ===========================
  * Improved email client command line handling in qtxdg-mat.

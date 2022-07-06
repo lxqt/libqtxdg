@@ -416,7 +416,7 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
             // Try to reduce the amount of subDirs by looking in the GTK+ cache in order to save
             // a massive amount of file stat (especially if the icon is not there)
             auto cache = theme.m_gtkCaches.at(i);
-            if (cache->isValid() || cache->reValid(true)) {
+            if (cache->reValid(true) || cache->isValid()) {
                 const auto result = cache->lookup(iconNameFallback);
                 if (cache->isValid()) {
                     const QVector<QIconDirInfo> subDirsCopy = subDirs;

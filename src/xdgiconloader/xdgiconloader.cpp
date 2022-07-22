@@ -414,11 +414,11 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
             QVector<QIconDirInfo> subDirs = theme.keyList();
 
             // Try to reduce the amount of subDirs by looking in the GTK+ cache in order to save
-            // a massive amount of file stat (especially if the icon is not there)
+            // a massive amount of file stat
             auto cache = theme.m_gtkCaches.at(i);
             if (cache->isValid() || cache->reValid(true)) {
                 const auto result = cache->lookup(iconNameFallback);
-                if (cache->isValid()) {
+                if (cache->isValid() && !result.isEmpty()) {
                     const QVector<QIconDirInfo> subDirsCopy = subDirs;
                     subDirs.clear();
                     subDirs.reserve(result.count());

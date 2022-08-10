@@ -349,6 +349,9 @@ void XdgMenuReader::processDirectoryDirTag(QDomElement& element)
  <DirectoryDir> elements containing the default desktop dir locations
  ($XDG_DATA_DIRS/desktop-directories/).
 
+ The default locations that are earlier in the search path go later in the <Menu>
+ so that they have priority.
+
  menu-cache additional prepends $XDG_DATA_HOME/applications.
  ************************************************/
 void XdgMenuReader::processDefaultDirectoryDirsTag(QDomElement& element)
@@ -357,8 +360,9 @@ void XdgMenuReader::processDefaultDirectoryDirsTag(QDomElement& element)
     QStringList dirs = XdgDirs::dataDirs();
     dirs.prepend(XdgDirs::dataHome(false));
 
-    for (const QString &dir : qAsConst(dirs))
-        addDirTag(element, QLatin1String("DirectoryDir"), dir + QLatin1String("/desktop-directories/"));
+    int n = dirs.size();
+    for (int i = 0; i < n; ++i)
+        addDirTag(element, QLatin1String("DirectoryDir"), dirs.at(n - i - 1) + QLatin1String("/desktop-directories/"));
 }
 
 /************************************************

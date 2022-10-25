@@ -1,5 +1,5 @@
-libqtxdg-3.9.1 / 2022-11-05
-===========================
+libqtxdg-3.10.0 / 2022-11-05
+============================
  * Invalidate GTK icon cache as soon as icons are installed.
  * Follow `freedesktop.org` in adding dirs under `DefaultDirectoryDirs`.
 

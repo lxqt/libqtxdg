@@ -190,7 +190,7 @@ void XdgMenuApplinkProcessor::findDesktopFiles(const QString& dirName, const QSt
     for (const QFileInfo &file : files)
     {
         auto f = std::make_unique<XdgDesktopFile>();
-        if (f->load(file.canonicalFilePath()) && f->isValid())
+        if (f->load(file.absoluteFilePath()) && f->isValid())
             mAppFileInfoHash.insert(prefix + file.fileName(), new XdgMenuAppFileInfo(std::move(f), prefix + file.fileName(), this));
     }
 
@@ -199,7 +199,7 @@ void XdgMenuApplinkProcessor::findDesktopFiles(const QString& dirName, const QSt
     const QFileInfoList dirs = dir.entryInfoList(QStringList(), QDir::Dirs | QDir::NoDotAndDotDot);
     for (const QFileInfo &d : dirs)
     {
-        QString dn = d.canonicalFilePath();
+        QString dn = d.absoluteFilePath();
         if (dn != dirName)
         {
             findDesktopFiles(dn, QString::fromLatin1("%1%2-").arg(prefix, d.fileName()));

@@ -750,9 +750,8 @@ bool XdgDesktopFile::load(const QString& fileName)
 {
     d->clear();
     if (fileName.startsWith(QDir::separator())) { // absolute path
-        QFileInfo f(fileName);
-        if (f.exists())
-            d->mFileName = f.canonicalFilePath();
+        if (QFileInfo::exists(fileName))
+            d->mFileName = fileName;
         else
             return false;
     } else { // relative path
@@ -1482,13 +1481,13 @@ QString findDesktopFile(const QString& dirName, const QString& desktopName)
     QFileInfo fi(dir, desktopName);
 
     if (fi.exists())
-        return fi.canonicalFilePath();
+        return fi.absoluteFilePath();
 
     // Working recursively ............
     const QFileInfoList dirs = dir.entryInfoList(QStringList(), QDir::Dirs | QDir::NoDotAndDotDot);
     for (const QFileInfo &d : dirs)
     {
-        QString cn = d.canonicalFilePath();
+        QString cn = d.absoluteFilePath();
         if (dirName != cn)
         {
             QString f = findDesktopFile(cn, desktopName);

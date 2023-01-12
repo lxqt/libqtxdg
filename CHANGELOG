@@ -414,7 +414,7 @@ libqtxdg-3.2.0 / 2018-05-21
   * Fixes an XdgMimeInfo memory leak
   * Use case insensitive comparisons with desktop environment names
   * Updates some XdgDesktopFile methods documentation
-  * Make desktop enviroment names comparisons case insensitive
+  * Make desktop environment names comparisons case insensitive
   * solve failed comp LXQT with LXQt (OnlyShowIn=LXQt;) in desktop files
   * Re-adds Support XDG_CURRENT_DESKTOP in autostart handling
   * Deprecates non desktop environment neutral XdgDesktopFile methods

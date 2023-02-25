@@ -53,7 +53,7 @@
 #include <QImageReader>
 #include <QXmlStreamReader>
 #include <QFileSystemWatcher>
-#include <QSvgRenderer>
+#include <QBuffer>
 
 #include <private/qhexstring_p.h>
 
@@ -829,12 +829,12 @@ QPixmap ScalableEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State 
         pm = QPixmap(icnSize, icnSize);
         pm.fill(Qt::transparent);
 
-        QSvgRenderer renderer;
-        if (renderer.load(filename))
-        {
+        QImageReader imageReader(filename);
+        if (imageReader.canRead()) {
+            imageReader.setScaledSize(QSize(icnSize, icnSize));
             QPainter p;
             p.begin(&pm);
-            renderer.render(&p, QRect(0, 0, icnSize, icnSize));
+            p.drawImage(0, 0, imageReader.read());
             p.end();
         }
 
@@ -928,11 +928,14 @@ QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, Q
 
             if (!svgBuffer.isEmpty())
             {
-                QSvgRenderer renderer;
-                renderer.load(svgBuffer);
+                QBuffer buffer;
+                buffer.setData(svgBuffer);
+                buffer.open(QIODevice::ReadOnly);
+                QImageReader imageReader(&buffer);
+                imageReader.setScaledSize(QSize(icnSize, icnSize));
                 QPainter p;
                 p.begin(&pm);
-                renderer.render(&p, QRect(0, 0, icnSize, icnSize));
+                p.drawImage(0, 0, imageReader.read());
                 p.end();
             }
         }

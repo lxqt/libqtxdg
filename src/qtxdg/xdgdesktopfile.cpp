@@ -920,7 +920,22 @@ QString XdgDesktopFile::localizedKey(const QString& key) const
 
 QVariant XdgDesktopFile::localizedValue(const QString& key, const QVariant& defaultValue) const
 {
-    return value(localizedKey(key), defaultValue);
+    // If the file is translated via gettext, override locally-defined translations
+    if (contains(QLatin1String("X-Ubuntu-Gettext-Domain")))
+    {
+        QString domain = value(QLatin1String("X-Ubuntu-Gettext-Domain")).toString();
+        QString val = value(key, defaultValue).toString().trimmed();
+        if (!val.isEmpty()) {
+            QByteArray _domain = domain.toUtf8();
+            QByteArray _val = val.toUtf8();
+            char *translated = dgettext(_domain.constData(), _val.constData());
+            return QVariant(QString::fromUtf8(translated));
+        } else {
+            return QVariant();
+        }
+    } else {
+        return value(localizedKey(key), defaultValue);
+    }
 }
 
 

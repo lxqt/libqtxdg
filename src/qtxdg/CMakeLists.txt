@@ -1,6 +1,6 @@
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(QTX_LIBRARIES Qt5::Widgets Qt5::Xml Qt5::DBus)
+set(QTX_LIBRARIES Qt6::Widgets Qt6::Xml Qt6::DBus)
 
 set(libqtxdg_PUBLIC_H_FILES
     xdgaction.h
@@ -63,7 +63,7 @@ set(libqtxdg_CPP_FILES
     xdgdefaultapps.cpp
 )
 
-QT5_ADD_DBUS_INTERFACE(libqtxdg_DBUS_INTERFACE_SRCS
+QT6_ADD_DBUS_INTERFACE(libqtxdg_DBUS_INTERFACE_SRCS
     dbus/org.freedesktop.Application.xml
     application_interface
 )
@@ -105,7 +105,7 @@ target_include_directories(${QTXDGX_LIBRARY_NAME}
         "$<BUILD_INTERFACE:${QTXDGX_INTREE_INCLUDEDIR}/${QTXDGX_FILE_NAME}>"
         "$<BUILD_INTERFACE:${QTXDGX_INTREE_INCLUDEDIR}>"
     PRIVATE
-        ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
+        ${Qt6Gui_PRIVATE_INCLUDE_DIRS}
         ${GLIB_INCLUDE_DIRS}
         ${GLIB_GIO_UNIX_INCLUDE_DIR}
 )

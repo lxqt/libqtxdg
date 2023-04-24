@@ -121,18 +121,18 @@ void QtXdgTest::testCustomFormat()
 
     test2.beginGroup(QStringLiteral("Default Applications"));
 //    qDebug() << test2.value("text/plain");
-    QVERIFY(test2.value(QStringLiteral("text/plain")) == QLatin1String("gvim.desktop"));
+    QVERIFY(test2.value(QStringLiteral("text/plain")).toString() == QLatin1String("gvim.desktop"));
 
 //    qDebug() << test2.value("text/html");
-    QVERIFY(test2.value(QStringLiteral("text/html")) == QLatin1String("firefox.desktop"));
+    QVERIFY(test2.value(QStringLiteral("text/html")).toString() == QLatin1String("firefox.desktop"));
     test2.endGroup();
 
     test2.beginGroup(QStringLiteral("Other Applications"));
 //    qDebug() << test2.value("application/pdf");
-    QVERIFY(test2.value(QStringLiteral("application/pdf")) == QLatin1String("qpdfview.desktop"));
+    QVERIFY(test2.value(QStringLiteral("application/pdf")).toString() == QLatin1String("qpdfview.desktop"));
 
 //    qDebug() << test2.value("image/svg+xml");
-    QVERIFY(test2.value(QStringLiteral("image/svg+xml")) == QStringLiteral("inkscape.desktop"));
+    QVERIFY(test2.value(QStringLiteral("image/svg+xml")).toString() == QStringLiteral("inkscape.desktop"));
     test2.endGroup();
 }
 

@@ -21,7 +21,7 @@ target_include_directories(qtxdg-desktop-file-start
 )
 
 target_include_directories(qtxdg-iconfinder
-    PRIVATE "${Qt5Gui_PRIVATE_INCLUDE_DIRS}"
+    PRIVATE "${Qt6Gui_PRIVATE_INCLUDE_DIRS}"
 )
 
 target_compile_definitions(qtxdg-desktop-file-start

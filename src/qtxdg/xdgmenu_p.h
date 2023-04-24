@@ -33,7 +33,6 @@
 #define REBUILD_DELAY 3000
 
 class QDomElement;
-class QStringList;
 class QString;
 class QDomDocument;
 

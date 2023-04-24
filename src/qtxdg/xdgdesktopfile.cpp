@@ -344,9 +344,9 @@ QString &unEscapeExec(QString& str, QList<int> &literals)
     // The parseCombinedArgString() splits the string by the space symbols,
     // we temporarily replace them on the special characters.
     // Replacement will reverse after the splitting.
-    repl.insert(QLatin1Char(' '),  01);    // space
-    repl.insert(QLatin1Char('\t'), 02);    // tab
-    repl.insert(QLatin1Char('\n'), 03);    // newline,
+    repl.insert(QLatin1Char(' '),  QChar(01));    // space
+    repl.insert(QLatin1Char('\t'), QChar(02));    // tab
+    repl.insert(QLatin1Char('\n'), QChar(03));    // newline,
 
     repl.insert(QLatin1Char('"'), QLatin1Char('"'));    // double quote,
     repl.insert(QLatin1Char('\''), QLatin1Char('\''));  // single quote ("'"),
@@ -577,7 +577,7 @@ bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const
         return QProcess::startDetached(cmd, args, workingDir);
     } else
     {
-        QScopedPointer<QProcess> p(new QProcess);
+        auto p = std::make_unique<QProcess>();
         p->setStandardInputFile(QProcess::nullDevice());
         p->setProcessChannelMode(QProcess::ForwardedChannels);
         if (!workingDir.isEmpty())
@@ -586,7 +586,7 @@ bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const
         bool started = p->waitForStarted();
         if (started)
         {
-            QProcess* proc = p.take(); //release the pointer(will be selfdestroyed upon finish)
+            QProcess* proc = p.release(); //release the pointer(will be selfdestroyed upon finish)
             QObject::connect(proc, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
                 proc, &QProcess::deleteLater);
             QObject::connect(QCoreApplication::instance(), &QCoreApplication::aboutToQuit, proc, &QProcess::terminate);
@@ -805,7 +805,7 @@ QVariant XdgDesktopFile::value(const QString& key, const QVariant& defaultValue)
 {
     QString path = (!prefix().isEmpty()) ? prefix() + QLatin1Char('/') + key : key;
     QVariant res = d->mItems.value(path, defaultValue);
-    if (res.type() == QVariant::String)
+    if (res.metaType().id() == QMetaType::QString)
     {
         QString s = res.toString();
         return unEscape(s, false);
@@ -818,7 +818,7 @@ QVariant XdgDesktopFile::value(const QString& key, const QVariant& defaultValue)
 void XdgDesktopFile::setValue(const QString &key, const QVariant &value)
 {
     QString path = (!prefix().isEmpty()) ? prefix() + QLatin1Char('/') + key : key;
-    if (value.type() == QVariant::String)
+    if (value.metaType().id() == QMetaType::QString)
     {
 
         QString s=value.toString();
@@ -1205,9 +1205,9 @@ QStringList XdgDesktopFile::expandExecString(const QStringList& urls) const
         // The parseCombinedArgString() splits the string by the space symbols,
         // we temporarily replaced them on the special characters.
         // Now we reverse it.
-        token.replace(01, QLatin1Char(' '));
-        token.replace(02, QLatin1Char('\t'));
-        token.replace(03, QLatin1Char('\n'));
+        token.replace(QChar(01), QLatin1Char(' '));
+        token.replace(QChar(02), QLatin1Char('\t'));
+        token.replace(QChar(03), QLatin1Char('\n'));
 
         // ----------------------------------------------------------
         // A single file name, even if multiple files are selected.
@@ -1581,7 +1581,7 @@ bool writeDesktopFile(QIODevice & device, const QSettings::SettingsMap & map)
     for (auto it = map.constBegin(); it != map.constEnd(); ++it)
     {
         bool isString     = it.value().canConvert<QString>();
-        bool isStringList = (it.value().type() == QVariant::StringList);
+        bool isStringList = (it.value().metaType().id() == QMetaType::QStringList);
 
         if ((! isString) && (! isStringList))
         {

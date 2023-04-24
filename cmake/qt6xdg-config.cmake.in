@@ -1,0 +1,15 @@
+@PACKAGE_INIT@
+
+if (NOT TARGET @QTXDGX_LIBRARY_NAME@)
+    include(CMakeFindDependencyMacro)
+
+    find_dependency(Qt6Widgets @QT_MINIMUM_VERSION@)
+    find_dependency(Qt6Xml @QT_MINIMUM_VERSION@)
+    find_dependency(Qt6DBus @QT_MINIMUM_VERSION@)
+    find_dependency(Qt6XdgIconLoader @QTXDG_VERSION_STRING@ EXACT)
+
+    if (CMAKE_VERSION VERSION_GREATER 2.8.12)
+        cmake_policy(SET CMP0024 NEW)
+    endif()
+    include("${CMAKE_CURRENT_LIST_DIR}/qt6xdg-targets.cmake")
+endif()

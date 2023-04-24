@@ -55,7 +55,7 @@
 #include <private/qicon_p.h>
 #include <private/qiconloader_p.h>
 #include <QtCore/QHash>
-#include <QtCore/QVector>
+#include <QtCore/QList>
 
 //QT_BEGIN_NAMESPACE
 
@@ -80,12 +80,16 @@ public:
     bool read(QDataStream &in) override;
     bool write(QDataStream &out) const override;
 
+    QString iconName() override;
+    bool isNull() override;
+    QPixmap scaledPixmap(const QSize &size, QIcon::Mode mode, QIcon::State state, qreal scale) override;
+    QList<QSize> availableSizes(QIcon::Mode mode, QIcon::State state) override;
+
 private:
     QString key() const override;
     bool hasIcon() const;
     void ensureLoaded();
-    void virtual_hook(int id, void *data) override;
-    QIconLoaderEngineEntry *entryForSize(const QSize &size, int scale = 1);
+    QIconLoaderEngineEntry *entryForSize(const QThemeIconInfo &info, const QSize &size, int scale = 1);
     XdgIconLoaderEngine(const XdgIconLoaderEngine &other);
     QThemeIconInfo m_info;
     QString m_iconName;
@@ -104,18 +108,18 @@ public:
     XdgIconTheme(const QString &name);
     XdgIconTheme() = default;
     QStringList parents() { return m_parents; }
-    QVector <QIconDirInfo> keyList() { return m_keyList; }
+    QList <QIconDirInfo> keyList() { return m_keyList; }
     QStringList contentDirs() { return m_contentDirs; }
     bool isValid() const { return m_valid; }
     bool followsColorScheme() const { return m_followsColorScheme; }
 private:
     QStringList m_contentDirs;
-    QVector <QIconDirInfo> m_keyList;
+    QList <QIconDirInfo> m_keyList;
     QStringList m_parents;
     bool m_valid = false;
     bool m_followsColorScheme = false;
 public:
-    QVector<QSharedPointer<QIconCacheGtkReader>> m_gtkCaches;
+    QList<QSharedPointer<QIconCacheGtkReader>> m_gtkCaches;
 };
 
 class XDGICONLOADER_EXPORT XdgIconLoader

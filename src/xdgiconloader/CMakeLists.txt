@@ -46,13 +46,13 @@ target_include_directories(${QTXDGX_ICONLOADER_LIBRARY_NAME}
         "$<BUILD_INTERFACE:${QTXDGX_INTREE_INCLUDEDIR}>"
         "$<BUILD_INTERFACE:${QTXDGX_INTREE_INCLUDEDIR}/${QTXDGX_ICONLOADER_FILE_NAME}/${QTXDG_VERSION_STRING}>"
     PRIVATE
-        ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
+        ${Qt6Gui_PRIVATE_INCLUDE_DIRS}
 )
 
 target_link_libraries(${QTXDGX_ICONLOADER_LIBRARY_NAME}
     PUBLIC
-        Qt5::Gui
-        Qt5::Svg
+        Qt6::Gui
+        Qt6::Svg
 )
 
 set_target_properties(${QTXDGX_ICONLOADER_LIBRARY_NAME}

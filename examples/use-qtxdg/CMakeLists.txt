@@ -6,6 +6,6 @@ cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 # versions.
 project(use-qtxdg)
 
-find_package(QT5XDG)
+find_package(QT6XDG)
 add_executable(use-qtxdg main.cpp)
-target_link_libraries(use-qtxdg Qt5Xdg)
+target_link_libraries(use-qtxdg Qt6Xdg)

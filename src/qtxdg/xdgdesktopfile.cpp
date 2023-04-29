@@ -1008,6 +1008,11 @@ QString XdgDesktopFile::actionName(const QString & action) const
         : QString{};
 }
 
+QStringList XdgDesktopFile::actionExpandExecString(const QString & action, const QStringList& urls) const
+{        
+         return XdgDesktopAction{*this, action}.expandExecString(urls);       
+}
+
 XdgDesktopFile::Type XdgDesktopFile::type() const
 {
     return d->mType;

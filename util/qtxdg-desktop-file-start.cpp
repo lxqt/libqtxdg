@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     parser.setApplicationDescription(QLatin1String("QtXdg XdgDesktopFile start Tester"));
     parser.addHelpOption();
     parser.addVersionOption();
-    parser.addPositionalArgument(QLatin1String("file [urls...]"), QLatin1String("desktop file to start and it's urls"),QLatin1String("file [urls...]"));
+    parser.addPositionalArgument(QLatin1String("file [urls...]"), QLatin1String("desktop file to start and its urls"),QLatin1String("file [urls...]"));
     parser.process(app);
 
     if (parser.positionalArguments().isEmpty()) {

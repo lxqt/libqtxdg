@@ -24,20 +24,13 @@ target_include_directories("${QTXDGX_ICONENGINEPLUGIN_LIBRARY_NAME}"
 mark_as_advanced(QTXDGX_ICONENGINEPLUGIN_INSTALL_PATH)
 
 if (NOT DEFINED QTXDGX_ICONENGINEPLUGIN_INSTALL_PATH)
-    get_target_property(REAL_QMAKE_EXECUTABLE Qt6::qmake IMPORTED_LOCATION)
-    if(NOT REAL_QMAKE_EXECUTABLE)
-        message(FATAL_ERROR "qmake is not found.")
-    endif()
+    include(LXQtQueryQt)
+    lxqt_query_qt(_QT_PLUGINS_DIR QT_INSTALL_PLUGINS)
 
-    # execute the command "qmake -query QT_INSTALL_PLUGINS" to get the path of plugins dir.
-    execute_process(COMMAND "${REAL_QMAKE_EXECUTABLE}" -query QT_INSTALL_PLUGINS
-        OUTPUT_VARIABLE QT_PLUGINS_DIR
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-    if (NOT QT_PLUGINS_DIR)
+    if (NOT _QT_PLUGINS_DIR)
         message(FATAL_ERROR "Qt6 plugin directory cannot be detected.")
     endif()
-    set(QTXDGX_ICONENGINEPLUGIN_INSTALL_PATH "${QT_PLUGINS_DIR}/iconengines")
+    set(QTXDGX_ICONENGINEPLUGIN_INSTALL_PATH "${_QT_PLUGINS_DIR}/iconengines")
 endif()
 
 message(STATUS "XdgIconEnginePlugin will be installed into: ${QTXDGX_ICONENGINEPLUGIN_INSTALL_PATH}")

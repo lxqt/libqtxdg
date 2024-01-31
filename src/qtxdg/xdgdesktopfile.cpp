@@ -557,7 +557,7 @@ bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const
     {
         for (const QString &s : nonDetachExecs)
         {
-            for (const QString &a : qAsConst(args))
+            for (const QString &a : std::as_const(args))
             {
                 if (a.contains(s))
                 {
@@ -1505,7 +1505,7 @@ QString findDesktopFile(const QString& desktopName)
     QStringList dataDirs = XdgDirs::dataDirs();
     dataDirs.prepend(XdgDirs::dataHome(false));
 
-    for (const QString &dirName : qAsConst(dataDirs))
+    for (const QString &dirName : std::as_const(dataDirs))
     {
         QString f = findDesktopFile(dirName + QLatin1String("/applications"), desktopName);
         if (!f.isEmpty())

@@ -90,6 +90,7 @@ private:
     QThemeIconInfo m_info;
     QString m_iconName;
     uint m_key;
+    std::map<std::tuple<int, int>, QIconLoaderEngineEntry *> m_entryForSize;
 
     friend class XdgIconLoader;
 };

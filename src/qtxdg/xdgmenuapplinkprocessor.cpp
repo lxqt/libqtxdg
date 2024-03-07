@@ -88,7 +88,7 @@ void XdgMenuApplinkProcessor::step1()
 
     // Process childs menus ...............................
 
-    for (XdgMenuApplinkProcessor* child : qAsConst(mChilds))
+    for (XdgMenuApplinkProcessor* child : std::as_const(mChilds))
         child->step1();
 }
 
@@ -98,7 +98,7 @@ void XdgMenuApplinkProcessor::step2()
     // Create AppLinks elements ...........................
     QDomDocument doc = mElement.ownerDocument();
 
-    for (XdgMenuAppFileInfo* fileInfo : qAsConst(mSelected))
+    for (XdgMenuAppFileInfo* fileInfo : std::as_const(mSelected))
     {
         if (mOnlyUnallocated && fileInfo->allocated())
             continue;
@@ -139,7 +139,7 @@ void XdgMenuApplinkProcessor::step2()
 
 
     // Process childs menus ...............................
-    for (XdgMenuApplinkProcessor* child : qAsConst(mChilds))
+    for (XdgMenuApplinkProcessor* child : std::as_const(mChilds))
         child->step2();
 }
 

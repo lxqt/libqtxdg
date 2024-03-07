@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.16.0 FATAL_ERROR)
 # CMP0000: Call the cmake_minimum_required() command at the beginning of the top-level
 # CMakeLists.txt file even before calling the project() command.
 # The cmake_minimum_required(VERSION) command implicitly invokes the cmake_policy(VERSION)
@@ -13,17 +13,17 @@ option(QTXDG_INSTALL_DEFAPPS_CONFIG "Install default app config files" ON)
 # additional cmake files
 set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
-set(QTXDG_MAJOR_VERSION 3)
-set(QTXDG_MINOR_VERSION 12)
+set(QTXDG_MAJOR_VERSION 4)
+set(QTXDG_MINOR_VERSION 0)
 set(QTXDG_PATCH_VERSION 0)
 set(QTXDG_VERSION_STRING ${QTXDG_MAJOR_VERSION}.${QTXDG_MINOR_VERSION}.${QTXDG_PATCH_VERSION})
 
-set(LXQTBT_MINIMUM_VERSION "0.13.0")
-set(QT_MINIMUM_VERSION "5.15.0")
+set(LXQTBT_MINIMUM_VERSION "2.0.0")
+set(QT_MINIMUM_VERSION "6.6.0")
 set(GLIB_MINIMUM_VERSION "2.41.0") # Mime Apps new implementation
 
-find_package(lxqt-build-tools ${LXQTBT_MINIMUM_VERSION} REQUIRED)
-find_package(Qt5 ${QT_MINIMUM_VERSION} CONFIG REQUIRED Widgets Svg Xml DBus)
+find_package(lxqt2-build-tools ${LXQTBT_MINIMUM_VERSION} REQUIRED)
+find_package(Qt6 ${QT_MINIMUM_VERSION} CONFIG REQUIRED Widgets Svg Xml DBus)
 find_package(GLIB ${GLIB_MINIMUM_VERSION} REQUIRED COMPONENTS gobject gio gio-unix)
 find_package(XTerm)
 
@@ -44,26 +44,26 @@ include(compiler_settings NO_POLICY_SCOPE)
 set(CMAKE_AUTOMOC ON)
 
 if (BUILD_TESTS)
-    find_package(Qt5 ${QT_MINIMUM_VERSION} CONFIG REQUIRED Test)
+    find_package(Qt6 ${QT_MINIMUM_VERSION} CONFIG REQUIRED Test)
 endif()
 
 
-set(QTXDGX_LIBRARY_NAME "Qt5Xdg")
-set(QTXDGX_FILE_NAME "qt5xdg")
+set(QTXDGX_LIBRARY_NAME "Qt6Xdg")
+set(QTXDGX_FILE_NAME "qt6xdg")
 
-set(QTXDGX_ICONLOADER_LIBRARY_NAME "Qt5XdgIconLoader")
-set(QTXDGX_ICONLOADER_FILE_NAME "qt5xdgiconloader")
-set(QTXDGX_ICONENGINEPLUGIN_LIBRARY_NAME "Qt5XdgIconPlugin")
+set(QTXDGX_ICONLOADER_LIBRARY_NAME "Qt6XdgIconLoader")
+set(QTXDGX_ICONLOADER_FILE_NAME "qt6xdgiconloader")
+set(QTXDGX_ICONENGINEPLUGIN_LIBRARY_NAME "Qt6XdgIconPlugin")
 
-set(QTXDGX_PKG_CONFIG_DESCRIPTION "Qt5Xdg, a Qt5 implementation of XDG standards")
-set(QTXDGX_PKG_CONFIG_REQUIRES "Qt5Core >= ${QT_MINIMUM_VERSION}, Qt5Xml >= ${QT_MINIMUM_VERSION}, Qt5Widgets >= ${QT_MINIMUM_VERSION}, Qt5DBus >= ${QT_MINIMUM_VERSION}, Qt5XdgIconLoader = ${QTXDG_VERSION_STRING}")
+set(QTXDGX_PKG_CONFIG_DESCRIPTION "Qt6Xdg, a Qt6 implementation of XDG standards")
+set(QTXDGX_PKG_CONFIG_REQUIRES "Qt6Core >= ${QT_MINIMUM_VERSION}, Qt6Xml >= ${QT_MINIMUM_VERSION}, Qt6Widgets >= ${QT_MINIMUM_VERSION}, Qt6DBus >= ${QT_MINIMUM_VERSION}, Qt6XdgIconLoader = ${QTXDG_VERSION_STRING}")
 
-set(QTXDGX_ICONLOADER_PKG_CONFIG_DESCRIPTION "Qt5XdgIconLader, a Qt5 XDG Icon Loader")
-set(QTXDGX_ICONLOADER_PKG_CONFIG_REQUIRES "Qt5Gui >= ${QT_MINIMUM_VERSION}, Qt5Svg >= ${QT_MINIMUM_VERSION}")
+set(QTXDGX_ICONLOADER_PKG_CONFIG_DESCRIPTION "Qt6XdgIconLader, a Qt6 XDG Icon Loader")
+set(QTXDGX_ICONLOADER_PKG_CONFIG_REQUIRES "Qt6Gui >= ${QT_MINIMUM_VERSION}, Qt6Svg >= ${QT_MINIMUM_VERSION}")
 
 set(QTXDGX_INTREE_INCLUDEDIR "${CMAKE_CURRENT_BINARY_DIR}/InTreeBuild/include")
 
-message(STATUS "Building ${PROJECT_NAME} with Qt ${Qt5Core_VERSION}")
+message(STATUS "Building ${PROJECT_NAME} with Qt ${Qt6Core_VERSION}")
 
 if (QTXDG_INSTALL_DEFAPPS_CONFIG)
     file(GLOB QTXDG_CONFIG_FILES config/*.conf)

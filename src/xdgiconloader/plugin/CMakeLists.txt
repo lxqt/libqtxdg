@@ -12,32 +12,25 @@ target_compile_definitions(${QTXDGX_ICONENGINEPLUGIN_LIBRARY_NAME}
 )
 target_link_libraries(${QTXDGX_ICONENGINEPLUGIN_LIBRARY_NAME}
     PUBLIC
-        Qt5::Gui
+        Qt6::Gui
         "${QTXDGX_ICONLOADER_LIBRARY_NAME}"
 )
 
 target_include_directories("${QTXDGX_ICONENGINEPLUGIN_LIBRARY_NAME}"
     PRIVATE
-        "${Qt5Gui_PRIVATE_INCLUDE_DIRS}"
+        "${Qt6Gui_PRIVATE_INCLUDE_DIRS}"
 )
 
 mark_as_advanced(QTXDGX_ICONENGINEPLUGIN_INSTALL_PATH)
 
 if (NOT DEFINED QTXDGX_ICONENGINEPLUGIN_INSTALL_PATH)
-    get_target_property(QT_QMAKE_EXECUTABLE ${Qt5Core_QMAKE_EXECUTABLE} IMPORTED_LOCATION)
-    if(NOT QT_QMAKE_EXECUTABLE)
-        message(FATAL_ERROR "qmake is not found.")
-    endif()
+    include(LXQtQueryQt)
+    lxqt_query_qt(_QT_PLUGINS_DIR QT_INSTALL_PLUGINS)
 
-    # execute the command "qmake -query QT_INSTALL_PLUGINS" to get the path of plugins dir.
-    execute_process(COMMAND "${QT_QMAKE_EXECUTABLE}" -query QT_INSTALL_PLUGINS
-        OUTPUT_VARIABLE QT_PLUGINS_DIR
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-    if (NOT QT_PLUGINS_DIR)
-        message(FATAL_ERROR "Qt5 plugin directory cannot be detected.")
+    if (NOT _QT_PLUGINS_DIR)
+        message(FATAL_ERROR "Qt6 plugin directory cannot be detected.")
     endif()
-    set(QTXDGX_ICONENGINEPLUGIN_INSTALL_PATH "${QT_PLUGINS_DIR}/iconengines")
+    set(QTXDGX_ICONENGINEPLUGIN_INSTALL_PATH "${_QT_PLUGINS_DIR}/iconengines")
 endif()
 
 message(STATUS "XdgIconEnginePlugin will be installed into: ${QTXDGX_ICONENGINEPLUGIN_INSTALL_PATH}")

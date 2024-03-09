@@ -2,7 +2,7 @@
 
 ## Overview
 
-`libqtxdg` is a Qt 5 implementation of freedesktop.org XDG specifications.   
+`libqtxdg` is a Qt 6 implementation of freedesktop.org XDG specifications.   
 
 It is maintained by the LXQt project and nearly all LXQt components are depending on it. Yet it can be used independently from this desktop environment, too.   
 

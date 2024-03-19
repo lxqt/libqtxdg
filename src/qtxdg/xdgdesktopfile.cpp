@@ -27,7 +27,6 @@
 
 // clazy:excludeall=non-pod-global-static
 
-#include "desktopenvironment_p.cpp"
 #include "xdgdesktopfile.h"
 #include "xdgdesktopfile_p.h"
 #include "xdgdirs.h"
@@ -1376,12 +1375,20 @@ bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) 
     // A list of strings identifying the environments that should display/not
     // display a given desktop entry.
     // OnlyShowIn ........
-    QString env;
+    QStringList env;
     if (environment.isEmpty())
-        env = QString::fromLocal8Bit(detectDesktopEnvironment());
+        env = QString::fromLocal8Bit(qgetenv("XDG_CURRENT_DESKTOP").toLower()).split(QLatin1Char(':'));
     else {
-        env = environment.toUpper();
+        env.push_back(environment.toLower());
     }
+
+    const auto has_env_intersection = [&env] (const QStringList & values) -> bool {
+        for (const auto & val : values) {
+            if (env.cend() != std::find(env.cbegin(), env.cend(), val))
+                return true;
+        }
+        return false;
+    };
 
     QString key;
     bool keyFound = false;
@@ -1396,12 +1403,8 @@ bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) 
         keyFound = contains(key) ? true : false;
     }
 
-    if (keyFound)
-    {
-        QStringList s = value(key).toString().toUpper().split(QLatin1Char(';'));
-        if (!s.contains(env))
-            return false;
-    }
+    if (keyFound && !has_env_intersection(value(key).toString().toLower().split(QLatin1Char(';'))))
+        return false;
 
     // NotShowIn .........
     if (contains(notShowInKey))
@@ -1415,12 +1418,8 @@ bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) 
         keyFound = contains(key) ? true : false;
     }
 
-    if (keyFound)
-    {
-        QStringList s = value(key).toString().toUpper().split(QLatin1Char(';'));
-        if (s.contains(env))
-            return false;
-    }
+    if (keyFound && has_env_intersection(value(key).toString().toLower().split(QLatin1Char(';'))))
+        return false;
 
     // actually installed. If not, entry may not show in menus, etc.
     if (contains(QLatin1String("TryExec")))

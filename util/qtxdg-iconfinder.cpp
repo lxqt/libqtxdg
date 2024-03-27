@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
         const auto info = XdgIconLoader::instance()->loadIcon(iconName);
         qint64 elapsed = t.elapsed();
         const auto icon = info.iconName;
-        const auto entries = info.entries;
+        const auto &entries = info.entries;
 
         std::cout << qPrintable(iconName) <<
             qPrintable(QString::fromLatin1(":")) << qPrintable(icon) <<

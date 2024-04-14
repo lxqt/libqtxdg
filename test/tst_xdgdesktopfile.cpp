@@ -44,7 +44,7 @@ QTEST_MAIN(tst_xdgdesktopfile)
 
 void tst_xdgdesktopfile::testRead()
 {
-    QTemporaryFile file(QStringLiteral("testReadXXXXXX.desktop"));
+    QTemporaryFile file(QDir::temp().filePath(QStringLiteral("testReadXXXXXX.desktop")));
     QVERIFY(file.open());
     const QString fileName = file.fileName();
     QTextStream ts(&file);
@@ -87,7 +87,7 @@ void tst_xdgdesktopfile::testReadLocalized_data()
 
 void tst_xdgdesktopfile::testReadLocalized()
 {
-    QTemporaryFile file(QStringLiteral("testReadLocalizedXXXXXX.desktop"));
+    QTemporaryFile file(QDir::temp().filePath(QStringLiteral("testReadLocalizedXXXXXX.desktop")));
     QVERIFY(file.open());
     const QString fileName = file.fileName();
     QTextStream ts(&file);

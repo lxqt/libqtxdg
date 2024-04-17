@@ -1,3 +1,10 @@
+libqtxdg-4.0.0 / 2024-04-17
+============================
+ * Ported to Qt6.
+ * Consider the EV `XDG_CURRENT_DESKTOP` as a colon-separated list.
+ * Fixed an FTBFS with `BUILD_DEV_UTILS` enabled.
+ * Fixed a test file after recent changes in Qt6.
+
 libqtxdg-3.12.0 / 2023-11-05
 ============================
  * Fixed a typo and bumped the version.

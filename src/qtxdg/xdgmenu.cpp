@@ -666,6 +666,7 @@ QString XdgMenu::getMenuFileName(const QString& baseName)
     // rest files ordered by priority (descending)
     wellKnownFiles << QLatin1String("kde4-applications.menu");
     wellKnownFiles << QLatin1String("kde-applications.menu");
+    wellKnownFiles << QLatin1String("plasma-applications.menu");
     wellKnownFiles << QLatin1String("gnome-applications.menu");
     wellKnownFiles << QLatin1String("lxde-applications.menu");
 

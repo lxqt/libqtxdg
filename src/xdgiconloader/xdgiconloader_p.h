@@ -63,7 +63,11 @@ class XdgIconLoader;
 
 struct ScalableFollowsColorEntry : public ScalableEntry
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(6,8,0))
+    QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state, qreal scale) override;
+#else
     QPixmap pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state) override;
+#endif
 };
 
 //class QIconLoaderEngine : public QIconEngine

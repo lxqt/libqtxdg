@@ -72,12 +72,12 @@ public:
      */
     bool operator==(const XdgMimeType &other) const
     {
-        return QMimeType::operator==(other);
+        return name() == other.name();
     }
 
     inline bool operator!=(const XdgMimeType &other) const
     {
-        return !QMimeType::operator==(other);
+        return !operator==(other);
     }
 
     void swap(XdgMimeType &other) noexcept;

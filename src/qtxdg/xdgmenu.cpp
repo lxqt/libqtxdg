@@ -227,7 +227,7 @@ void XdgMenuPrivate::load(const QString& fileName)
         qWarning() << QString::fromLatin1("%1 not loading: %2").arg(fileName, file.errorString());
         return;
     }
-    mXml.setContent(&file, true);
+    mXml.setContent(&file, QDomDocument::ParseOption::UseNamespaceProcessing);
 }
 
 

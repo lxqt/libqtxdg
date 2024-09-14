@@ -794,7 +794,6 @@ QPixmap PixmapEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State st
         calculatedDpr = qMax(qreal(1.0), scale * ratio);
     }
 
-
     QString key = QLatin1String("$qt_theme_")
                   % HexString<quint64>(basePixmap.cacheKey())
                   % HexString<quint8>(mode)

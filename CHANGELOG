@@ -1,3 +1,8 @@
+libqtxdg-4.0.1 / 2024-10-12
+============================
+ * Added `plasma-applications.menu` to the fallback menu files.
+ * Fixed compilation with Qt ≥ 6.8.
+
 libqtxdg-4.0.0 / 2024-04-17
 ============================
  * Ported to Qt6.

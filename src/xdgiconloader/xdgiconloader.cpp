@@ -757,7 +757,11 @@ QSize XdgIconLoaderEngine::actualSize(const QSize &size, QIcon::Mode mode,
 }
 
 // XXX: duplicated from qiconloader.cpp, because this symbol isn't exported :(
+#if (QT_VERSION >= QT_VERSION_CHECK(6,8,0))
+QPixmap PixmapEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state, qreal scale)
+#else
 QPixmap PixmapEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state)
+#endif
 {
     Q_UNUSED(state);
 
@@ -766,18 +770,45 @@ QPixmap PixmapEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State st
     if (basePixmap.isNull())
         basePixmap.load(filename);
 
+    // see QPixmapIconEngine::adjustSize
     QSize actualSize = basePixmap.size();
     // If the size of the best match we have (basePixmap) is larger than the
     // requested size, we downscale it to match.
     if (!actualSize.isNull() && (actualSize.width() > size.width() || actualSize.height() > size.height()))
         actualSize.scale(size, Qt::KeepAspectRatio);
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6,8,0))
+    // see QIconPrivate::pixmapDevicePixelRatio
+    qreal calculatedDpr;
+    QSize targetSize = size * scale;
+    if ((actualSize.width() == targetSize.width() && actualSize.height() <= targetSize.height()) ||
+        (actualSize.width() <= targetSize.width() && actualSize.height() == targetSize.height()))
+    {
+        // Correctly scaled for dpr, just having different aspect ratio
+        calculatedDpr = scale;
+    }
+    else
+    {
+        qreal ratio = 0.5 * (qreal(actualSize.width()) / qreal(targetSize.width()) +
+                             qreal(actualSize.height() / qreal(targetSize.height())));
+        calculatedDpr = qMax(qreal(1.0), scale * ratio);
+    }
+
+    QString key = QLatin1String("$qt_theme_")
+                  % HexString<quint64>(basePixmap.cacheKey())
+                  % HexString<quint8>(mode)
+                  % HexString<quint64>(QGuiApplication::palette().cacheKey())
+                  % HexString<uint>(actualSize.width())
+                  % HexString<uint>(actualSize.height())
+                  % HexString<quint16>(qRound(calculatedDpr * 1000));
+#else
     QString key = QLatin1String("$qt_theme_")
                   % HexString<qint64>(basePixmap.cacheKey())
                   % HexString<int>(mode)
                   % HexString<qint64>(QGuiApplication::palette().cacheKey())
                   % HexString<int>(actualSize.width())
                   % HexString<int>(actualSize.height());
+#endif
 
     QPixmap cachedPixmap;
     if (QPixmapCache::find(key, &cachedPixmap)) {
@@ -789,6 +820,9 @@ QPixmap PixmapEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State st
             cachedPixmap = basePixmap;
         if (QGuiApplication *guiApp = qobject_cast<QGuiApplication *>(qApp))
             cachedPixmap = static_cast<QGuiApplicationPrivate*>(QObjectPrivate::get(guiApp))->applyQIconStyleHelper(mode, cachedPixmap);
+#if (QT_VERSION >= QT_VERSION_CHECK(6,8,0))
+        cachedPixmap.setDevicePixelRatio(calculatedDpr);
+#endif
         QPixmapCache::insert(key, cachedPixmap);
     }
     return cachedPixmap;
@@ -796,21 +830,39 @@ QPixmap PixmapEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State st
 
 // NOTE: For SVG, QSvgRenderer is used to prevent our icon handling from
 // being broken by icon engines that register themselves for SVG.
+#if (QT_VERSION >= QT_VERSION_CHECK(6,8,0))
+QPixmap ScalableEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state, qreal scale)
+#else
 QPixmap ScalableEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state)
+#endif
 {
     QPixmap pm;
     if (size.isEmpty())
         return pm;
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6,8,0))
+    QString key = QLatin1String("lxqt_")
+                  % filename
+                  % HexString<quint8>(mode)
+                  % HexString<int>(state)
+                  % HexString<uint>(size.width())
+                  % HexString<uint>(size.height())
+                  % HexString<quint16>(qRound(scale * 1000));
+#else
     QString key = QLatin1String("lxqt_")
                   % filename
                   % HexString<int>(mode)
                   % HexString<int>(state)
                   % HexString<int>(size.width())
                   % HexString<int>(size.height());
+#endif
     if (!QPixmapCache::find(key, &pm))
     {
+#if (QT_VERSION >= QT_VERSION_CHECK(6,8,0))
+        int icnSize = qMin(size.width(), size.height()) * scale;
+#else
         int icnSize = qMin(size.width(), size.height());
+#endif
         pm = QPixmap(icnSize, icnSize);
         pm.fill(Qt::transparent);
 
@@ -824,8 +876,12 @@ QPixmap ScalableEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State 
         }
 
         svgIcon = QIcon(pm);
+#if (QT_VERSION >= QT_VERSION_CHECK(6,8,0))
+        pm = svgIcon.pixmap(size, scale, mode, state);
+#else
         if (QIconEngine *engine = svgIcon.data_ptr() ? svgIcon.data_ptr()->engine : nullptr)
             pm = engine->pixmap(size, mode, state);
+#endif
         QPixmapCache::insert(key, pm);
     }
 
@@ -838,7 +894,11 @@ static const QString STYLE = QStringLiteral("\n.ColorScheme-Text, .ColorScheme-N
 // NOTE: Qt palette does not have any colors for positive/negative text
 // .ColorScheme-PositiveText,ColorScheme-NegativeText {color:%4;}
 
+#if (QT_VERSION >= QT_VERSION_CHECK(6,8,0))
+QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state, qreal scale)
+#else
 QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State state)
+#endif
 {
     QPixmap pm;
     if (size.isEmpty())
@@ -866,6 +926,16 @@ QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, Q
         }
         hCol = pal.highlight().color().name();
     }
+#if (QT_VERSION >= QT_VERSION_CHECK(6,8,0))
+    QString key = QLatin1String("lxqt_")
+                  % filename
+                  % HexString<quint8>(mode)
+                  % HexString<int>(state)
+                  % HexString<uint>(size.width())
+                  % HexString<uint>(size.height())
+                  % HexString<quint16>(qRound(scale * 1000))
+                  % txtCol % bgCol % hCol;
+#else
     QString key = QLatin1String("lxqt_")
                   % filename
                   % HexString<int>(mode)
@@ -873,9 +943,14 @@ QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, Q
                   % HexString<int>(size.width())
                   % HexString<int>(size.height())
                   % txtCol % bgCol % hCol;
+#endif
     if (!QPixmapCache::find(key, &pm))
     {
+#if (QT_VERSION >= QT_VERSION_CHECK(6,8,0))
+        int icnSize = qMin(size.width(), size.height()) * scale;
+#else
         int icnSize = qMin(size.width(), size.height());
+#endif
         pm = QPixmap(icnSize, icnSize);
         pm.fill(Qt::transparent);
 
@@ -926,8 +1001,12 @@ QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, Q
         // for QIcon::pixmap() to handle states and modes,
         // especially the disabled mode.
         svgIcon = QIcon(pm);
+#if (QT_VERSION >= QT_VERSION_CHECK(6,8,0))
+        pm = svgIcon.pixmap(size, scale, mode, state);
+#else
         if (QIconEngine *engine = svgIcon.data_ptr() ? svgIcon.data_ptr()->engine : nullptr)
             pm = engine->pixmap(size, mode, state);
+#endif
         QPixmapCache::insert(key, pm);
     }
 
@@ -937,13 +1016,7 @@ QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, Q
 QPixmap XdgIconLoaderEngine::pixmap(const QSize &size, QIcon::Mode mode,
                                  QIcon::State state)
 {
-    ensureLoaded();
-
-    QIconLoaderEngineEntry *entry = entryForSize(m_info, size);
-    if (entry)
-        return entry->pixmap(size, mode, state);
-
-    return QPixmap();
+    return scaledPixmap(size, mode, state, 1.0);
 }
 
 QString XdgIconLoaderEngine::key() const
@@ -967,8 +1040,13 @@ QPixmap XdgIconLoaderEngine::scaledPixmap(const QSize &size, QIcon::Mode mode, Q
 {
     ensureLoaded();
     const int integerScale = qCeil(scale);
+#if (QT_VERSION >= QT_VERSION_CHECK(6,8,0))
+    QIconLoaderEngineEntry *entry = entryForSize(m_info, size, integerScale);
+    return entry ? entry->pixmap(size, mode, state, scale) : QPixmap();
+#else
     QIconLoaderEngineEntry *entry = entryForSize(m_info, size / integerScale, integerScale);
     return entry ? entry->pixmap(size, mode, state) : QPixmap();
+#endif
 }
 
 QList<QSize> XdgIconLoaderEngine::availableSizes(QIcon::Mode mode, QIcon::State state)

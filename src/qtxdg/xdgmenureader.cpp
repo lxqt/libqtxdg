@@ -79,16 +79,13 @@ bool XdgMenuReader::load(const QString& fileName, const QString& baseDir)
     //qDebug() << "Load file:" << mFileName;
     mMenu->addWatchPath(mFileName);
 
-    QString errorStr;
-    int errorLine;
-    int errorColumn;
-
-    if (!mXml.setContent(&file, true, &errorStr, &errorLine, &errorColumn))
+    QDomDocument::ParseResult res = mXml.setContent(&file, QDomDocument::ParseOption::UseNamespaceProcessing);
+    if (!res)
     {
         mErrorStr = QString::fromLatin1("Parse error at line %1, column %2:\n%3")
-                        .arg(errorLine)
-                        .arg(errorColumn)
-                        .arg(errorStr);
+                        .arg(res.errorLine)
+                        .arg(res.errorColumn)
+                        .arg(res.errorMessage);
        return false;
     }
 

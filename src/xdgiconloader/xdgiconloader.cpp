@@ -439,7 +439,11 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
                 } else if (gSupportsSvg) {
                     const QString svgPath = subDir + svgIconName;
                     if (QFile::exists(svgPath)) {
-                        std::unique_ptr<ScalableEntry> iconEntry = (followColorScheme() && theme.followsColorScheme()) ? std::make_unique<ScalableFollowsColorEntry>() : std::make_unique<ScalableEntry>();
+                        std::unique_ptr<QIconLoaderEngineEntry> iconEntry;
+                        if (followColorScheme() && theme.followsColorScheme())
+                            iconEntry.reset(new ScalableFollowsColorEntry);
+                        else
+                            iconEntry.reset(new ScalableEntry);
                         iconEntry->dir = dirInfo;
                         iconEntry->filename = svgPath;
                         info.entries.push_back(std::move(iconEntry));
@@ -737,8 +741,11 @@ QSize XdgIconLoaderEngine::actualSize(const QSize &size, QIcon::Mode mode,
     QIconLoaderEngineEntry *entry = entryForSize(m_info, size);
     if (entry) {
         const QIconDirInfo &dir = entry->dir;
-        if (dir.type == QIconDirInfo::Scalable || dynamic_cast<ScalableEntry *>(entry))
+        if (dir.type == QIconDirInfo::Scalable
+            || dynamic_cast<ScalableEntry *>(entry)
+            || dynamic_cast<ScalableFollowsColorEntry *>(entry)) {
             return size;
+        }
         else {
             int dir_size = dir.size;
             //Note: fallback for directories that don't have its content size defined

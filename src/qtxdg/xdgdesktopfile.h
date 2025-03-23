@@ -203,7 +203,14 @@ public:
         @par urls - A list of files or URLS. Each file is passed as a separate argument to the result string program.*/
     QStringList expandExecString(const QStringList& urls = QStringList()) const;
 
-    /*! Returns the URL for the Link desktop file; otherwise an empty string is returned.  */
+    /*! A Exec value consists of an executable program optionally followed by one or more arguments.
+        This function expands this arguments for @par action and returns command line string parts.
+        Note this method make sense only for Application type.
+        @par action - The action on which to query the expanded exec string.
+        @par urls - A list of files or URLS. Each file is passed as a separate argument to the result string program.*/
+    QStringList actionExpandExecString(const QString & action, const QStringList& urls = QStringList()) const;
+
+     /*! Returns the URL for the Link desktop file; otherwise an empty string is returned.  */
     QString url() const;
 
     /*! Computes the desktop file ID. It is the identifier of an installed

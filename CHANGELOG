@@ -1,3 +1,7 @@
+libqtxdg-4.2.0 / 2025-04-17
+============================
+ * Adapted to changes in private headers of Qt 6.9.
+
 libqtxdg-4.1.0 / 2024-11-05
 ============================
  * Bumped the version to 4.1.0.

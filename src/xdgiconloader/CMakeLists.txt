@@ -50,6 +50,8 @@ target_include_directories(${QTXDGX_ICONLOADER_LIBRARY_NAME}
 )
 
 target_link_libraries(${QTXDGX_ICONLOADER_LIBRARY_NAME}
+    PRIVATE
+        Qt6::GuiPrivate
     PUBLIC
         Qt6::Gui
         Qt6::Svg

@@ -1129,6 +1129,7 @@ void replaceVar(QString &str, const QString &varName, const QString &after)
 
 QString expandEnvVariables(const QString &str)
 {
+    static QRegularExpression tildeHomeRegex{QString::fromLatin1("~(?=$|/)")};
     QString scheme = QUrl(str).scheme();
 
     if (scheme == QLatin1String("http")   || scheme == QLatin1String("https") || scheme == QLatin1String("shttp") ||
@@ -1147,7 +1148,7 @@ QString expandEnvVariables(const QString &str)
     const QString homeDir = QFile::decodeName(qgetenv("HOME"));
 
     QString res = str;
-    res.replace(QRegularExpression(QString::fromLatin1("~(?=$|/)")), homeDir);
+    res.replace(tildeHomeRegex, homeDir);
 
     replaceVar(res, QLatin1String("HOME"), homeDir);
     replaceVar(res, QLatin1String("USER"), QString::fromLocal8Bit(qgetenv("USER")));

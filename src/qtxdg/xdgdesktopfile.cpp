@@ -97,7 +97,7 @@ QString expandEnvVariables(const QString &str);
 QStringList expandEnvVariables(const QStringList &strs);
 QString findDesktopFile(const QString& dirName, const QString& desktopName);
 QString findDesktopFile(const QString& desktopName);
-static QStringList parseCombinedArgString(const QString &program, const QList<int> &literals);
+static QStringList parseCombinedArgString(const QStringView program, const QList<int> &literals);
 bool read(const QString &prefix);
 void replaceVar(QString &str, const QString &varName, const QString &after);
 QString &unEscape(QString& str, bool exec);
@@ -1058,7 +1058,7 @@ bool XdgDesktopFile::startDetached(const QString& url) const
 }
 
 
-static QStringList parseCombinedArgString(const QString &program, const QList<int> &literals)
+static QStringList parseCombinedArgString(const QStringView program, const QList<int> &literals)
 {
     QStringList args;
     QString tmp;
@@ -1077,7 +1077,7 @@ static QStringList parseCombinedArgString(const QString &program, const QList<in
             // Add the literal to the arguments and jump to its end.
             int length = literals.at(n + 1) - literals.at(n) - 1;
             if (length > 0) {
-                tmp += program.mid(literals.at(n) + 1, length);
+                tmp += program.sliced(literals.at(n) + 1, length);
                 isLiteral = true;
             }
             i = literals.at(n + 1);

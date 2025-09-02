@@ -33,6 +33,7 @@
 #include <QFileInfo>
 #include <QRandomGenerator>
 #include <QTest>
+#include <QFileInfo>
 #include <QTemporaryDir>
 
 using namespace Qt::Literals::StringLiterals;
@@ -67,6 +68,7 @@ private Q_SLOTS:
     void testAutostartHome();
     void testAutostartDirs();
     void testNonWritableLocations();
+    void testStateHome();
 
 private:
     void setDefaultLocations();
@@ -89,6 +91,9 @@ private:
 
     QDir m_nonWritableRoot;
     QString m_configHomeNonWritable;
+
+    QString m_stateHome;
+    QTemporaryDir m_stateHomeTemp;
 };
 
 void tst_xdgdirs::initTestCase()
@@ -117,6 +122,7 @@ void tst_xdgdirs::setDefaultLocations()
     qputenv("XDG_DATA_HOME", QByteArray());
     qputenv("XDG_DATA_DIRS", QByteArray());
     qputenv("XDG_CACHE_HOME", QByteArray());
+    qputenv("XDG_STATE_HOME", QByteArray());
 }
 
 void tst_xdgdirs::setCustomLocations()
@@ -126,12 +132,13 @@ void tst_xdgdirs::setCustomLocations()
     m_dataHome = m_dataHomeTemp.path();
     m_dataDirs = m_dataDirsTemp.path();
     m_cacheHome = m_cacheHomeTemp.path();
+    m_stateHome = m_stateHomeTemp.path();
     qputenv("XDG_CONFIG_HOME", QFile::encodeName(m_configHome));
     qputenv("XDG_CONFIG_DIRS", QFile::encodeName(m_configDirs));
     qputenv("XDG_DATA_HOME", QFile::encodeName(m_dataHome));
     qputenv("XDG_DATA_DIRS", QFile::encodeName(m_dataDirs));
     qputenv("XDG_CACHE_HOME", QFile::encodeName(m_cacheHome));
-
+    qputenv("XDG_STATE_HOME", QFile::encodeName(m_stateHome));
 }
 
 void tst_xdgdirs::setNonWritableLocations()
@@ -146,6 +153,7 @@ void tst_xdgdirs::setNonWritableLocations()
     qputenv("XDG_CONFIG_HOME", QFile::encodeName(m_configHomeNonWritable));
     qputenv("XDG_DATA_HOME", QFile::encodeName(m_configHomeNonWritable));
     qputenv("XDG_CACHE_HOME", QFile::encodeName(m_configHomeNonWritable));
+    qputenv("XDG_STATE_HOME", QFile::encodeName(m_configHomeNonWritable));
 }
 
 void tst_xdgdirs::testDataHome()
@@ -290,6 +298,20 @@ void tst_xdgdirs::testNonWritableLocations()
     QCOMPARE(XdgDirs::dataHome(true), QString());
     QCOMPARE(XdgDirs::cacheHome(true), QString());
     QCOMPARE(XdgDirs::autostartHome(true), QString());
+
+    QCOMPARE(XdgDirs::stateHome(true), QString());
+    QCOMPARE(XdgDirs::stateHome("appName"_L1), QString());
+}
+
+void tst_xdgdirs::testStateHome()
+{
+    setDefaultLocations();
+    const QString stateHome = XdgDirs::stateHome();
+    QCOMPARE(stateHome, QDir::homePath() + "/.local/state"_L1);
+
+    setCustomLocations();
+    const QString stateHomeCustom = XdgDirs::stateHome();
+    QCOMPARE(stateHomeCustom, m_stateHome);
 }
 
 QTEST_APPLESS_MAIN(tst_xdgdirs)

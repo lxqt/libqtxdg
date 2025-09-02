@@ -151,6 +151,19 @@ public:
       * @sa autostartHome()
       */
      static QStringList autostartDirs(const QString &postfix = QString());
+
+     /*! @brief Returns a directory location where user-specific application state data files should be written.
+      * If $XDG_STATE_HOME is either not set or empty, a default equal to $HOME/.local/state should be used.
+      * If @i createDir is true the resultig dir will be created. If the resulting dir cannot be createds an empty string is returned.
+      */
+     static QString stateHome(bool createDir = true);
+
+     /*! @brief Returns a directory location where user-specific application state data files should be written.
+      * If $XDG_STATE_HOME is either not set or empty, a default equal to $HOME/.local/state should be used.
+      * If @i postfix is not empty it will be appended to the XDG_STATE_HOME.
+      * If @i createDir is true the resultig dir will be created. If the resulting dir cannot be createds an empty string is returned.
+      */
+     static QString stateHome(const QString &postfix, bool createDir = true);
 };
 
 #endif // QTXDG_XDGDIRS_H

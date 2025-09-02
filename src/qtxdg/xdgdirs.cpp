@@ -367,3 +367,41 @@ QStringList XdgDirs::autostartDirs(const QString &postfix)
     cleanAndAddPostfix(dirs, postfix);
     return dirs;
 }
+
+
+QString XdgDirs::stateHome(bool createDir)
+{
+    QString d = qEnvironmentVariable("XDG_STATE_HOME");
+
+    // All paths set in the environment variables must be absolute
+    // Relative paths should consider the path invalid and ignore it
+    if (!d.startsWith(u'/'))
+        d.clear();
+
+    if (d.isEmpty())
+        d = QDir::homePath() + "/.local/state"_L1;
+
+    if (createDir)
+        return createDirectory(d);
+
+    return d;
+}
+
+QString XdgDirs::stateHome(const QString &postfix, bool createDir)
+{
+    QString d = stateHome(createDir);
+    if (d.isEmpty())
+        return QString();
+
+    if (postfix.isEmpty())
+        return d;
+
+    fixBashShortcuts(d);
+    removeEndingSlash(d);
+    const QString dir = d.append(handlePostfix(postfix));
+
+    if (createDir)
+        return createDirectory(dir);
+
+    return dir;
+}

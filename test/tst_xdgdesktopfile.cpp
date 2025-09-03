@@ -20,7 +20,9 @@
 
 #include "tst_xdgdesktopfile.h"
 #include "XdgDesktopFile"
-#include <QtTest>
+
+#include <QTemporaryFile>
+#include <QTest>
 
 
 class Language

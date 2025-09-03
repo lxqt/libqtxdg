@@ -35,7 +35,7 @@
 #include "xdgdirs.h"
 #include "xdgmimeapps.h"
 
-#include <QtTest>
+#include <QTest>
 
 #include <QDir>
 #include <QFileInfo>

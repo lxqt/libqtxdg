@@ -29,7 +29,7 @@
 
 #include "xdgdirs.h"
 
-#include <QtTest>
+#include <QTest>
 #include <QTemporaryDir>
 
 class tst_xdgdirs : public QObject

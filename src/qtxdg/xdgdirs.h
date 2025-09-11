@@ -36,7 +36,7 @@
  * This specification defines where these files should be looked for by defining one or more base
  * directories relative to which files should be located.
  *
- * All postfix parameters should start with an '/' slash.
+ * postfix parameters can start with or without an '/u' slash. Both cases are handled.
  *
  * @sa http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
  */

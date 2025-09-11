@@ -32,7 +32,7 @@
 #include <QString>
 #include <QStringList>
 
-/*! @brief The XdgMenu class implements the "XDG Base Directory Specification" from freedesktop.org.
+/*! @brief The XdgDirs class implements the "XDG Base Directory Specification" from freedesktop.org.
  * This specification defines where these files should be looked for by defining one or more base
  * directories relative to which files should be located.
  *

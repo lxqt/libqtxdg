@@ -82,6 +82,7 @@ QString createDirectory(const QString &dir)
         if (!d.mkpath(QLatin1String(".")))
         {
             qWarning() << QString::fromLatin1("Can't create %1 directory.").arg(d.absolutePath());
+            return QString();
         }
     }
     QString r = d.absolutePath();

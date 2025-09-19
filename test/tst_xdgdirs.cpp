@@ -29,8 +29,27 @@
 
 #include "xdgdirs.h"
 
+#include <QDir>
+#include <QFileInfo>
+#include <QRandomGenerator>
 #include <QTest>
 #include <QTemporaryDir>
+
+using namespace Qt::Literals::StringLiterals;
+
+QString randomString(int length)
+{
+    static const QString characterPool("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"_L1);
+    if (length < 0)
+        return QString();
+
+    QString randomString;
+    for (int i = 0; i < length; ++i) {
+        const int index = QRandomGenerator::global()->generate() % characterPool.size();
+        randomString.append(characterPool.at(index));
+    }
+    return randomString;
+}
 
 class tst_xdgdirs : public QObject
 {
@@ -47,10 +66,12 @@ private Q_SLOTS:
     void testCacheHome();
     void testAutostartHome();
     void testAutostartDirs();
+    void testNonWritableLocations();
 
 private:
     void setDefaultLocations();
     void setCustomLocations();
+    void setNonWritableLocations();
 
     QString m_configHome;
     QTemporaryDir m_configHomeTemp;
@@ -62,6 +83,9 @@ private:
     QTemporaryDir m_dataDirsTemp;
     QString m_cacheHome;
     QTemporaryDir m_cacheHomeTemp;
+
+    QDir m_nonWritableRoot;
+    QString m_configHomeNonWritable;
 };
 
 void tst_xdgdirs::initTestCase()
@@ -74,6 +98,10 @@ void tst_xdgdirs::cleanupTestCase()
 {
     QCoreApplication::instance()->setOrganizationName(QString());
     QCoreApplication::instance()->setApplicationName(QString());
+
+    QFile f(m_nonWritableRoot.path());
+    QVERIFY(f.setPermissions(QFile::WriteUser | QFile::WriteOwner));
+    QVERIFY(m_nonWritableRoot.removeRecursively());
 }
 
 void tst_xdgdirs::setDefaultLocations()
@@ -100,12 +128,27 @@ void tst_xdgdirs::setCustomLocations()
 
 }
 
+void tst_xdgdirs::setNonWritableLocations()
+{
+    const QString randomDir = randomString(8);
+    m_nonWritableRoot = QDir::temp();
+
+    QVERIFY(m_nonWritableRoot.mkdir(randomDir, QFileDevice::ReadUser));
+    m_nonWritableRoot.cd(randomDir);
+    m_configHomeNonWritable = m_nonWritableRoot.path() + u'/' + "nonwritabledir"_L1;
+
+    qputenv("XDG_CONFIG_HOME", QFile::encodeName(m_configHomeNonWritable));
+    qputenv("XDG_DATA_HOME", QFile::encodeName(m_configHomeNonWritable));
+    qputenv("XDG_CACHE_HOME", QFile::encodeName(m_configHomeNonWritable));
+}
+
 void tst_xdgdirs::testDataHome()
 {
     setDefaultLocations();
     const QString expectedDataHome = QDir::homePath() + QString::fromLatin1("/.local/share");
     QCOMPARE(XdgDirs::dataHome(), expectedDataHome);
     QCOMPARE(XdgDirs::dataHome(false), expectedDataHome);
+    QCOMPARE(XdgDirs::dataHome(true), expectedDataHome);
 
     setCustomLocations();
     QCOMPARE(XdgDirs::dataHome(), m_dataHome);
@@ -221,6 +264,14 @@ void tst_xdgdirs::testAutostartDirs()
     const QStringList autostartDirsCustomWithPostfix = XdgDirs::autostartDirs(postfix);
     QCOMPARE(autostartDirsCustomWithPostfix.count(), 1);
     QCOMPARE(autostartDirsCustomWithPostfix.at(0), m_configDirs + QString::fromLatin1("/autostart") + postfix);
+}
+
+void tst_xdgdirs::testNonWritableLocations()
+{
+    setNonWritableLocations();
+    QCOMPARE(XdgDirs::configHome(true), QString());
+    QCOMPARE(XdgDirs::dataHome(true), QString());
+    QCOMPARE(XdgDirs::cacheHome(true), QString());
 }
 
 QTEST_APPLESS_MAIN(tst_xdgdirs)

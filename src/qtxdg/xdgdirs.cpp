@@ -230,7 +230,8 @@ bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool 
     if (createDir) {
         QString path = QString(value).replace(QLatin1String("$HOME"), QLatin1String("~"));
         fixBashShortcuts(path);
-        QDir().mkpath(path);
+
+        return createDirectory(path).isEmpty() ? false : true;
     }
 
     return true;

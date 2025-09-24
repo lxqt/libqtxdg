@@ -72,7 +72,8 @@ public:
 
     /*! @brief Returns true if writing into configuration file $XDG_CONFIG_HOME/user-dirs.dirs
      * the path in value for the directory in dir is succesfull. Returns false otherwise. If
-     * createDir is true, dir will be created if it doesn't exist.
+     * createDir is true, dir will be created if it doesn't exist. Returns true if dir creation
+     * is succesfull, false otherwise.
      */
     static bool setUserDir(UserDirectory dir, const QString &value, bool createDir);
 

@@ -272,6 +272,7 @@ void tst_xdgdirs::testNonWritableLocations()
     QCOMPARE(XdgDirs::configHome(true), QString());
     QCOMPARE(XdgDirs::dataHome(true), QString());
     QCOMPARE(XdgDirs::cacheHome(true), QString());
+    QCOMPARE(XdgDirs::autostartHome(true), QString());
 }
 
 QTEST_APPLESS_MAIN(tst_xdgdirs)

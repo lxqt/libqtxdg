@@ -33,6 +33,7 @@
 #include <QDebug>
 #include <QStandardPaths>
 
+using namespace Qt::Literals::StringLiterals;
 
 static const QString userDirectoryString[8] =
 {
@@ -323,7 +324,12 @@ QString XdgDirs::runtimeDir()
 
 QString XdgDirs::autostartHome(bool createDir)
 {
-    QString s = QString::fromLatin1("%1/autostart").arg(configHome(createDir));
+    const QString confHome = configHome(createDir);
+
+    if (confHome.isEmpty())
+        return QString();
+
+    QString s = confHome + "/autostart"_L1;
     fixBashShortcuts(s);
 
     if (createDir)

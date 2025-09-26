@@ -74,6 +74,7 @@ private:
     void setNonWritableLocations();
 
     QString noSlashPostfix;
+    QString postfix;
 
     QString m_configHome;
     QTemporaryDir m_configHomeTemp;
@@ -96,6 +97,7 @@ void tst_xdgdirs::initTestCase()
     QCoreApplication::instance()->setApplicationName(QStringLiteral("tst_xdgdirs"));
 
     noSlashPostfix = QCoreApplication::applicationName();
+    postfix = u'/' + QCoreApplication::applicationName();
 }
 
 void tst_xdgdirs::cleanupTestCase()
@@ -173,8 +175,6 @@ void tst_xdgdirs::testConfigHome()
 
 void tst_xdgdirs::testDataDirs()
 {
-    const QString postfix = QString::fromLatin1("/") + QCoreApplication::applicationName();
-
     setDefaultLocations();
     const QStringList dataDirs = XdgDirs::dataDirs();
     QCOMPARE(dataDirs.count(), 2);
@@ -207,7 +207,6 @@ void tst_xdgdirs::testDataDirs()
 
 void tst_xdgdirs::testConfigDirs()
 {
-    const QString postfix = QString::fromLatin1("/") + QCoreApplication::applicationName();
     setDefaultLocations();
 
     const QStringList configDirs = XdgDirs::configDirs();
@@ -257,8 +256,6 @@ void tst_xdgdirs::testAutostartHome()
 
 void tst_xdgdirs::testAutostartDirs()
 {
-    const QString postfix = QString::fromLatin1("/") + QCoreApplication::applicationName();
-
     setDefaultLocations();
     const QStringList autostartDirs = XdgDirs::autostartDirs();
     QCOMPARE(autostartDirs.count(), 1);

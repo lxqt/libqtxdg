@@ -28,7 +28,8 @@
 #include "xdgmenulayoutprocessor.h"
 #include "xmlhelper.h"
 #include <QDebug>
-#include <QMap>
+#include <QCollator>
+#include <QList>
 
 
 // Helper functions prototypes
@@ -386,7 +387,7 @@ void XdgMenuLayoutProcessor::processSeparatorTag(const QDomElement &element)
 void XdgMenuLayoutProcessor::processMergeTag(const QDomElement &element)
 {
     QString type = element.attribute(QLatin1String("type"));
-    QMap<QString, QDomElement> map;
+    QList<QDomElement> elements;
     MutableDomElementIterator it(mElement);
 
     while (it.hasNext())
@@ -396,13 +397,20 @@ void XdgMenuLayoutProcessor::processMergeTag(const QDomElement &element)
             ((type == QLatin1String("menus") || type == QLatin1String("all")) && e.tagName() == QLatin1String("Menu" )) ||
             ((type == QLatin1String("files") || type == QLatin1String("all")) && e.tagName() == QLatin1String("AppLink"))
            )
-            map.insert(e.attribute(QLatin1String("title")), e);
+            elements.append(e);
     }
 
-    QMapIterator<QString, QDomElement> mi(map);
-    while (mi.hasNext()) {
-        mi.next();
-        mResult.insertBefore(mi.value(), element);
+    QCollator collator;
+    collator.setCaseSensitivity(Qt::CaseInsensitive);
+
+    std::sort(elements.begin(), elements.end(),
+              [&](const QDomElement &a, const QDomElement &b) {
+                  return collator.compare(a.attribute(QLatin1String("title")),
+                                          b.attribute(QLatin1String("title"))) < 0;
+              });
+
+    for (const QDomElement &e : elements) {
+        mResult.insertBefore(e, element);
     }
 
     mResult.removeChild(element);

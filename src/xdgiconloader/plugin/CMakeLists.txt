@@ -11,6 +11,8 @@ target_compile_definitions(${QTXDGX_ICONENGINEPLUGIN_LIBRARY_NAME}
         "QT_NO_KEYWORDS"
 )
 target_link_libraries(${QTXDGX_ICONENGINEPLUGIN_LIBRARY_NAME}
+    PRIVATE
+        Qt6::GuiPrivate
     PUBLIC
         Qt6::Gui
         "${QTXDGX_ICONLOADER_LIBRARY_NAME}"

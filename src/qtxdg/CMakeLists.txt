@@ -78,6 +78,8 @@ add_library(${QTXDGX_LIBRARY_NAME} SHARED
 )
 
 target_link_libraries(${QTXDGX_LIBRARY_NAME}
+    PRIVATE
+        Qt6::GuiPrivate
     PUBLIC
         ${QTX_LIBRARIES}
         ${QTXDGX_ICONLOADER_LIBRARY_NAME}

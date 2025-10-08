@@ -53,6 +53,7 @@ void removeEndingSlash(QString &s);
 QString createDirectory(const QString &dir);
 
 void cleanAndAddPostfix(QStringList &dirs, const QString& postfix);
+QString handlePostfix(const QString &postfix);
 QString userDirFallback(XdgDirs::UserDirectory dir);
 
 /************************************************
@@ -94,13 +95,25 @@ QString createDirectory(const QString &dir)
 
 void cleanAndAddPostfix(QStringList &dirs, const QString& postfix)
 {
+    const QString universalPostfix = handlePostfix(postfix);
     const int N = dirs.count();
     for(int i = 0; i < N; ++i)
     {
         fixBashShortcuts(dirs[i]);
         removeEndingSlash(dirs[i]);
-        dirs[i].append(postfix);
+        dirs[i].append(universalPostfix);
     }
+}
+
+QString handlePostfix(const QString &postfix)
+{
+    if (postfix.isEmpty())
+        return QString();
+
+    if (postfix.startsWith(u'/'))
+        return postfix;
+
+    return u'/' + postfix;
 }
 
 
@@ -347,7 +360,8 @@ QStringList XdgDirs::autostartDirs(const QString &postfix)
     QStringList dirs;
     const QStringList s = configDirs();
     for (const QString &dir : s)
-        dirs << QString::fromLatin1("%1/autostart").arg(dir) + postfix;
+        dirs << QString::fromLatin1("%1/autostart").arg(dir);
 
+    cleanAndAddPostfix(dirs, postfix);
     return dirs;
 }

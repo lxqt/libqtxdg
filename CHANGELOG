@@ -1,3 +1,11 @@
+libqtxdg-4.3.0 / 2025-11-05
+============================
+ * Fixed building with Qt 6.10.
+ * Fixed xdgdirs' `createdir` behavior.
+ * Miscellaneous code improvements.
+ * Xdg dirs better postfix
+ * Fixed XdgDirs documentation typo.
+
 libqtxdg-4.2.0 / 2025-04-17
 ============================
  * Adapted to changes in private headers of Qt 6.9.

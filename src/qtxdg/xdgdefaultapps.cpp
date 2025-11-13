@@ -32,14 +32,15 @@
 #include <memory>
 #include <vector>
 
+using namespace Qt::Literals::StringLiterals;
 
 static XdgDesktopFile *getTerminal(const QString &terminalName)
 {
     XdgDesktopFile *t = new XdgDesktopFile{};
     if (t->load(terminalName) && t->isValid()) {
-        const QStringList cats = t->value(QL1S("Categories"), QString()).toString().split(QL1C(';'), Qt::SkipEmptyParts);
-        if (cats.contains(QL1S("TerminalEmulator"))) {
-            if (t->contains(QL1S("TryExec"))) {
+        const QStringList cats = t->value("Categories"_L1, QString()).toString().split(u';', Qt::SkipEmptyParts);
+        if (cats.contains("TerminalEmulator"_L1)) {
+            if (t->contains("TryExec"_L1)) {
                 if (t->tryExec()) {
                     return t;
                 }
@@ -57,9 +58,9 @@ static QStringList getWebBrowserProtocolsGet()
 {
     // Protocols needed to quailify a application as the default browser
     static const QStringList webBrowserProtocolsGet = {
-        QL1S("text/html"),
-        QL1S("x-scheme-handler/http"),
-        QL1S("x-scheme-handler/https")
+        "text/html"_L1,
+        "x-scheme-handler/http"_L1,
+        "x-scheme-handler/https"_L1
     };
     return webBrowserProtocolsGet;
 }
@@ -69,8 +70,8 @@ static QStringList getWebBrowserProtocolsSet()
     // When setting an application as the default browser xdg-settings also
     // sets these protocols. We simply follow it as good practice.
     static const QStringList webBrowserProtocolsSet {
-        QL1S("x-scheme-handler/about"),
-        QL1S("x-scheme-handler/unknown")
+        "x-scheme-handler/about"_L1,
+        "x-scheme-handler/unknown"_L1
     };
     return webBrowserProtocolsSet;
 }
@@ -127,32 +128,32 @@ static bool setDefaultApp(const QString &protocol, const XdgDesktopFile &app)
 
 XdgDesktopFile *XdgDefaultApps::emailClient()
 {
-    return defaultApp(QL1S("x-scheme-handler/mailto"));
+    return defaultApp("x-scheme-handler/mailto"_L1);
 }
 
 QList<XdgDesktopFile *> XdgDefaultApps::emailClients()
 {
-    return categoryAndMimeTypeApps(QSL("Email"), QStringList() << QL1S("x-scheme-handler/mailto"));
+    return categoryAndMimeTypeApps(u"Email"_s, QStringList() << "x-scheme-handler/mailto"_L1);
 }
 
 XdgDesktopFile *XdgDefaultApps::fileManager()
 {
-    return defaultApp(QL1S("inode/directory"));
+    return defaultApp("inode/directory"_L1);
 }
 
 QList<XdgDesktopFile *> XdgDefaultApps::fileManagers()
 {
-    return categoryAndMimeTypeApps(QSL("FileManager"), QStringList() << QL1S("inode/directory"));
+    return categoryAndMimeTypeApps("FileManager"_L1, QStringList() << "inode/directory"_L1);
 }
 
 bool XdgDefaultApps::setEmailClient(const XdgDesktopFile &app)
 {
-    return setDefaultApp(QL1S("x-scheme-handler/mailto"), app);
+    return setDefaultApp("x-scheme-handler/mailto"_L1, app);
 }
 
 bool XdgDefaultApps::setFileManager(const XdgDesktopFile &app)
 {
-    return setDefaultApp(QL1S("inode/directory"), app);
+    return setDefaultApp("inode/directory"_L1, app);
 }
 
 bool XdgDefaultApps::setTerminal(const XdgDesktopFile &app)
@@ -162,7 +163,7 @@ bool XdgDefaultApps::setTerminal(const XdgDesktopFile &app)
 
     const QString configFile = qtxdgConfigFilename();
     QSettings settings(QSettings::UserScope, configFile);
-    settings.setValue(QL1S("TerminalEmulator"), XdgDesktopFile::id(app.fileName()));
+    settings.setValue("TerminalEmulator"_L1, XdgDesktopFile::id(app.fileName()));
     return true;
 }
 
@@ -182,14 +183,14 @@ XdgDesktopFile *XdgDefaultApps::terminal()
 {
     const QString configFile = qtxdgConfigFilename();
     QSettings settings(QSettings::UserScope, configFile);
-    const QString terminalName = settings.value(QL1S("TerminalEmulator"), QString()).toString();
+    const QString terminalName = settings.value("TerminalEmulator"_L1, QString()).toString();
     return getTerminal(terminalName);
 }
 
 QList<XdgDesktopFile *> XdgDefaultApps::terminals()
 {
     XdgMimeApps db;
-    QList<XdgDesktopFile *> terminalList = db.categoryApps(QL1S("TerminalEmulator"));
+    QList<XdgDesktopFile *> terminalList = db.categoryApps("TerminalEmulator"_L1);
     QList<XdgDesktopFile *>::iterator it = terminalList.begin();
     while (it != terminalList.end()) {
         if ((*it)->isShown()) {
@@ -227,5 +228,5 @@ XdgDesktopFile *XdgDefaultApps::webBrowser()
 
 QList<XdgDesktopFile *> XdgDefaultApps::webBrowsers()
 {
-    return categoryAndMimeTypeApps(QSL("WebBrowser"), getWebBrowserProtocolsGet());
+    return categoryAndMimeTypeApps(u"WebBrowser"_s, getWebBrowserProtocolsGet());
 }

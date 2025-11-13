@@ -30,6 +30,7 @@
 #include <QDebug>
 #include <QCoreApplication>
 
+using namespace Qt::Literals::StringLiterals;
 
 XdgAction::XdgAction(QObject *parent):
     QAction(parent)
@@ -89,7 +90,7 @@ void XdgAction::load(const XdgDesktopFile& desktopFile)
     if (mDesktopFile.isValid())
     {
         // & is reserved for mnemonics
-        setText(mDesktopFile.name().replace(QLatin1Char('&'), QLatin1String("&&")));
+        setText(mDesktopFile.name().replace(u'&', "&&"_L1));
         setToolTip(mDesktopFile.comment());
 
         connect(this, &XdgAction::triggered, this, &XdgAction::runConmmand);
@@ -115,7 +116,7 @@ void XdgAction::updateIcon()
 {
     if (icon().isNull())
     {
-        QIcon icon = mDesktopFile.icon().isNull() ? XdgIcon::fromTheme(QLatin1String("application-x-executable")) : mDesktopFile.icon();
+        QIcon icon = mDesktopFile.icon().isNull() ? XdgIcon::fromTheme("application-x-executable"_L1) : mDesktopFile.icon();
 
         // Some themes may lack the "application-x-executable" icon; checking null prevents
         // infinite recursion (setIcon->dataChanged->updateIcon->setIcon

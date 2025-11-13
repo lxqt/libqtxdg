@@ -93,8 +93,8 @@ private:
 
 void tst_xdgdirs::initTestCase()
 {
-    QCoreApplication::instance()->setOrganizationName(QStringLiteral("QtXdg"));
-    QCoreApplication::instance()->setApplicationName(QStringLiteral("tst_xdgdirs"));
+    QCoreApplication::instance()->setOrganizationName(u"QtXdg"_s);
+    QCoreApplication::instance()->setApplicationName(u"tst_xdgdirs"_s);
 
     noSlashPostfix = QCoreApplication::applicationName();
     postfix = u'/' + QCoreApplication::applicationName();
@@ -151,7 +151,7 @@ void tst_xdgdirs::setNonWritableLocations()
 void tst_xdgdirs::testDataHome()
 {
     setDefaultLocations();
-    const QString expectedDataHome = QDir::homePath() + QString::fromLatin1("/.local/share");
+    const QString expectedDataHome = QDir::homePath() + "/.local/share"_L1;
     QCOMPARE(XdgDirs::dataHome(), expectedDataHome);
     QCOMPARE(XdgDirs::dataHome(false), expectedDataHome);
     QCOMPARE(XdgDirs::dataHome(true), expectedDataHome);
@@ -164,7 +164,7 @@ void tst_xdgdirs::testDataHome()
 void tst_xdgdirs::testConfigHome()
 {
     setDefaultLocations();
-    const QString expectedConfigHome = QDir::homePath() + QString::fromLatin1("/.config");
+    const QString expectedConfigHome = QDir::homePath() + "/.config"_L1;
     QCOMPARE(XdgDirs::configHome(), expectedConfigHome);
     QCOMPARE(XdgDirs::configHome(false), expectedConfigHome);
 
@@ -178,13 +178,13 @@ void tst_xdgdirs::testDataDirs()
     setDefaultLocations();
     const QStringList dataDirs = XdgDirs::dataDirs();
     QCOMPARE(dataDirs.count(), 2);
-    QCOMPARE(dataDirs.at(0), QString::fromLatin1("/usr/local/share"));
-    QCOMPARE(dataDirs.at(1), QString::fromLatin1("/usr/share"));
+    QCOMPARE(dataDirs.at(0), "/usr/local/share"_L1);
+    QCOMPARE(dataDirs.at(1), "/usr/share"_L1);
 
     const QStringList dataDirsWithPostfix = XdgDirs::dataDirs(postfix);
     QCOMPARE(dataDirsWithPostfix.count(), 2);
-    QCOMPARE(dataDirsWithPostfix.at(0), QString::fromLatin1("/usr/local/share") + postfix);
-    QCOMPARE(dataDirsWithPostfix.at(1), QString::fromLatin1("/usr/share") + postfix);
+    QCOMPARE(dataDirsWithPostfix.at(0), "/usr/local/share"_L1 + postfix);
+    QCOMPARE(dataDirsWithPostfix.at(1), "/usr/share"_L1 + postfix);
 
     const QStringList dataDirsWithNoSlashPostfix = XdgDirs::dataDirs(noSlashPostfix);
     QCOMPARE(dataDirsWithNoSlashPostfix.count(), 2);
@@ -211,11 +211,11 @@ void tst_xdgdirs::testConfigDirs()
 
     const QStringList configDirs = XdgDirs::configDirs();
     QCOMPARE(configDirs.count(), 1);
-    QCOMPARE(configDirs.at(0), QString::fromLatin1("/etc/xdg"));
+    QCOMPARE(configDirs.at(0), "/etc/xdg"_L1);
 
     const QStringList configDirsWithPostfix = XdgDirs::configDirs(postfix);
     QCOMPARE(configDirsWithPostfix.count(), 1);
-    QCOMPARE(configDirsWithPostfix.at(0), QString::fromLatin1("/etc/xdg") + postfix);
+    QCOMPARE(configDirsWithPostfix.at(0), "/etc/xdg"_L1 + postfix);
 
     setCustomLocations();
     const QStringList configDirsCustom = XdgDirs::configDirs();
@@ -230,7 +230,7 @@ void tst_xdgdirs::testConfigDirs()
 void tst_xdgdirs::testCacheHome()
 {
     setDefaultLocations();
-    const QString expectedCacheHome = QDir::homePath() + QStringLiteral("/.cache");
+    const QString expectedCacheHome = QDir::homePath() + u"/.cache"_s;
     QCOMPARE(XdgDirs::cacheHome(), expectedCacheHome);
     QCOMPARE(XdgDirs::cacheHome(false), expectedCacheHome);
 
@@ -244,12 +244,12 @@ void tst_xdgdirs::testCacheHome()
 void tst_xdgdirs::testAutostartHome()
 {
     setDefaultLocations();
-    const QString expectedAutoStartHome = QDir::homePath() + QString::fromLatin1("/.config/autostart");
+    const QString expectedAutoStartHome = QDir::homePath() + "/.config/autostart"_L1;
     QCOMPARE(XdgDirs::autostartHome(), expectedAutoStartHome);
     QCOMPARE(XdgDirs::autostartHome(false), expectedAutoStartHome);
 
     setCustomLocations();
-    const QString expectedAutostartHomeCustom = XdgDirs::configHome() + QString::fromLatin1("/autostart");
+    const QString expectedAutostartHomeCustom = XdgDirs::configHome() + "/autostart"_L1;
     QCOMPARE(XdgDirs::autostartHome(), expectedAutostartHomeCustom);
     QCOMPARE(XdgDirs::autostartHome(false), expectedAutostartHomeCustom);
 }
@@ -259,11 +259,11 @@ void tst_xdgdirs::testAutostartDirs()
     setDefaultLocations();
     const QStringList autostartDirs = XdgDirs::autostartDirs();
     QCOMPARE(autostartDirs.count(), 1);
-    QCOMPARE(autostartDirs.at(0), QString::fromLatin1("/etc/xdg/autostart"));
+    QCOMPARE(autostartDirs.at(0), "/etc/xdg/autostart"_L1);
 
     const QStringList autostartDirsWithPostfix = XdgDirs::autostartDirs(postfix);
     QCOMPARE(autostartDirsWithPostfix.count(), 1);
-    QCOMPARE(autostartDirsWithPostfix.at(0), QString::fromLatin1("/etc/xdg/autostart") + postfix);
+    QCOMPARE(autostartDirsWithPostfix.at(0), "/etc/xdg/autostart"_L1 + postfix);
 
     const QStringList autostartDirsWithNoSlashPostfix = XdgDirs::autostartDirs(noSlashPostfix);
     QCOMPARE(autostartDirsWithNoSlashPostfix.count(), 1);
@@ -272,11 +272,11 @@ void tst_xdgdirs::testAutostartDirs()
     setCustomLocations();
     const QStringList autostartDirsCustom = XdgDirs::autostartDirs();
     QCOMPARE(autostartDirsCustom.count(), 1);
-    QCOMPARE(autostartDirsCustom.at(0), m_configDirs + QString::fromLatin1("/autostart"));
+    QCOMPARE(autostartDirsCustom.at(0), m_configDirs + "/autostart"_L1);
 
     const QStringList autostartDirsCustomWithPostfix = XdgDirs::autostartDirs(postfix);
     QCOMPARE(autostartDirsCustomWithPostfix.count(), 1);
-    QCOMPARE(autostartDirsCustomWithPostfix.at(0), m_configDirs + QString::fromLatin1("/autostart") + postfix);
+    QCOMPARE(autostartDirsCustomWithPostfix.at(0), m_configDirs + "/autostart"_L1 + postfix);
 
     const QStringList autostartDirsCustomWithNoSlashPostfix = XdgDirs::autostartDirs(noSlashPostfix);
     QCOMPARE(autostartDirsCustomWithNoSlashPostfix.count(), 1);

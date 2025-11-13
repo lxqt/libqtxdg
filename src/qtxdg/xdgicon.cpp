@@ -27,6 +27,7 @@
 
 #include "xdgicon.h"
 
+#include <QLatin1StringView>
 #include <QString>
 #include <QDebug>
 #include <QDir>
@@ -36,7 +37,9 @@
 #include "../xdgiconloader/xdgiconloader_p.h"
 #include <QCoreApplication>
 
-static const QLatin1String DEFAULT_APP_ICON("application-x-executable");
+using namespace Qt::Literals::StringLiterals;
+
+static constexpr QLatin1StringView DEFAULT_APP_ICON("application-x-executable");
 
 static void qt_cleanup_icon_cache();
 typedef QCache<QString, QIcon> IconCache;
@@ -73,12 +76,12 @@ QIcon XdgIcon::fromTheme(const QString& iconName, const QIcon& fallback)
     if (iconName.isEmpty())
         return fallback;
 
-    bool isAbsolute = (iconName[0] == QLatin1Char('/'));
+    bool isAbsolute = (iconName[0] == u'/');
 
     QString name = QFileInfo(iconName).fileName();
-    if (name.endsWith(QLatin1String(".png"), Qt::CaseInsensitive) ||
-        name.endsWith(QLatin1String(".svg"), Qt::CaseInsensitive) ||
-        name.endsWith(QLatin1String(".xpm"), Qt::CaseInsensitive))
+    if (name.endsWith(".png"_L1, Qt::CaseInsensitive) ||
+        name.endsWith(".svg"_L1, Qt::CaseInsensitive) ||
+        name.endsWith(".xpm"_L1, Qt::CaseInsensitive))
     {
         name.truncate(name.length() - 4);
     }

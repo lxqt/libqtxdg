@@ -26,7 +26,10 @@
 #include "xdgmimeappsglibbackend.h"
 
 #include <QMutexLocker>
+#include <QString>
 #include <QDebug>
+
+using namespace Qt::Literals::StringLiterals;
 
 XdgMimeAppsPrivate::XdgMimeAppsPrivate()
     : mBackend(nullptr)
@@ -88,8 +91,8 @@ QList<XdgDesktopFile *> XdgMimeApps::categoryApps(const QString &category)
     const QList <XdgDesktopFile *> apps = allApps();
     QList <XdgDesktopFile *> dl;
     for (XdgDesktopFile * const df : apps) {
-        const QStringList categories = df->value(QL1S("Categories")).toString().toUpper().split(QL1C(';'));
-        if (!categories.isEmpty() && (categories.contains(cat) || categories.contains(QL1S("X-") + cat)))
+        const QStringList categories = df->value("Categories"_L1).toString().toUpper().split(u';');
+        if (!categories.isEmpty() && (categories.contains(cat) || categories.contains("X-"_L1 + cat)))
             dl.append(df);
         else
             delete df;

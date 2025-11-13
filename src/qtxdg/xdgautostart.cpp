@@ -31,6 +31,7 @@
 #include <QSet>
 #include <QDir>
 
+using namespace Qt::Literals::StringLiterals;
 
 /**
  * The Autostart Directories are $XDG_CONFIG_DIRS/autostart. If the same filename is
@@ -63,7 +64,7 @@ XdgDesktopFileList XdgAutoStart::desktopFileList(QStringList dirs, bool excludeH
         if (!dir.exists())
             continue;
 
-        const QFileInfoList files = dir.entryInfoList(QStringList(QLatin1String("*.desktop")), QDir::Files | QDir::Readable);
+        const QFileInfoList files = dir.entryInfoList(QStringList("*.desktop"_L1), QDir::Files | QDir::Readable);
         for (const QFileInfo &fi : files)
         {
             if (processed.contains(fi.fileName()))
@@ -88,5 +89,5 @@ XdgDesktopFileList XdgAutoStart::desktopFileList(QStringList dirs, bool excludeH
 QString XdgAutoStart::localPath(const XdgDesktopFile& file)
 {
     QFileInfo fi(file.fileName());
-    return QString::fromLatin1("%1/%2").arg(XdgDirs::autostartHome(), fi.fileName());
+    return "%1/%2"_L1.arg(XdgDirs::autostartHome(), fi.fileName());
 }

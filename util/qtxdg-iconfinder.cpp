@@ -27,17 +27,19 @@
 #include <iostream>
 #include <QDebug>
 
+using namespace Qt::Literals::StringLiterals;
+
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
-    app.setApplicationName(QStringLiteral("qtxdg-iconfinder"));
+    app.setApplicationName(u"qtxdg-iconfinder"_s);
     app.setApplicationVersion(QStringLiteral(QTXDG_VERSION));
 
     QCommandLineParser parser;
-    parser.setApplicationDescription(QStringLiteral("QtXdg icon finder"));
-    parser.addPositionalArgument(QStringLiteral("iconnames"),
-        QStringLiteral("The icon names to search for"),
-        QStringLiteral("[iconnames...]"));
+    parser.setApplicationDescription(u"QtXdg icon finder"_s);
+    parser.addPositionalArgument(u"iconnames"_s,
+        u"The icon names to search for"_s,
+        u"[iconnames...]"_s);
     parser.addVersionOption();
     parser.addHelpOption();
     parser.process(app);
@@ -56,8 +58,8 @@ int main(int argc, char *argv[])
         const auto &entries = info.entries;
 
         std::cout << qPrintable(iconName) <<
-            qPrintable(QString::fromLatin1(":")) << qPrintable(icon) <<
-            qPrintable(QString::fromLatin1(":")) <<
+            qPrintable(":"_L1) << qPrintable(icon) <<
+            qPrintable(":"_L1) <<
             qPrintable(QString::number(elapsed)) << "\n";
 
         for (const auto &i : entries) {
@@ -66,9 +68,9 @@ int main(int argc, char *argv[])
         totalElapsed += elapsed;
     }
 
-    std::cout << qPrintable(QString::fromLatin1("Total loadIcon() time: ")) <<
+    std::cout << qPrintable("Total loadIcon() time: "_L1) <<
         qPrintable(QString::number(totalElapsed)) <<
-        qPrintable(QString::fromLatin1(" ms")) << "\n";
+        qPrintable(" ms"_L1) << "\n";
 
     return EXIT_SUCCESS;
 }

@@ -48,6 +48,7 @@
 #include <QCoreApplication>
 #include <QCryptographicHash>
 
+using namespace Qt::Literals::StringLiterals;
 
 // Helper functions prototypes
 void installTranslation(const QString &name);
@@ -157,37 +158,37 @@ bool XdgMenu::read(const QString& menuFileName)
 
     d->mXml = reader.xml();
     QDomElement root = d->mXml.documentElement();
-    d->saveLog(QLatin1String("00-reader.xml"));
+    d->saveLog("00-reader.xml"_L1);
 
     d->simplify(root);
-    d->saveLog(QLatin1String("01-simplify.xml"));
+    d->saveLog("01-simplify.xml"_L1);
 
     d->mergeMenus(root);
-    d->saveLog(QLatin1String("02-mergeMenus.xml"));
+    d->saveLog("02-mergeMenus.xml"_L1);
 
     d->moveMenus(root);
-    d->saveLog(QLatin1String("03-moveMenus.xml"));
+    d->saveLog("03-moveMenus.xml"_L1);
 
     d->mergeMenus(root);
-    d->saveLog(QLatin1String("04-mergeMenus.xml"));
+    d->saveLog("04-mergeMenus.xml"_L1);
 
     d->deleteDeletedMenus(root);
-    d->saveLog(QLatin1String("05-deleteDeletedMenus.xml"));
+    d->saveLog("05-deleteDeletedMenus.xml"_L1);
 
     d->processDirectoryEntries(root, QStringList());
-    d->saveLog(QLatin1String("06-processDirectoryEntries.xml"));
+    d->saveLog("06-processDirectoryEntries.xml"_L1);
 
     d->processApps(root);
-    d->saveLog(QLatin1String("07-processApps.xml"));
+    d->saveLog("07-processApps.xml"_L1);
 
     d->processLayouts(root);
-    d->saveLog(QLatin1String("08-processLayouts.xml"));
+    d->saveLog("08-processLayouts.xml"_L1);
 
     d->deleteEmpty(root);
-    d->saveLog(QLatin1String("09-deleteEmpty.xml"));
+    d->saveLog("09-deleteEmpty.xml"_L1);
 
     d->fixSeparators(root);
-    d->saveLog(QLatin1String("10-fixSeparators.xml"));
+    d->saveLog("10-fixSeparators.xml"_L1);
 
 
     d->mOutDated = false;
@@ -204,7 +205,7 @@ void XdgMenu::save(const QString& fileName)
     QFile file(fileName);
     if (!file.open(QFile::WriteOnly | QFile::Text))
     {
-        qWarning() << QString::fromLatin1("Cannot write file %1:\n%2.")
+        qWarning() << "Cannot write file %1:\n%2."_L1
                 .arg(fileName, file.errorString());
         return;
     }
@@ -224,7 +225,7 @@ void XdgMenuPrivate::load(const QString& fileName)
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly | QFile::Text))
     {
-        qWarning() << QString::fromLatin1("%1 not loading: %2").arg(fileName, file.errorString());
+        qWarning() << "%1 not loading: %2"_L1.arg(fileName, file.errorString());
         return;
     }
     mXml.setContent(&file, QDomDocument::ParseOption::UseNamespaceProcessing);
@@ -235,7 +236,7 @@ void XdgMenuPrivate::saveLog(const QString& logFileName)
 {
     Q_Q(XdgMenu);
     if (!mLogDir.isEmpty())
-        q->save(mLogDir + QLatin1Char('/') + logFileName);
+        q->save(mLogDir + u'/' + logFileName);
 }
 
 
@@ -243,13 +244,13 @@ void XdgMenuPrivate::mergeMenus(QDomElement& element)
 {
     QHash<QString, QDomElement> menus;
 
-    MutableDomElementIterator it(element, QLatin1String("Menu"));
+    MutableDomElementIterator it(element, "Menu"_L1);
 
     it.toFront();
     while(it.hasNext())
     {
         it.next();
-        menus[it.current().attribute(QLatin1String("name"))] = it.current();
+        menus[it.current().attribute("name"_L1)] = it.current();
     }
 
 
@@ -257,7 +258,7 @@ void XdgMenuPrivate::mergeMenus(QDomElement& element)
     while (it.hasPrevious())
     {
         QDomElement src = it.previous();
-        QDomElement dest = menus[src.attribute(QLatin1String("name"))];
+        QDomElement dest = menus[src.attribute("name"_L1)];
         if (dest != src)
         {
             prependChilds(src, dest);
@@ -266,11 +267,11 @@ void XdgMenuPrivate::mergeMenus(QDomElement& element)
     }
 
 
-    QDomElement n = element.firstChildElement(QLatin1String("Menu"));
+    QDomElement n = element.firstChildElement("Menu"_L1);
     while (!n.isNull())
     {
         mergeMenus(n);
-        n = n.nextSiblingElement(QLatin1String("Menu"));
+        n = n.nextSiblingElement("Menu"_L1);
     }
 
     it.toFront();
@@ -287,46 +288,46 @@ void XdgMenuPrivate::simplify(QDomElement& element)
     {
         QDomElement n = it.next();
 
-        if (n.tagName() == QLatin1String("Name"))
+        if (n.tagName() == "Name"_L1)
         {
-            // The <Name> field must not contain the slash character ("/");
+            // The <Name> field must not contain the slash character ("/"_L1;
             // implementations should discard any name containing a slash.
-            element.setAttribute(QLatin1String("name"), n.text().remove(QLatin1Char('/')));
+            element.setAttribute("name"_L1, n.text().remove(u'/'));
             n.parentNode().removeChild(n);
         }
 
         // ......................................
-        else if(n.tagName() == QLatin1String("Deleted"))
+        else if(n.tagName() == "Deleted"_L1)
         {
-            element.setAttribute(QLatin1String("deleted"), true);
+            element.setAttribute("deleted"_L1, true);
             n.parentNode().removeChild(n);
         }
-        else if(n.tagName() == QLatin1String("NotDeleted"))
+        else if(n.tagName() == "NotDeleted"_L1)
         {
-            element.setAttribute(QLatin1String("deleted"), false);
-            n.parentNode().removeChild(n);
-        }
-
-        // ......................................
-        else if(n.tagName() == QLatin1String("OnlyUnallocated"))
-        {
-            element.setAttribute(QLatin1String("onlyUnallocated"), true);
-            n.parentNode().removeChild(n);
-        }
-        else if(n.tagName() == QLatin1String(QLatin1String("NotOnlyUnallocated")))
-        {
-            element.setAttribute(QLatin1String("onlyUnallocated"), false);
+            element.setAttribute("deleted"_L1, false);
             n.parentNode().removeChild(n);
         }
 
         // ......................................
-        else if(n.tagName() == QLatin1String("FileInfo"))
+        else if(n.tagName() == "OnlyUnallocated"_L1)
+        {
+            element.setAttribute("onlyUnallocated"_L1, true);
+            n.parentNode().removeChild(n);
+        }
+        else if(n.tagName() == "NotOnlyUnallocated"_L1)
+        {
+            element.setAttribute("onlyUnallocated"_L1, false);
+            n.parentNode().removeChild(n);
+        }
+
+        // ......................................
+        else if(n.tagName() == "FileInfo"_L1)
         {
             n.parentNode().removeChild(n);
         }
 
         // ......................................
-        else if(n.tagName() == QLatin1String("Menu"))
+        else if(n.tagName() == "Menu"_L1)
         {
             simplify(n);
         }
@@ -347,15 +348,15 @@ void XdgMenuPrivate::prependChilds(QDomElement& srcElement, QDomElement& destEle
         destElement.insertBefore(n, destElement.firstChild());
     }
 
-    if (srcElement.attributes().contains(QLatin1String("deleted")) &&
-        !destElement.attributes().contains(QLatin1String("deleted"))
+    if (srcElement.attributes().contains("deleted"_L1) &&
+        !destElement.attributes().contains("deleted"_L1)
        )
-        destElement.setAttribute(QLatin1String("deleted"), srcElement.attribute(QLatin1String("deleted")));
+        destElement.setAttribute("deleted"_L1, srcElement.attribute("deleted"_L1));
 
-    if (srcElement.attributes().contains(QLatin1String("onlyUnallocated")) &&
-        !destElement.attributes().contains(QLatin1String("onlyUnallocated"))
+    if (srcElement.attributes().contains("onlyUnallocated"_L1) &&
+        !destElement.attributes().contains("onlyUnallocated"_L1)
        )
-        destElement.setAttribute(QLatin1String("onlyUnallocated"), srcElement.attribute(QLatin1String("onlyUnallocated")));
+        destElement.setAttribute("onlyUnallocated"_L1, srcElement.attribute("onlyUnallocated"_L1));
 }
 
 
@@ -366,11 +367,11 @@ void XdgMenuPrivate::appendChilds(QDomElement& srcElement, QDomElement& destElem
     while(it.hasNext())
         destElement.appendChild(it.next());
 
-    if (srcElement.attributes().contains(QLatin1String("deleted")))
-        destElement.setAttribute(QLatin1String("deleted"), srcElement.attribute(QLatin1String("deleted")));
+    if (srcElement.attributes().contains("deleted"_L1))
+        destElement.setAttribute("deleted"_L1, srcElement.attribute("deleted"_L1));
 
-    if (srcElement.attributes().contains(QLatin1String("onlyUnallocated")))
-        destElement.setAttribute(QLatin1String("onlyUnallocated"), srcElement.attribute(QLatin1String("onlyUnallocated")));
+    if (srcElement.attributes().contains("onlyUnallocated"_L1))
+        destElement.setAttribute("onlyUnallocated"_L1, srcElement.attribute("onlyUnallocated"_L1));
 }
 
 
@@ -383,10 +384,10 @@ QDomElement XdgMenu::findMenu(QDomElement& baseElement, const QString& path, boo
 {
     Q_D(XdgMenu);
     // Absolute path ..................
-    if (path.startsWith(QLatin1Char('/')))
+    if (path.startsWith(u'/'))
     {
         QDomElement root = d->mXml.documentElement();
-        return findMenu(root, path.section(QLatin1Char('/'), 2), createNonExisting);
+        return findMenu(root, path.section(u'/', 2), createNonExisting);
     }
 
     // Relative path ..................
@@ -394,13 +395,13 @@ QDomElement XdgMenu::findMenu(QDomElement& baseElement, const QString& path, boo
         return baseElement;
 
 
-    QString name = path.section(QLatin1Char('/'), 0, 0);
+    QString name = path.section(u'/', 0, 0);
     MutableDomElementIterator it(baseElement);
     while(it.hasNext())
     {
         QDomElement n = it.next();
-        if (n.attribute(QLatin1String("name")) == name)
-            return findMenu(n, path.section(QLatin1Char('/'), 1), createNonExisting);
+        if (n.attribute("name"_L1) == name)
+            return findMenu(n, path.section(u'/', 1), createNonExisting);
     }
 
 
@@ -410,14 +411,14 @@ QDomElement XdgMenu::findMenu(QDomElement& baseElement, const QString& path, boo
         return QDomElement();
 
 
-    const QStringList names = path.split(QLatin1Char('/'), Qt::SkipEmptyParts);
+    const QStringList names = path.split(u'/', Qt::SkipEmptyParts);
     QDomElement el = baseElement;
     for (const QString &n : names)
     {
         QDomElement p = el;
-        el = d->mXml.createElement(QLatin1String("Menu"));
+        el = d->mXml.createElement("Menu"_L1);
         p.appendChild(el);
-        el.setAttribute(QLatin1String("name"), n);
+        el.setAttribute("name"_L1, n);
     }
     return el;
 
@@ -453,17 +454,17 @@ void XdgMenuPrivate::moveMenus(QDomElement& element)
     Q_Q(XdgMenu);
 
     {
-        MutableDomElementIterator i(element, QLatin1String("Menu"));
+        MutableDomElementIterator i(element, "Menu"_L1);
         while(i.hasNext())
             moveMenus(i.next());
     }
 
-    MutableDomElementIterator i(element, QLatin1String("Move"));
+    MutableDomElementIterator i(element, "Move"_L1);
     while(i.hasNext())
     {
         i.next();
-        QString oldPath = i.current().lastChildElement(QLatin1String("Old")).text();
-        QString newPath = i.current().lastChildElement(QLatin1String("New")).text();
+        QString oldPath = i.current().lastChildElement("Old"_L1).text();
+        QString newPath = i.current().lastChildElement("New"_L1).text();
 
         element.removeChild(i.current());
 
@@ -493,12 +494,12 @@ void XdgMenuPrivate::moveMenus(QDomElement& element)
  ************************************************/
 void XdgMenuPrivate::deleteDeletedMenus(QDomElement& element)
 {
-    MutableDomElementIterator i(element, QLatin1String("Menu"));
+    MutableDomElementIterator i(element, "Menu"_L1);
     while(i.hasNext())
     {
         QDomElement e = i.next();
-        if (e.attribute(QLatin1String("deleted")) == QLatin1String("1") ||
-            e.attribute(QLatin1String("name")) == QLatin1String(".hidden")
+        if (e.attribute("deleted"_L1) == "1"_L1 ||
+            e.attribute("name"_L1) == ".hidden"_L1
             )
             element.removeChild(e);
         else
@@ -513,7 +514,7 @@ void XdgMenuPrivate::processDirectoryEntries(QDomElement& element, const QString
     QStringList dirs;
     QStringList files;
 
-    element.setAttribute(QLatin1String("title"), element.attribute(QLatin1String("name")));
+    element.setAttribute("title"_L1, element.attribute("name"_L1));
 
     MutableDomElementIterator i(element, QString());
     i.toBack();
@@ -521,13 +522,13 @@ void XdgMenuPrivate::processDirectoryEntries(QDomElement& element, const QString
     {
         QDomElement e = i.previous();
 
-        if (e.tagName() == QLatin1String("Directory"))
+        if (e.tagName() == "Directory"_L1)
         {
             files << e.text();
             element.removeChild(e);
         }
 
-        else if (e.tagName() == QLatin1String("DirectoryDir"))
+        else if (e.tagName() == "DirectoryDir"_L1)
         {
             dirs << e.text();
             element.removeChild(e);
@@ -538,13 +539,13 @@ void XdgMenuPrivate::processDirectoryEntries(QDomElement& element, const QString
 
     bool found = false;
     for (const QString &file : std::as_const(files)){
-        if (file.startsWith(QLatin1Char('/')))
+        if (file.startsWith(u'/'))
             found = loadDirectoryFile(file, element);
         else
         {
             for (const QString &dir : std::as_const(dirs))
             {
-                found = loadDirectoryFile(dir + QLatin1Char('/') + file, element);
+                found = loadDirectoryFile(dir + u'/' + file, element);
                 if (found) break;
             }
         }
@@ -552,7 +553,7 @@ void XdgMenuPrivate::processDirectoryEntries(QDomElement& element, const QString
     }
 
 
-    MutableDomElementIterator it(element, QLatin1String("Menu"));
+    MutableDomElementIterator it(element, "Menu"_L1);
     while(it.hasNext())
     {
         QDomElement e = it.next();
@@ -571,9 +572,9 @@ bool XdgMenuPrivate::loadDirectoryFile(const QString& fileName, QDomElement& ele
         return false;
 
 
-    element.setAttribute(QLatin1String("title"), file.localizedValue(QLatin1String("Name")).toString());
-    element.setAttribute(QLatin1String("comment"), file.localizedValue(QLatin1String("Comment")).toString());
-    element.setAttribute(QLatin1String("icon"), file.value(QLatin1String("Icon")).toString());
+    element.setAttribute("title"_L1, file.localizedValue("Name"_L1).toString());
+    element.setAttribute("comment"_L1, file.localizedValue("Comment"_L1).toString());
+    element.setAttribute("icon"_L1, file.value("Icon"_L1).toString());
 
     Q_Q(XdgMenu);
     q->addWatchPath(QFileInfo(file.fileName()).absolutePath());
@@ -591,15 +592,15 @@ void XdgMenuPrivate::processApps(QDomElement& element)
 
 void XdgMenuPrivate::deleteEmpty(QDomElement& element)
 {
-    MutableDomElementIterator it(element, QLatin1String("Menu"));
+    MutableDomElementIterator it(element, "Menu"_L1);
     while(it.hasNext())
         deleteEmpty(it.next());
 
-    if (element.attribute(QLatin1String("keep")) == QLatin1String("true"))
+    if (element.attribute("keep"_L1) == "true"_L1)
         return;
 
-    QDomElement childMenu = element.firstChildElement(QLatin1String("Menu"));
-    QDomElement childApps = element.firstChildElement(QLatin1String("AppLink"));
+    QDomElement childMenu = element.firstChildElement("Menu"_L1);
+    QDomElement childApps = element.firstChildElement("AppLink"_L1);
 
     if (childMenu.isNull() && childApps.isNull())
     {
@@ -618,25 +619,25 @@ void XdgMenuPrivate::processLayouts(QDomElement& element)
 void XdgMenuPrivate::fixSeparators(QDomElement& element)
 {
 
-    MutableDomElementIterator it(element, QLatin1String("Separator"));
+    MutableDomElementIterator it(element, "Separator"_L1);
     while(it.hasNext())
     {
         QDomElement s = it.next();
-        if (s.previousSiblingElement().tagName() == QLatin1String("Separator"))
+        if (s.previousSiblingElement().tagName() == "Separator"_L1)
             element.removeChild(s);
     }
 
 
     QDomElement first = element.firstChild().toElement();
-    if (first.tagName() == QLatin1String("Separator"))
+    if (first.tagName() == "Separator"_L1)
         element.removeChild(first);
 
     QDomElement last = element.lastChild().toElement();
-    if (last.tagName() == QLatin1String("Separator"))
+    if (last.tagName() == "Separator"_L1)
         element.removeChild(last);
 
 
-    MutableDomElementIterator mi(element, QLatin1String("Menu"));
+    MutableDomElementIterator mi(element, "Menu"_L1);
     while(mi.hasNext())
         fixSeparators(mi.next());
 }
@@ -653,28 +654,28 @@ QString XdgMenu::getMenuFileName(const QString& baseName)
 
     for (const QString &configDir : configDirs)
     {
-        QFileInfo file(QString::fromLatin1("%1/menus/%2%3").arg(configDir, menuPrefix, baseName));
+        QFileInfo file("%1/menus/%2%3"_L1.arg(configDir, menuPrefix, baseName));
         if (file.exists())
             return file.filePath();
     }
 
     QStringList wellKnownFiles;
     // razor- is a priority for us
-    wellKnownFiles << QLatin1String("razor-applications.menu");
+    wellKnownFiles << "razor-applications.menu"_L1;
     // the "global" menu file name on suse and fedora
-    wellKnownFiles << QLatin1String("applications.menu");
+    wellKnownFiles << "applications.menu"_L1;
     // rest files ordered by priority (descending)
-    wellKnownFiles << QLatin1String("kde4-applications.menu");
-    wellKnownFiles << QLatin1String("kde-applications.menu");
-    wellKnownFiles << QLatin1String("plasma-applications.menu");
-    wellKnownFiles << QLatin1String("gnome-applications.menu");
-    wellKnownFiles << QLatin1String("lxde-applications.menu");
+    wellKnownFiles << "kde4-applications.menu"_L1;
+    wellKnownFiles << "kde-applications.menu"_L1;
+    wellKnownFiles << "plasma-applications.menu"_L1;
+    wellKnownFiles << "gnome-applications.menu"_L1;
+    wellKnownFiles << "lxde-applications.menu"_L1;
 
     for (const QString &configDir : configDirs)
     {
         for (const QString &f : std::as_const(wellKnownFiles))
         {
-            QFileInfo file(QString::fromLatin1("%1/menus/%2").arg(configDir, f));
+            QFileInfo file("%1/menus/%2"_L1.arg(configDir, f));
             if (file.exists())
                 return file.filePath();
         }

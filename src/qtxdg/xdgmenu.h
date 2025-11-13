@@ -38,6 +38,7 @@ class QDomDocument;
 class QDomElement;
 class XdgMenuPrivate;
 
+using namespace Qt::Literals::StringLiterals;
 
 /*! @brief The XdgMenu class implements the "Desktop Menu Specification" from freedesktop.org.
 
@@ -108,7 +109,7 @@ public:
      */
     void setLogDir(const QString& directory);
 
-    static QString getMenuFileName(const QString& baseName = QLatin1String("applications.menu"));
+    static QString getMenuFileName(const QString& baseName = "applications.menu"_L1);
 
     bool isOutDated() const;
 

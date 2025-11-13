@@ -26,6 +26,8 @@
 
 #include <iostream>
 
+using namespace Qt::Literals::StringLiterals;
+
 static void printErr(const QString & out)
 {
     std::cerr << qPrintable(out);
@@ -34,14 +36,14 @@ static void printErr(const QString & out)
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
-    QCoreApplication::setApplicationName(QLatin1String("qtxdg-desktop-file-start"));
-    QCoreApplication::setApplicationVersion(QLatin1String(QTXDG_VERSION));
+    QCoreApplication::setApplicationName("qtxdg-desktop-file-start"_L1);
+    QCoreApplication::setApplicationVersion(QLatin1StringView(QTXDG_VERSION));
 
     QCommandLineParser parser;
-    parser.setApplicationDescription(QLatin1String("QtXdg XdgDesktopFile start Tester"));
+    parser.setApplicationDescription("QtXdg XdgDesktopFile start Tester"_L1);
     parser.addHelpOption();
     parser.addVersionOption();
-    parser.addPositionalArgument(QLatin1String("file [urls...]"), QLatin1String("desktop file to start and its urls"),QLatin1String("file [urls...]"));
+    parser.addPositionalArgument("file [urls...]"_L1, "desktop file to start and its urls"_L1,"file [urls...]"_L1);
     parser.process(app);
 
     if (parser.positionalArguments().isEmpty()) {
@@ -54,7 +56,7 @@ int main(int argc, char *argv[])
     const QFileInfo fileInfo(userFileName);
     if (fileInfo.isAbsolute()) {
         if (!fileInfo.exists()) {
-            printErr(QString::fromLatin1("File %1 does not exist\n").arg(userFileName));
+            printErr("File %1 does not exist\n"_L1.arg(userFileName));
             return EXIT_FAILURE;
         }
     }
@@ -64,7 +66,7 @@ int main(int argc, char *argv[])
     if (valid) {
         f.startDetached(userArgs);
     } else {
-        printErr(QString::fromLatin1("%1 doesn't exist or isn't a valid .desktop file\n").arg(userFileName));
+        printErr("%1 doesn't exist or isn't a valid .desktop file\n"_L1.arg(userFileName));
         return EXIT_FAILURE;
     }
 

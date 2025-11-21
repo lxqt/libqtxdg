@@ -57,7 +57,7 @@ static XdgDesktopFile *getTerminal(const QString &terminalName)
 static QStringList getWebBrowserProtocolsGet()
 {
     // Protocols needed to quailify a application as the default browser
-    static const QStringList webBrowserProtocolsGet = {
+    static const QStringList webBrowserProtocolsGet {
         "text/html"_L1,
         "x-scheme-handler/http"_L1,
         "x-scheme-handler/https"_L1

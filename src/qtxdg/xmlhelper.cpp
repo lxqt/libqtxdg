@@ -32,6 +32,7 @@
 #include <QtXml/QDomElement>
 #include <QtXml/QDomNode>
 
+using namespace Qt::Literals::StringLiterals;
 
 QDebug operator<<(QDebug dbg, const QDomElement &el)
 {
@@ -39,8 +40,8 @@ QDebug operator<<(QDebug dbg, const QDomElement &el)
 
     QString args;
     for (int i=0; i<map.count(); ++i)
-        args += QLatin1Char(' ') + map.item(i).nodeName() + QLatin1Char('=') + map.item(i).nodeValue() + QLatin1Char('\'');
+        args += u' ' + map.item(i).nodeName() + u'=' + map.item(i).nodeValue() + u'\'';
 
-    dbg.nospace() << QString::fromLatin1("<%1%2>%3</%1>").arg(el.tagName(), args, el.text());
+    dbg.nospace() << "<%1%2>%3</%1>"_L1.arg(el.tagName(), args, el.text());
     return dbg.space();
 }

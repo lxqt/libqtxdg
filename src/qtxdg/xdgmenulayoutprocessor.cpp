@@ -31,6 +31,7 @@
 #include <QCollator>
 #include <QList>
 
+using namespace Qt::Literals::StringLiterals;
 
 // Helper functions prototypes
 QDomElement findLastElementByTag(const QDomElement &element, const QString &tagName);
@@ -62,7 +63,7 @@ QDomElement findLastElementByTag(const QDomElement &element, const QString &tagN
  ************************************************/
 XdgMenuLayoutProcessor::XdgMenuLayoutProcessor(QDomElement& element):
     mElement(element),
-    mDefaultLayout(findLastElementByTag(element, QLatin1String("DefaultLayout")))
+    mDefaultLayout(findLastElementByTag(element, "DefaultLayout"_L1))
 {
     mDefaultParams.mShowEmpty = false;
     mDefaultParams.mInline = false;
@@ -74,14 +75,14 @@ XdgMenuLayoutProcessor::XdgMenuLayoutProcessor(QDomElement& element):
     {
         // Create DefaultLayout node
         QDomDocument doc = element.ownerDocument();
-        mDefaultLayout = doc.createElement(QLatin1String("DefaultLayout"));
+        mDefaultLayout = doc.createElement("DefaultLayout"_L1);
 
-        QDomElement menus = doc.createElement(QLatin1String("Merge"));
-        menus.setAttribute(QLatin1String("type"), QLatin1String("menus"));
+        QDomElement menus = doc.createElement("Merge"_L1);
+        menus.setAttribute("type"_L1, "menus"_L1);
         mDefaultLayout.appendChild(menus);
 
-        QDomElement files = doc.createElement(QLatin1String("Merge"));
-        files.setAttribute(QLatin1String("type"), QLatin1String("files"));
+        QDomElement files = doc.createElement("Merge"_L1);
+        files.setAttribute("type"_L1, "files"_L1);
         mDefaultLayout.appendChild(files);
 
         mElement.appendChild(mDefaultLayout);
@@ -91,7 +92,7 @@ XdgMenuLayoutProcessor::XdgMenuLayoutProcessor(QDomElement& element):
 
     // If a menu does not contain a <Layout> element or if it contains an empty <Layout> element
     // then the default layout should be used.
-    mLayout = findLastElementByTag(element, QLatin1String("Layout"));
+    mLayout = findLastElementByTag(element, "Layout"_L1);
     if (mLayout.isNull() || !mLayout.hasChildNodes())
         mLayout = mDefaultLayout;
 }
@@ -102,7 +103,7 @@ XdgMenuLayoutProcessor::XdgMenuLayoutProcessor(QDomElement& element, XdgMenuLayo
     mElement(element)
 {
     // DefaultLayout ............................
-    QDomElement defaultLayout = findLastElementByTag(element, QLatin1String("DefaultLayout"));
+    QDomElement defaultLayout = findLastElementByTag(element, "DefaultLayout"_L1);
 
     if (defaultLayout.isNull())
         mDefaultLayout = parent->mDefaultLayout;
@@ -113,7 +114,7 @@ XdgMenuLayoutProcessor::XdgMenuLayoutProcessor(QDomElement& element, XdgMenuLayo
 
     // If a menu does not contain a <Layout> element or if it contains an empty <Layout> element
     // then the default layout should be used.
-    mLayout = findLastElementByTag(element, QLatin1String("Layout"));
+    mLayout = findLastElementByTag(element, "Layout"_L1);
     if (mLayout.isNull() || !mLayout.hasChildNodes())
         mLayout = mDefaultLayout;
 
@@ -122,20 +123,20 @@ XdgMenuLayoutProcessor::XdgMenuLayoutProcessor(QDomElement& element, XdgMenuLayo
 
 void XdgMenuLayoutProcessor::setParams(QDomElement defaultLayout, LayoutParams *result)
 {
-    if (defaultLayout.hasAttribute(QLatin1String("show_empty")))
-        result->mShowEmpty = defaultLayout.attribute(QLatin1String("show_empty")) == QLatin1String("true");
+    if (defaultLayout.hasAttribute("show_empty"_L1))
+        result->mShowEmpty = defaultLayout.attribute("show_empty"_L1) == "true"_L1;
 
-    if (defaultLayout.hasAttribute(QLatin1String("inline")))
-        result->mInline = defaultLayout.attribute(QLatin1String("inline")) == QLatin1String("true");
+    if (defaultLayout.hasAttribute("inline"_L1))
+        result->mInline = defaultLayout.attribute("inline"_L1) == "true"_L1;
 
-    if (defaultLayout.hasAttribute(QLatin1String("inline_limit")))
-        result->mInlineLimit = defaultLayout.attribute(QLatin1String("inline_limit")).toInt();
+    if (defaultLayout.hasAttribute("inline_limit"_L1))
+        result->mInlineLimit = defaultLayout.attribute("inline_limit"_L1).toInt();
 
-    if (defaultLayout.hasAttribute(QLatin1String("inline_header")))
-        result->mInlineHeader = defaultLayout.attribute(QLatin1String("inline_header")) == QLatin1String("true");
+    if (defaultLayout.hasAttribute("inline_header"_L1))
+        result->mInlineHeader = defaultLayout.attribute("inline_header"_L1) == "true"_L1;
 
-    if (defaultLayout.hasAttribute(QLatin1String("inline_alias")))
-        result->mInlineAlias = defaultLayout.attribute(QLatin1String("inline_alias")) == QLatin1String("true");
+    if (defaultLayout.hasAttribute("inline_alias"_L1))
+        result->mInlineAlias = defaultLayout.attribute("inline_alias"_L1) == "true"_L1;
 }
 
 
@@ -162,7 +163,7 @@ int childsCount(const QDomElement& element)
     while (it.hasNext())
     {
         QString tag = it.next().tagName();
-        if (tag == QLatin1String("AppLink") || tag == QLatin1String("Menu") || tag == QLatin1String("Separator"))
+        if (tag == "AppLink"_L1 || tag == "Menu"_L1 || tag == "Separator"_L1)
             count ++;
     }
 
@@ -173,12 +174,12 @@ int childsCount(const QDomElement& element)
 void XdgMenuLayoutProcessor::run()
 {
     QDomDocument doc = mLayout.ownerDocument();
-    mResult = doc.createElement(QLatin1String("Result"));
+    mResult = doc.createElement("Result"_L1);
     mElement.appendChild(mResult);
 
     // Process childs menus ...............................
     {
-        DomElementIterator it(mElement, QLatin1String("Menu"));
+        DomElementIterator it(mElement, "Menu"_L1);
         while (it.hasNext())
         {
             QDomElement e = it.next();
@@ -195,26 +196,26 @@ void XdgMenuLayoutProcessor::run()
     {
         QDomElement e = it.next();
 
-        if (e.tagName() == QLatin1String("Filename"))
+        if (e.tagName() == "Filename"_L1)
             processFilenameTag(e);
 
-        else if (e.tagName() == QLatin1String("Menuname"))
+        else if (e.tagName() == "Menuname"_L1)
             processMenunameTag(e);
 
-        else if (e.tagName() == QLatin1String("Separator"))
+        else if (e.tagName() == "Separator"_L1)
             processSeparatorTag(e);
 
-        else if (e.tagName() == QLatin1String("Merge"))
+        else if (e.tagName() == "Merge"_L1)
         {
-            QDomElement merge = mResult.ownerDocument().createElement(QLatin1String("Merge"));
-            merge.setAttribute(QLatin1String("type"), e.attribute(QLatin1String("type")));
+            QDomElement merge = mResult.ownerDocument().createElement("Merge"_L1);
+            merge.setAttribute("type"_L1, e.attribute("type"_L1));
             mResult.appendChild(merge);
         }
     }
 
     // Step 2 ...................................
     {
-        MutableDomElementIterator ri(mResult, QLatin1String("Merge"));
+        MutableDomElementIterator ri(mResult, "Merge"_L1);
         while (ri.hasNext())
         {
             processMergeTag(ri.next());
@@ -248,7 +249,7 @@ void XdgMenuLayoutProcessor::processFilenameTag(const QDomElement &element)
 {
     QString id = element.text();
 
-    QDomElement appLink = searchElement(QLatin1String("AppLink"), QLatin1String("id"), id);
+    QDomElement appLink = searchElement("AppLink"_L1, "id"_L1, id);
     if (!appLink.isNull())
         mResult.appendChild(appLink);
 }
@@ -289,7 +290,7 @@ void XdgMenuLayoutProcessor::processFilenameTag(const QDomElement &element)
 void XdgMenuLayoutProcessor::processMenunameTag(const QDomElement &element)
 {
     QString id = element.text();
-    QDomElement menu = searchElement(QLatin1String("Menu"), QLatin1String("name"), id);
+    QDomElement menu = searchElement("Menu"_L1, "name"_L1, id);
     if (menu.isNull())
         return;
 
@@ -302,7 +303,7 @@ void XdgMenuLayoutProcessor::processMenunameTag(const QDomElement &element)
     {
         if (params.mShowEmpty)
         {
-            menu.setAttribute(QLatin1String("keep"), QLatin1String("true"));
+            menu.setAttribute("keep"_L1, "true"_L1);
             mResult.appendChild(menu);
         }
         return;
@@ -329,7 +330,7 @@ void XdgMenuLayoutProcessor::processMenunameTag(const QDomElement &element)
     // Header ....................................
     if (doHeader)
     {
-        QDomElement header = mLayout.ownerDocument().createElement(QLatin1String("Header"));
+        QDomElement header = mLayout.ownerDocument().createElement("Header"_L1);
 
         QDomNamedNodeMap attrs = menu.attributes();
         for (int i=0; i < attrs.count(); ++i)
@@ -343,7 +344,7 @@ void XdgMenuLayoutProcessor::processMenunameTag(const QDomElement &element)
     // Alias .....................................
     if (doAlias)
     {
-        menu.firstChild().toElement().setAttribute(QLatin1String("title"), menu.attribute(QLatin1String("title")));
+        menu.firstChild().toElement().setAttribute("title"_L1, menu.attribute("title"_L1));
     }
 
     // Inline ....................................
@@ -363,7 +364,7 @@ void XdgMenuLayoutProcessor::processMenunameTag(const QDomElement &element)
  ************************************************/
 void XdgMenuLayoutProcessor::processSeparatorTag(const QDomElement &element)
 {
-    QDomElement separator = element.ownerDocument().createElement(QLatin1String("Separator"));
+    QDomElement separator = element.ownerDocument().createElement("Separator"_L1);
     mResult.appendChild(separator);
 }
 
@@ -386,7 +387,7 @@ void XdgMenuLayoutProcessor::processSeparatorTag(const QDomElement &element)
  ************************************************/
 void XdgMenuLayoutProcessor::processMergeTag(const QDomElement &element)
 {
-    QString type = element.attribute(QLatin1String("type"));
+    QString type = element.attribute("type"_L1);
     QList<QDomElement> elements;
     MutableDomElementIterator it(mElement);
 
@@ -394,8 +395,8 @@ void XdgMenuLayoutProcessor::processMergeTag(const QDomElement &element)
     {
         QDomElement e = it.next();
         if (
-            ((type == QLatin1String("menus") || type == QLatin1String("all")) && e.tagName() == QLatin1String("Menu" )) ||
-            ((type == QLatin1String("files") || type == QLatin1String("all")) && e.tagName() == QLatin1String("AppLink"))
+            ((type == "menus"_L1 || type == "all"_L1) && e.tagName() == "Menu"_L1) ||
+            ((type == "files"_L1 || type == "all"_L1) && e.tagName() == "AppLink"_L1)
            )
             elements.append(e);
     }
@@ -405,8 +406,8 @@ void XdgMenuLayoutProcessor::processMergeTag(const QDomElement &element)
 
     std::sort(elements.begin(), elements.end(),
               [&](const QDomElement &a, const QDomElement &b) {
-                  return collator.compare(a.attribute(QLatin1String("title")),
-                                          b.attribute(QLatin1String("title"))) < 0;
+                  return collator.compare(a.attribute("title"_L1),
+                                          b.attribute("title"_L1)) < 0;
               });
 
     for (const QDomElement &e : elements) {

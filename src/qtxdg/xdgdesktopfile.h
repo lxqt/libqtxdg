@@ -39,6 +39,8 @@
 
 class XdgDesktopFileData;
 
+using namespace Qt::Literals::StringLiterals;
+
 /**
  \brief Desktop files handling.
  XdgDesktopFile class gives the interface for reading the values from the XDG .desktop file.
@@ -161,12 +163,12 @@ public:
     QStringList mimeTypes() const;
 
     //! This function is provided for convenience. It's equivalent to calling localizedValue("Name").toString().
-    QString name() const { return localizedValue(QLatin1String("Name")).toString(); }
+    QString name() const { return localizedValue("Name"_L1).toString(); }
     //! Returns an (localized) name for application action \param action.
     QString actionName(const QString & action) const;
 
     //! This function is provided for convenience. It's equivalent to calling localizedValue("Comment").toString().
-    QString comment() const { return localizedValue(QLatin1String("Comment")).toString(); }
+    QString comment() const { return localizedValue("Comment"_L1).toString(); }
 
     /*! Returns the desktop file type.
         @see XdgDesktopFile::Type */
@@ -252,7 +254,7 @@ public:
     bool tryExec() const;
 
 protected:
-    virtual QString prefix() const { return QLatin1String("Desktop Entry"); }
+    virtual QString prefix() const { return "Desktop Entry"_L1; }
     virtual bool check() const { return true; }
 private:
     /*! Returns the localized version of the key if the Desktop File already contains a localized version of it.

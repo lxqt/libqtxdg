@@ -47,6 +47,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QHash>
+#include <QLatin1StringView>
 #include <QList>
 #include <QMimeDatabase>
 #include <QMimeType>
@@ -67,24 +68,24 @@
 // A list of executables that can't be run with QProcess::startDetached(). They
 // will be run with QProcess::start()
 static const QStringList nonDetachExecs = QStringList()
-    << QLatin1String("pkexec");
+    << "pkexec"_L1;
 
-static const QLatin1String onlyShowInKey("OnlyShowIn");
-static const QLatin1String notShowInKey("NotShowIn");
-static const QLatin1String categoriesKey("Categories");
-static const QLatin1String actionsKey("Actions");
-static const QLatin1String extendPrefixKey("X-");
-static const QLatin1String mimeTypeKey("MimeType");
-static const QLatin1String applicationsStr("applications");
+static constexpr QLatin1StringView onlyShowInKey("OnlyShowIn");
+static constexpr QLatin1StringView notShowInKey("NotShowIn");
+static constexpr QLatin1StringView categoriesKey("Categories");
+static constexpr QLatin1StringView actionsKey("Actions");
+static constexpr QLatin1StringView extendPrefixKey("X-");
+static constexpr QLatin1StringView mimeTypeKey("MimeType");
+static constexpr QLatin1StringView applicationsStr("applications");
 
-static const QLatin1String nameKey("Name");
-static const QLatin1String typeKey("Type");
-static const QLatin1String ApplicationStr("Application");
-static const QLatin1String LinkStr("Link");
-static const QLatin1String DirectoryStr("Directory");
-static const QLatin1String execKey("Exec");
-static const QLatin1String urlKey("URL");
-static const QLatin1String iconKey("Icon");
+static constexpr QLatin1StringView nameKey("Name");
+static constexpr QLatin1StringView typeKey("Type");
+static constexpr QLatin1StringView ApplicationStr("Application");
+static constexpr QLatin1StringView LinkStr("Link");
+static constexpr QLatin1StringView DirectoryStr("Directory");
+static constexpr QLatin1StringView execKey("Exec");
+static constexpr QLatin1StringView urlKey("URL");
+static constexpr QLatin1StringView iconKey("Icon");
 
 // Helper functions prototypes
 QString &doEscape(QString& str, const QHash<QChar,QChar> &repl);
@@ -137,13 +138,13 @@ namespace
 QString &doEscape(QString& str, const QHash<QChar,QChar> &repl)
 {
     // First we replace slash.
-    str.replace(QLatin1Char('\\'), QLatin1String("\\\\"));
+    str.replace(u'\\', "\\\\"_L1);
 
     QHashIterator<QChar,QChar> i(repl);
     while (i.hasNext()) {
         i.next();
-        if (i.key() != QLatin1Char('\\'))
-            str.replace(i.key(), QString::fromLatin1("\\\\%1").arg(i.value()));
+        if (i.key() != u'\\')
+            str.replace(i.key(), "\\\\%1"_L1.arg(i.value()));
     }
 
     return str;
@@ -157,9 +158,9 @@ QString &doEscape(QString& str, const QHash<QChar,QChar> &repl)
 QString &escape(QString& str)
 {
     QHash<QChar,QChar> repl;
-    repl.insert(QLatin1Char('\n'),  QLatin1Char('n'));
-    repl.insert(QLatin1Char('\t'),  QLatin1Char('t'));
-    repl.insert(QLatin1Char('\r'),  QLatin1Char('r'));
+    repl.insert(u'\n', u'n');
+    repl.insert(u'\t', u't');
+    repl.insert(u'\r', u'r');
 
     return doEscape(str, repl);
 }
@@ -190,10 +191,10 @@ QString &escapeExec(QString& str)
     // The parseCombinedArgString() splits the string by the space symbols,
     // we temporarily replace them on the special characters.
     // Replacement will reverse after the splitting.
-    repl.insert(QLatin1Char('"'), QLatin1Char('"'));    // double quote,
-    repl.insert(QLatin1Char('\''), QLatin1Char('\''));  // single quote ("'"),
-    repl.insert(QLatin1Char('\\'), QLatin1Char('\\'));  // backslash character ("\"),
-    repl.insert(QLatin1Char('$'), QLatin1Char('$'));    // dollar sign ("$"),
+    repl.insert(u'"', u'"');    // double quote,
+    repl.insert(u'\'', u'\'');  // single quote ("'"),
+    repl.insert(u'\\', u'\\');  // backslash character ("\"),
+    repl.insert(u'$', u'$');    // dollar sign ("$"),
 
     return doEscape(str, repl);
 }
@@ -205,7 +206,7 @@ QString &doSimpleUnEscape(QString& str, const QHash<QChar,QChar> &repl)
     int n = 0;
     while (true)
     {
-        n=str.indexOf(QLatin1String("\\"), n);
+        n=str.indexOf("\\"_L1, n);
         if (n < 0 || n > str.length() - 2)
             break;
 
@@ -228,7 +229,7 @@ QString &doUnEscape(QString& str, const QHash<QChar,QChar> &repl, QList<int> &li
 {
     int n = 0;
     bool inQuote = false;
-    static const QRegularExpression slashOrLiteralStart(QString::fromLatin1(R"(\\|(?<!\\)('|"))"));
+    static const QRegularExpression slashOrLiteralStart(R"(\\|(?<!\\)('|"))"_L1);
     while (true)
     {
         if (!inQuote) // string literals cannot be double quoted
@@ -236,7 +237,7 @@ QString &doUnEscape(QString& str, const QHash<QChar,QChar> &repl, QList<int> &li
             n = str.indexOf(slashOrLiteralStart, n);
             if (n < 0)
                 break;
-            if (str.at(n) != QLatin1Char('\\')) // perhaps a literal start
+            if (str.at(n) != u'\\') // perhaps a literal start
             {
                 int end = str.indexOf(str.at(n), n + 1);
                 if (end < 0)
@@ -255,11 +256,11 @@ QString &doUnEscape(QString& str, const QHash<QChar,QChar> &repl, QList<int> &li
             }
         }
         else
-            n = str.indexOf(QLatin1String("\\"), n);
+            n = str.indexOf("\\"_L1, n);
         if (n < 0 || n > str.length() - 2)
             break;
 
-        if (str.at(n + 1) == QLatin1Char('"'))
+        if (str.at(n + 1) == '"'_L1)
             inQuote = !inQuote;
 
         if (repl.contains(str.at(n+1)))
@@ -282,11 +283,11 @@ QString &doUnEscape(QString& str, const QHash<QChar,QChar> &repl, QList<int> &li
 QString &unEscape(QString& str, bool exec)
 {
     QHash<QChar,QChar> repl;
-    repl.insert(QLatin1Char('\\'), QLatin1Char('\\'));
-    repl.insert(QLatin1Char('s'),  QLatin1Char(' '));
-    repl.insert(QLatin1Char('n'),  QLatin1Char('\n'));
-    repl.insert(QLatin1Char('t'),  QLatin1Char('\t'));
-    repl.insert(QLatin1Char('r'),  QLatin1Char('\r'));
+    repl.insert(u'\\', u'\\');
+    repl.insert(u's',  u' ');
+    repl.insert(u'n',  u'\n');
+    repl.insert(u't',  u'\t');
+    repl.insert(u'r',  u'\r');
 
     if (exec)
     {
@@ -343,26 +344,26 @@ QString &unEscapeExec(QString& str, QList<int> &literals)
     // The parseCombinedArgString() splits the string by the space symbols,
     // we temporarily replace them on the special characters.
     // Replacement will reverse after the splitting.
-    repl.insert(QLatin1Char(' '),  QChar(01));    // space
-    repl.insert(QLatin1Char('\t'), QChar(02));    // tab
-    repl.insert(QLatin1Char('\n'), QChar(03));    // newline,
+    repl.insert(u' ',  QChar(01));    // space
+    repl.insert(u'\t', QChar(02));    // tab
+    repl.insert(u'\n', QChar(03));    // newline,
 
-    repl.insert(QLatin1Char('"'), QLatin1Char('"'));    // double quote,
-    repl.insert(QLatin1Char('\''), QLatin1Char('\''));  // single quote ("'"),
-    repl.insert(QLatin1Char('\\'), QLatin1Char('\\'));  // backslash character ("\"),
-    repl.insert(QLatin1Char('>'), QLatin1Char('>'));    // greater-than sign (">"),
-    repl.insert(QLatin1Char('<'), QLatin1Char('<'));    // less-than sign ("<"),
-    repl.insert(QLatin1Char('~'), QLatin1Char('~'));    // tilde ("~"),
-    repl.insert(QLatin1Char('|'), QLatin1Char('|'));    // vertical bar ("|"),
-    repl.insert(QLatin1Char('&'), QLatin1Char('&'));    // ampersand ("&"),
-    repl.insert(QLatin1Char(';'), QLatin1Char(';'));    // semicolon (";"),
-    repl.insert(QLatin1Char('$'), QLatin1Char('$'));    // dollar sign ("$"),
-    repl.insert(QLatin1Char('*'), QLatin1Char('*'));    // asterisk ("*"),
-    repl.insert(QLatin1Char('?'), QLatin1Char('?'));    // question mark ("?"),
-    repl.insert(QLatin1Char('#'), QLatin1Char('#'));    // hash mark ("#"),
-    repl.insert(QLatin1Char('('), QLatin1Char('('));    // parenthesis ("(")
-    repl.insert(QLatin1Char(')'), QLatin1Char(')'));    // parenthesis (")")
-    repl.insert(QLatin1Char('`'), QLatin1Char('`'));    // backtick character ("`").
+    repl.insert(u'"', u'"');    // double quote,
+    repl.insert(u'\'', u'\'');  // single quote ("'"),
+    repl.insert(u'\\', u'\\');  // backslash character ("\"),
+    repl.insert(u'>', u'>');    // greater-than sign (">"),
+    repl.insert(u'<', u'<');    // less-than sign ("<"),
+    repl.insert(u'~', u'~');    // tilde ("~"),
+    repl.insert(u'|', u'|');    // vertical bar ("|"),
+    repl.insert(u'&', u'&');    // ampersand ("&"),
+    repl.insert(u';', u';');    // semicolon (";"),
+    repl.insert(u'$', u'$');    // dollar sign ("$"),
+    repl.insert(u'*', u'*');    // asterisk ("*"),
+    repl.insert(u'?', u'?');    // question mark ("?"),
+    repl.insert(u'#', u'#');    // hash mark ("#"),
+    repl.insert(u'(', u'(');    // parenthesis ("(")
+    repl.insert(u')', u')');    // parenthesis (")")
+    repl.insert(u'`', u'`');    // backtick character ("`").
 
     return doUnEscape(str, repl, literals);
 }
@@ -378,7 +379,7 @@ namespace
     public:
         XdgDesktopAction(const XdgDesktopFile & parent, const QString & action)
             : XdgDesktopFile(parent)
-            , m_prefix(QString{QLatin1String("Desktop Action %1")}.arg(action))
+            , m_prefix(QString{"Desktop Action %1"_L1}.arg(action))
         {}
 
     protected:
@@ -443,12 +444,12 @@ bool XdgDesktopFileData::read(const QString &prefix)
         QString line = stream.readLine().trimmed();
 
         // Skip comments ......................
-        if (line.startsWith(QLatin1Char('#')))
+        if (line.startsWith(u'#'))
             continue;
 
 
         // Section ..............................
-        if (line.startsWith(QLatin1Char('[')) && line.endsWith(QLatin1Char(']')))
+        if (line.startsWith(u'[') && line.endsWith(u']'))
         {
             section = line.mid(1, line.length()-2);
             if (section == prefix)
@@ -457,13 +458,13 @@ bool XdgDesktopFileData::read(const QString &prefix)
             continue;
         }
 
-        QString key = line.section(QLatin1Char('='), 0, 0).trimmed();
-        QString value = line.section(QLatin1Char('='), 1).trimmed();
+        QString key = line.section(u'=', 0, 0).trimmed();
+        QString value = line.section(u'=', 1).trimmed();
 
         if (key.isEmpty())
             continue;
 
-        mItems[section + QLatin1Char('/') + key] = QVariant(value);
+        mItems[section + u'/' + key] = QVariant(value);
     }
 
 
@@ -493,7 +494,7 @@ XdgDesktopFile::Type XdgDesktopFileData::detectType(XdgDesktopFile *q) const
 bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const QString & action, const QStringList& urls) const
 {
     //DBusActivatable handling
-    if (q->value(QLatin1String("DBusActivatable"), false).toBool()) {
+    if (q->value("DBusActivatable"_L1, false).toBool()) {
         /* WARNING: We fallback to use Exec when the DBusActivatable fails.
          *
          * This is a violation of the standard and we know it!
@@ -526,7 +527,7 @@ bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const
     if (appArgs.isEmpty())
         return false;
 
-    if (q->value(QLatin1String("Terminal")).toBool())
+    if (q->value("Terminal"_L1).toBool())
     {
         XdgDesktopFile *terminal = XdgDefaultApps::terminal();
         QString terminalCommand;
@@ -537,13 +538,13 @@ bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const
         else
         {
             qWarning() << "XdgDesktopFileData::startApplicationDetached(): Using fallback terminal (xterm).";
-            terminalCommand = QStringLiteral("xterm");
+            terminalCommand = u"xterm"_s;
         }
 
         delete terminal;
 
         args.append(QProcess::splitCommand(terminalCommand));
-        args.append(QLatin1String("-e"));
+        args.append("-e"_L1);
         args.append(appArgs);
     }
     else
@@ -567,7 +568,7 @@ bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const
     }
 
     QString cmd = args.takeFirst();
-    QString workingDir = q->value(QLatin1String("Path")).toString();
+    QString workingDir = q->value("Path"_L1).toString();
     if (!workingDir.isEmpty() && !QDir(workingDir).exists())
 	    workingDir = QString();
 
@@ -607,7 +608,7 @@ bool XdgDesktopFileData::startLinkDetached(const XdgDesktopFile *q) const
 
     QString scheme = QUrl(url).scheme();
 
-    if (scheme.isEmpty() || scheme == QLatin1String("file"))
+    if (scheme.isEmpty() || scheme == "file"_L1)
     {
         // Local file
         QFileInfo fi(url);
@@ -633,10 +634,10 @@ bool XdgDesktopFileData::startByDBus(const QString & action, const QStringList& 
 {
     QFileInfo f(mFileName);
     QString path(f.completeBaseName());
-    path = path.replace(QLatin1Char('.'), QLatin1Char('/')).prepend(QLatin1Char('/'));
+    path = path.replace(u'.', u'/').prepend(u'/');
 
     QVariantMap platformData;
-    platformData.insert(QLatin1String("desktop-startup-id"), QString::fromLocal8Bit(qgetenv("DESKTOP_STARTUP_ID")));
+    platformData.insert("desktop-startup-id"_L1, QString::fromLocal8Bit(qgetenv("DESKTOP_STARTUP_ID")));
 
     QDBusObjectPath d_path(path);
     if (d_path.path().isEmpty())
@@ -688,7 +689,7 @@ QStringList XdgDesktopFileData::getListValue(const XdgDesktopFile * q, const QSt
         if (!q->contains(used_key))
             return QStringList();
     }
-    return q->value(used_key).toString().split(QLatin1Char(';'), Qt::SkipEmptyParts);
+    return q->value(used_key).toString().split(u';', Qt::SkipEmptyParts);
 }
 
 
@@ -707,9 +708,9 @@ XdgDesktopFile::XdgDesktopFile(const XdgDesktopFile& other):
 XdgDesktopFile::XdgDesktopFile(Type type, const QString& name, const QString &value):
     d(new XdgDesktopFileData)
 {
-    d->mFileName = name + QLatin1String(".desktop");
+    d->mFileName = name + ".desktop"_L1;
     d->mType = type;
-    setValue(QLatin1String("Version"), QLatin1String("1.0"));
+    setValue("Version"_L1, "1.0"_L1);
     setValue(nameKey, name);
     if (type == XdgDesktopFile::ApplicationType)
     {
@@ -776,14 +777,14 @@ bool XdgDesktopFile::save(QIODevice *device) const
     while (i != d->mItems.constEnd())
     {
         QString path = i.key();
-        QString sect =  path.section(QLatin1Char('/'),0,0);
+        QString sect =  path.section(u'/',0,0);
         if (sect != section)
         {
             section = sect;
-            stream << QLatin1Char('[') << section << QLatin1Char(']') << Qt::endl;
+            stream << u'[' << section << u']' << Qt::endl;
         }
-        QString key = path.section(QLatin1Char('/'), 1);
-        stream << key << QLatin1Char('=') << i.value().toString() << Qt::endl;
+        QString key = path.section(u'/', 1);
+        stream << key << u'=' << i.value().toString() << Qt::endl;
         ++i;
     }
     return true;
@@ -802,7 +803,7 @@ bool XdgDesktopFile::save(const QString &fileName) const
 
 QVariant XdgDesktopFile::value(const QString& key, const QVariant& defaultValue) const
 {
-    QString path = (!prefix().isEmpty()) ? prefix() + QLatin1Char('/') + key : key;
+    QString path = (!prefix().isEmpty()) ? prefix() + u'/' + key : key;
     QVariant res = d->mItems.value(path, defaultValue);
     if (res.metaType().id() == QMetaType::QString)
     {
@@ -816,19 +817,19 @@ QVariant XdgDesktopFile::value(const QString& key, const QVariant& defaultValue)
 
 void XdgDesktopFile::setValue(const QString &key, const QVariant &value)
 {
-    QString path = (!prefix().isEmpty()) ? prefix() + QLatin1Char('/') + key : key;
+    QString path = (!prefix().isEmpty()) ? prefix() + u'/' + key : key;
     if (value.metaType().id() == QMetaType::QString)
     {
 
         QString s=value.toString();
-        if (key.toUpper() == QLatin1String("EXEC"))
+        if (key.toUpper() == "EXEC"_L1)
             escapeExec(s);
         else
             escape(s);
 
         d->mItems[path] = QVariant(s);
 
-        if (key.toUpper() == QLatin1String("TYPE"))
+        if (key.toUpper() == "TYPE"_L1)
             d->mType = d->detectType(this);
     }
     else
@@ -862,16 +863,16 @@ QString XdgDesktopFile::localizedKey(const QString& key) const
     if (lang.isEmpty())
          lang = QString::fromLocal8Bit(qgetenv("LANG"));
 
-    QString modifier = lang.section(QLatin1Char('@'), 1);
+    QString modifier = lang.section(u'@', 1);
     if (!modifier.isEmpty())
         lang.truncate(lang.length() - modifier.length() - 1);
 
-    QString encoding = lang.section(QLatin1Char('.'), 1);
+    QString encoding = lang.section(u'.', 1);
     if (!encoding.isEmpty())
         lang.truncate(lang.length() - encoding.length() - 1);
 
 
-    QString country = lang.section(QLatin1Char('_'), 1);
+    QString country = lang.section(u'_', 1);
     if (!country.isEmpty())
         lang.truncate(lang.length() - country.length() - 1);
 
@@ -884,7 +885,7 @@ QString XdgDesktopFile::localizedKey(const QString& key) const
 
     if (!modifier.isEmpty() && !country.isEmpty())
     {
-        QString k = QString::fromLatin1("%1[%2_%3@%4]").arg(key, lang, country, modifier);
+        QString k = "%1[%2_%3@%4]"_L1.arg(key, lang, country, modifier);
         //qDebug() << "\t try " << k << contains(k);
         if (contains(k))
             return k;
@@ -892,7 +893,7 @@ QString XdgDesktopFile::localizedKey(const QString& key) const
 
     if (!country.isEmpty())
     {
-        QString k = QString::fromLatin1("%1[%2_%3]").arg(key, lang, country);
+        QString k = "%1[%2_%3]"_L1.arg(key, lang, country);
         //qDebug() << "\t try " << k  << contains(k);
         if (contains(k))
             return k;
@@ -900,13 +901,13 @@ QString XdgDesktopFile::localizedKey(const QString& key) const
 
     if (!modifier.isEmpty())
     {
-        QString k = QString::fromLatin1("%1[%2@%3]").arg(key, lang, modifier);
+        QString k = "%1[%2@%3]"_L1.arg(key, lang, modifier);
         //qDebug() << "\t try " << k  << contains(k);
         if (contains(k))
             return k;
     }
 
-    QString k = QString::fromLatin1("%1[%2]").arg(key, lang);
+    QString k = "%1[%2]"_L1.arg(key, lang);
     //qDebug() << "\t try " << k  << contains(k);
     if (contains(k))
         return k;
@@ -935,14 +936,14 @@ QStringList XdgDesktopFile::actions() const
 
 void XdgDesktopFile::removeEntry(const QString& key)
 {
-    QString path = (!prefix().isEmpty()) ? prefix() + QLatin1Char('/') + key : key;
+    QString path = (!prefix().isEmpty()) ? prefix() + u'/' + key : key;
     d->mItems.remove(path);
 }
 
 
 bool XdgDesktopFile::contains(const QString& key) const
 {
-    QString path = (!prefix().isEmpty()) ? prefix() + QLatin1Char('/') + key : key;
+    QString path = (!prefix().isEmpty()) ? prefix() + u'/' + key : key;
     return d->mItems.contains(path);
 }
 
@@ -964,7 +965,7 @@ QIcon const XdgDesktopFile::icon(const QIcon& fallback) const
     QIcon result = XdgIcon::fromTheme(value(iconKey).toString(), fallback);
 
     if (result.isNull() && type() == ApplicationType) {
-        result = XdgIcon::fromTheme(QLatin1String("application-x-executable.png"));
+        result = XdgIcon::fromTheme("application-x-executable.png"_L1);
         // TODO Maybe defaults for other desktopfile types as well..
     }
 
@@ -996,7 +997,7 @@ QString const XdgDesktopFile::actionIconName(const QString & action) const
 
 QStringList XdgDesktopFile::mimeTypes() const
 {
-    return value(mimeTypeKey).toString().split(QLatin1Char(';'), Qt::SkipEmptyParts);
+    return value(mimeTypeKey).toString().split(u';', Qt::SkipEmptyParts);
 }
 
 
@@ -1084,7 +1085,7 @@ static QStringList parseCombinedArgString(const QStringView program, const QList
             continue;
         }
 
-        if (program.at(i) == QLatin1Char('"')) {
+        if (program.at(i) == u'"') {
             ++quoteCount;
             if (quoteCount == 3) {
                 // third consecutive quote
@@ -1122,26 +1123,26 @@ static QStringList parseCombinedArgString(const QStringView program, const QList
 
 void replaceVar(QString &str, const QString &varName, const QString &after)
 {
-    str.replace(QRegularExpression(QString::fromLatin1(R"regexp(\$%1(?!\w))regexp").arg(varName)), after);
-    str.replace(QRegularExpression(QString::fromLatin1(R"(\$\{%1\})").arg(varName)), after);
+    str.replace(QRegularExpression(R"regexp(\$%1(?!\w))regexp"_L1.arg(varName)), after);
+    str.replace(QRegularExpression(R"(\$\{%1\})"_L1.arg(varName)), after);
 }
 
 
 QString expandEnvVariables(const QString &str)
 {
-    static QRegularExpression tildeHomeRegex{QString::fromLatin1("~(?=$|/)")};
+    static QRegularExpression tildeHomeRegex{"~(?=$|/)"_L1};
     QString scheme = QUrl(str).scheme();
 
-    if (scheme == QLatin1String("http")   || scheme == QLatin1String("https") || scheme == QLatin1String("shttp") ||
-        scheme == QLatin1String("ftp")    || scheme == QLatin1String("ftps")  ||
-        scheme == QLatin1String("pop")    || scheme == QLatin1String("pops")  ||
-        scheme == QLatin1String("imap")   || scheme == QLatin1String("imaps") ||
-        scheme == QLatin1String("mailto") ||
-        scheme == QLatin1String("nntp")   ||
-        scheme == QLatin1String("irc")    ||
-        scheme == QLatin1String("telnet") ||
-        scheme == QLatin1String("xmpp")   ||
-        scheme == QLatin1String("nfs")
+    if (scheme == "http"_L1   || scheme == "https"_L1 || scheme == "shttp"_L1 ||
+        scheme == "ftp"_L1    || scheme == "ftps"_L1  ||
+        scheme == "pop"_L1    || scheme == "pops"_L1  ||
+        scheme == "imap"_L1   || scheme == "imaps"_L1 ||
+        scheme == "mailto"_L1 ||
+        scheme == "nntp"_L1   ||
+        scheme == "irc"_L1    ||
+        scheme == "telnet"_L1 ||
+        scheme == "xmpp"_L1   ||
+        scheme == "nfs"_L1
       )
         return str;
 
@@ -1150,16 +1151,16 @@ QString expandEnvVariables(const QString &str)
     QString res = str;
     res.replace(tildeHomeRegex, homeDir);
 
-    replaceVar(res, QLatin1String("HOME"), homeDir);
-    replaceVar(res, QLatin1String("USER"), QString::fromLocal8Bit(qgetenv("USER")));
+    replaceVar(res, "HOME"_L1, homeDir);
+    replaceVar(res, "USER"_L1, QString::fromLocal8Bit(qgetenv("USER")));
 
-    replaceVar(res, QLatin1String("XDG_DESKTOP_DIR"),   XdgDirs::userDir(XdgDirs::Desktop));
-    replaceVar(res, QLatin1String("XDG_TEMPLATES_DIR"), XdgDirs::userDir(XdgDirs::Templates));
-    replaceVar(res, QLatin1String("XDG_DOCUMENTS_DIR"), XdgDirs::userDir(XdgDirs::Documents));
-    replaceVar(res, QLatin1String("XDG_MUSIC_DIR"), XdgDirs::userDir(XdgDirs::Music));
-    replaceVar(res, QLatin1String("XDG_PICTURES_DIR"), XdgDirs::userDir(XdgDirs::Pictures));
-    replaceVar(res, QLatin1String("XDG_VIDEOS_DIR"), XdgDirs::userDir(XdgDirs::Videos));
-    replaceVar(res, QLatin1String("XDG_PHOTOS_DIR"), XdgDirs::userDir(XdgDirs::Pictures));
+    replaceVar(res, "XDG_DESKTOP_DIR"_L1,   XdgDirs::userDir(XdgDirs::Desktop));
+    replaceVar(res, "XDG_TEMPLATES_DIR"_L1, XdgDirs::userDir(XdgDirs::Templates));
+    replaceVar(res, "XDG_DOCUMENTS_DIR"_L1, XdgDirs::userDir(XdgDirs::Documents));
+    replaceVar(res, "XDG_MUSIC_DIR"_L1, XdgDirs::userDir(XdgDirs::Music));
+    replaceVar(res, "XDG_PICTURES_DIR"_L1, XdgDirs::userDir(XdgDirs::Pictures));
+    replaceVar(res, "XDG_VIDEOS_DIR"_L1, XdgDirs::userDir(XdgDirs::Videos));
+    replaceVar(res, "XDG_PHOTOS_DIR"_L1, XdgDirs::userDir(XdgDirs::Pictures));
 
     return res;
 }
@@ -1205,13 +1206,13 @@ QStringList XdgDesktopFile::expandExecString(const QStringList& urls) const
         // The parseCombinedArgString() splits the string by the space symbols,
         // we temporarily replaced them on the special characters.
         // Now we reverse it.
-        token.replace(QChar(01), QLatin1Char(' '));
-        token.replace(QChar(02), QLatin1Char('\t'));
-        token.replace(QChar(03), QLatin1Char('\n'));
+        token.replace(QChar(01), u' ');
+        token.replace(QChar(02), u'\t');
+        token.replace(QChar(03), u'\n');
 
         // ----------------------------------------------------------
         // A single file name, even if multiple files are selected.
-        if (token == QLatin1String("%f"))
+        if (token == "%f"_L1)
         {
             if (!urls.isEmpty())
                 result << expandEnvVariables(urls.at(0));
@@ -1221,7 +1222,7 @@ QStringList XdgDesktopFile::expandExecString(const QStringList& urls) const
         // ----------------------------------------------------------
         // A list of files. Use for apps that can open several local files at once.
         // Each file is passed as a separate argument to the executable program.
-        if (token == QLatin1String("%F"))
+        if (token == "%F"_L1)
         {
             result << expandEnvVariables(urls);
             continue;
@@ -1229,7 +1230,7 @@ QStringList XdgDesktopFile::expandExecString(const QStringList& urls) const
 
         // ----------------------------------------------------------
         // A single URL. Local files may either be passed as file: URLs or as file path.
-        if (token == QLatin1String("%u"))
+        if (token == "%u"_L1)
         {
             if (!urls.isEmpty())
             {
@@ -1248,7 +1249,7 @@ QStringList XdgDesktopFile::expandExecString(const QStringList& urls) const
         // ----------------------------------------------------------
         // A list of URLs. Each URL is passed as a separate argument to the executable
         // program. Local files may either be passed as file: URLs or as file path.
-        if (token == QLatin1String("%U"))
+        if (token == "%U"_L1)
         {
             for (const QString &s : urls)
             {
@@ -1267,11 +1268,11 @@ QStringList XdgDesktopFile::expandExecString(const QStringList& urls) const
         // The Icon key of the desktop entry expanded as two arguments, first --icon
         // and then the value of the Icon key. Should not expand to any arguments if
         // the Icon key is empty or missing.
-        if (token == QLatin1String("%i"))
+        if (token == "%i"_L1)
         {
             QString icon = value(iconKey).toString();
             if (!icon.isEmpty())
-                result << QLatin1String("-icon") << icon.replace(QLatin1Char('%'), QLatin1String("%%"));
+                result << "-icon"_L1 << icon.replace(u'%', "%%"_L1);
             continue;
         }
 
@@ -1279,27 +1280,27 @@ QStringList XdgDesktopFile::expandExecString(const QStringList& urls) const
         // ----------------------------------------------------------
         // The translated name of the application as listed in the appropriate Name key
         // in the desktop entry.
-        if (token == QLatin1String("%c"))
+        if (token == "%c"_L1)
         {
-            result << localizedValue(nameKey).toString().replace(QLatin1Char('%'), QLatin1String("%%"));
+            result << localizedValue(nameKey).toString().replace(u'%', "%%"_L1);
             continue;
         }
 
         // ----------------------------------------------------------
         // The location of the desktop file as either a URI (if for example gotten from
         // the vfolder system) or a local filename or empty if no location is known.
-        if (token == QLatin1String("%k"))
+        if (token == "%k"_L1)
         {
-            result << fileName().replace(QLatin1Char('%'), QLatin1String("%%"));
+            result << fileName().replace(u'%', "%%"_L1);
             break;
         }
 
         // ----------------------------------------------------------
         // Deprecated.
         // Deprecated field codes should be removed from the command line and ignored.
-        if (token == QLatin1String("%d") || token == QLatin1String("%D") ||
-            token == QLatin1String("%n") || token == QLatin1String("%N") ||
-            token == QLatin1String("%v") || token == QLatin1String("%m")
+        if (token == "%d"_L1 || token == "%D"_L1 ||
+            token == "%n"_L1 || token == "%N"_L1 ||
+            token == "%v"_L1 || token == "%m"_L1
             )
         {
             continue;
@@ -1332,13 +1333,13 @@ QString XdgDesktopFile::id(const QString &fileName, bool checkFileExists)
         }
     }
 
-    const QLatin1Char slash('/');
+    constexpr QLatin1Char slash(u'/');
     const QString s = slash + applicationsStr + slash;
     if (!id.startsWith(s))
         return QString();
 
     id.replace(id.indexOf(s), s.size(), QString());
-    id.replace(slash, QLatin1Char('-'));
+    id.replace(slash, u'-');
 
     return id;
 }
@@ -1354,7 +1355,7 @@ bool XdgDesktopFile::isShown(const QString &environment) const
     d->mIsShow.insert(env, false);
 
     // Means "this application exists, but don't display it in the menus".
-    if (value(QLatin1String("NoDisplay")).toBool())
+    if (value("NoDisplay"_L1).toBool())
         return false;
 
     // The file is not suitable to the current environment
@@ -1370,7 +1371,7 @@ bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) 
 {
     // Hidden should have been called Deleted. It means the user deleted
     // (at his level) something that was present
-    if (excludeHidden && value(QLatin1String("Hidden")).toBool())
+    if (excludeHidden && value("Hidden"_L1).toBool())
         return false;
 
     // A list of strings identifying the environments that should display/not
@@ -1378,7 +1379,7 @@ bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) 
     // OnlyShowIn ........
     QStringList env;
     if (environment.isEmpty())
-        env = QString::fromLocal8Bit(qgetenv("XDG_CURRENT_DESKTOP").toLower()).split(QLatin1Char(':'));
+        env = QString::fromLocal8Bit(qgetenv("XDG_CURRENT_DESKTOP").toLower()).split(u':');
     else {
         env.push_back(environment.toLower());
     }
@@ -1404,7 +1405,7 @@ bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) 
         keyFound = contains(key) ? true : false;
     }
 
-    if (keyFound && !has_env_intersection(value(key).toString().toLower().split(QLatin1Char(';'))))
+    if (keyFound && !has_env_intersection(value(key).toString().toLower().split(u';')))
         return false;
 
     // NotShowIn .........
@@ -1419,11 +1420,11 @@ bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) 
         keyFound = contains(key) ? true : false;
     }
 
-    if (keyFound && has_env_intersection(value(key).toString().toLower().split(QLatin1Char(';'))))
+    if (keyFound && has_env_intersection(value(key).toString().toLower().split(u';')))
         return false;
 
     // actually installed. If not, entry may not show in menus, etc.
-    if (contains(QLatin1String("TryExec")))
+    if (contains("TryExec"_L1))
         return tryExec();
 
     return true;
@@ -1432,7 +1433,7 @@ bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) 
 
 bool XdgDesktopFile::tryExec() const
 {
-    const QString progName = value(QLatin1String("TryExec")).toString();
+    const QString progName = value("TryExec"_L1).toString();
     if (progName.isEmpty())
         return false;
 
@@ -1445,10 +1446,10 @@ QString expandDynamicUrl(QString url)
     const QStringList env = QProcess::systemEnvironment();
     for (const QString &line : env)
     {
-        QString name = line.section(QLatin1Char('='), 0, 0);
-        QString val =  line.section(QLatin1Char('='), 1);
-        url.replace(QString::fromLatin1("$%1").arg(name), val);
-        url.replace(QString::fromLatin1("${%1}").arg(name), val);
+        QString name = line.section(u'=', 0, 0);
+        QString val =  line.section(u'=', 1);
+        url.replace("$%1"_L1.arg(name), val);
+        url.replace("${%1}"_L1.arg(name), val);
     }
 
     return url;
@@ -1467,7 +1468,7 @@ QString XdgDesktopFile::url() const
    return url;
 
     // WTF? What standard describes it?
-    url = expandDynamicUrl(value(QLatin1String("URL[$e]")).toString());
+    url = expandDynamicUrl(value("URL[$e]"_L1).toString());
     if (!url.isEmpty())
         return url;
 
@@ -1507,7 +1508,7 @@ QString findDesktopFile(const QString& desktopName)
 
     for (const QString &dirName : std::as_const(dataDirs))
     {
-        QString f = findDesktopFile(dirName + QLatin1String("/applications"), desktopName);
+        QString f = findDesktopFile(dirName + "/applications"_L1, desktopName);
         if (!f.isEmpty())
             return f;
     }
@@ -1531,18 +1532,18 @@ bool readDesktopFile(QIODevice & device, QSettings::SettingsMap & map)
         QString line = stream.readLine().trimmed();
 
         // Skip comments and empty lines
-        if (line.startsWith(QLatin1Char('#')) || line.isEmpty())
+        if (line.startsWith(u'#') || line.isEmpty())
             continue;
 
         // Section ..............................
-        if (line.startsWith(QLatin1Char('[')) && line.endsWith(QLatin1Char(']')))
+        if (line.startsWith(u'[') && line.endsWith(u']'))
         {
             section = line.mid(1, line.length()-2);
             continue;
         }
 
-        QString key = line.section(QLatin1Char('='), 0, 0).trimmed();
-        QString value = line.section(QLatin1Char('='), 1).trimmed();
+        QString key = line.section(u'=', 0, 0).trimmed();
+        QString value = line.section(u'=', 1).trimmed();
 
         if (key.isEmpty())
             continue;
@@ -1553,12 +1554,12 @@ bool readDesktopFile(QIODevice & device, QSettings::SettingsMap & map)
             return false;
         }
 
-        key.prepend(QLatin1Char('/'));
+        key.prepend(u'/');
         key.prepend(section);
 
-        if (value.contains(QLatin1Char(';')))
+        if (value.contains(u';'))
         {
-            map.insert(key, value.split(QLatin1Char(';'), Qt::SkipEmptyParts));
+            map.insert(key, value.split(u';', Qt::SkipEmptyParts));
         }
         else
         {
@@ -1588,7 +1589,7 @@ bool writeDesktopFile(QIODevice & device, const QSettings::SettingsMap & map)
             return false;
         }
 
-        QString thisSection = it.key().section(QLatin1Char('/'), 0, 0);
+        QString thisSection = it.key().section(u'/', 0, 0);
         if (thisSection.isEmpty())
         {
             qWarning() << "No section defined";
@@ -1597,11 +1598,11 @@ bool writeDesktopFile(QIODevice & device, const QSettings::SettingsMap & map)
 
         if (thisSection != section)
         {
-            stream << QLatin1Char('[') << thisSection << QLatin1Char(']') << QLatin1Char('\n');
+            stream << u'[' << thisSection << u']' << u'\n';
             section = thisSection;
         }
 
-        QString remainingKey = it.key().section(QLatin1Char('/'), 1, -1);
+        QString remainingKey = it.key().section(u'/', 1, -1);
 
         if (remainingKey.isEmpty())
         {
@@ -1609,22 +1610,22 @@ bool writeDesktopFile(QIODevice & device, const QSettings::SettingsMap & map)
             return false;
         }
 
-        stream << remainingKey << QLatin1Char('=');
+        stream << remainingKey << u'=';
 
         if (isString)
         {
-            stream << it.value().toString() << QLatin1Char(';');
+            stream << it.value().toString() << u';';
         }
         else /* if (isStringList) */
         {
             const auto values = it.value().toStringList();
             for (const QString &value : values)
             {
-                stream << value << QLatin1Char(';');
+                stream << value << u';';
             }
         }
 
-        stream << QLatin1Char('\n');
+        stream << u'\n';
 
     }
 

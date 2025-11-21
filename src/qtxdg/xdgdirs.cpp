@@ -31,20 +31,22 @@
 #include <cstdlib>
 #include <QDir>
 #include <QDebug>
+#include <QLatin1StringView>
 #include <QStandardPaths>
+
 
 using namespace Qt::Literals::StringLiterals;
 
-static const QString userDirectoryString[8] =
+static constexpr QLatin1StringView userDirectoryString[8] =
 {
-    QLatin1String("Desktop"),
-    QLatin1String("Download"),
-    QLatin1String("Templates"),
-    QLatin1String("Publicshare"),
-    QLatin1String("Documents"),
-    QLatin1String("Music"),
-    QLatin1String("Pictures"),
-    QLatin1String("Videos")
+    "Desktop"_L1,
+    "Download"_L1,
+    "Templates"_L1,
+    "Publicshare"_L1,
+    "Documents"_L1,
+    "Music"_L1,
+    "Pictures"_L1,
+    "Videos"_L1
 };
 
 // Helper functions prototypes
@@ -61,7 +63,7 @@ QString userDirFallback(XdgDirs::UserDirectory dir);
  ************************************************/
 void fixBashShortcuts(QString &s)
 {
-    if (s.startsWith(QLatin1Char('~')))
+    if (s.startsWith(u'~'))
         s = QFile::decodeName(qgetenv("HOME")) + (s).mid(1);
 }
 
@@ -71,7 +73,7 @@ void removeEndingSlash(QString &s)
     // We don't check for empty strings. Caller must check it.
 
     // Remove the ending slash, except for root dirs.
-    if (s.length() > 1 && s.endsWith(QLatin1Char('/')))
+    if (s.length() > 1 && s.endsWith(u'/'))
         s.chop(1);
 }
 
@@ -81,9 +83,9 @@ QString createDirectory(const QString &dir)
     QDir d(dir);
     if (!d.exists())
     {
-        if (!d.mkpath(QLatin1String(".")))
+        if (!d.mkpath("."_L1))
         {
-            qWarning() << QString::fromLatin1("Can't create %1 directory.").arg(d.absolutePath());
+            qWarning() << "Can't create %1 directory."_L1.arg(d.absolutePath());
             return QString();
         }
     }
@@ -123,9 +125,9 @@ QString userDirFallback(XdgDirs::UserDirectory dir)
     const QString home = QFile::decodeName(qgetenv("HOME"));
 
     if (home.isEmpty())
-        return QString::fromLatin1("/tmp");
+        return "/tmp"_L1;
     else if (dir == XdgDirs::Desktop)
-        fallback = QString::fromLatin1("%1/%2").arg(home, QLatin1String("Desktop"));
+        fallback = "%1/%2"_L1.arg(home, "Desktop"_L1);
     else
         fallback = home;
 
@@ -156,14 +158,14 @@ QString XdgDirs::userDir(XdgDirs::UserDirectory dir)
     const QString fallback = userDirFallback(dir);
 
     QString configDir(configHome());
-    QFile configFile(configDir + QLatin1String("/user-dirs.dirs"));
+    QFile configFile(configDir + "/user-dirs.dirs"_L1);
     if (!configFile.exists())
         return fallback;
 
     if (!configFile.open(QIODevice::ReadOnly | QIODevice::Text))
         return fallback;
 
-    QString userDirVar(QLatin1String("XDG_") + folderName.toUpper() + QLatin1String("_DIR"));
+    QString userDirVar("XDG_"_L1 + folderName.toUpper() + "_DIR"_L1);
     QTextStream in(&configFile);
     QString line;
     while (!in.atEnd())
@@ -174,10 +176,10 @@ QString XdgDirs::userDir(XdgDirs::UserDirectory dir)
             configFile.close();
 
             // get path between quotes
-            line = line.section(QLatin1Char('"'), 1, 1);
+            line = line.section(u'"', 1, 1);
             if (line.isEmpty())
                 return fallback;
-            line.replace(QLatin1String("$HOME"), QLatin1String("~"));
+            line.replace("$HOME"_L1, "~"_L1);
             fixBashShortcuts(line);
             return line;
         }
@@ -196,8 +198,8 @@ bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool 
         return false;
 
     const QString home = QFile::decodeName(qgetenv("HOME"));
-    if (!(value.startsWith(QLatin1String("$HOME"))
-                           || value.startsWith(QLatin1String("~/"))
+    if (!(value.startsWith("$HOME"_L1)
+                           || value.startsWith("~/"_L1)
                            || value.startsWith(home)
                            || value.startsWith(QDir(home).canonicalPath())))
 	return false;
@@ -205,7 +207,7 @@ bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool 
     QString folderName = userDirectoryString[dir];
 
     QString configDir(configHome());
-    QFile configFile(configDir + QLatin1String("/user-dirs.dirs"));
+    QFile configFile(configDir + "/user-dirs.dirs"_L1);
 
     // create the file if doesn't exist and opens it
     if (!configFile.open(QIODevice::ReadWrite | QIODevice::Text))
@@ -218,14 +220,14 @@ bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool 
     while (!stream.atEnd())
     {
         line = stream.readLine();
-        if (line.indexOf(QLatin1String("XDG_") + folderName.toUpper() + QLatin1String("_DIR")) == 0)
+        if (line.indexOf("XDG_"_L1 + folderName.toUpper() + "_DIR"_L1) == 0)
         {
             foundVar = true;
-            QString path = line.section(QLatin1Char('"'), 1, 1);
+            QString path = line.section(u'"', 1, 1);
             line.replace(path, value);
             lines.append(line);
         }
-        else if (line.indexOf(QLatin1String("XDG_")) == 0)
+        else if (line.indexOf("XDG_"_L1) == 0)
         {
             lines.append(line);
         }
@@ -234,15 +236,15 @@ bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool 
     stream.reset();
     configFile.resize(0);
     if (!foundVar)
-        stream << QString::fromLatin1("XDG_%1_DIR=\"%2\"\n").arg(folderName.toUpper(),(value));
+        stream << "XDG_%1_DIR=\"%2\"\n"_L1.arg(folderName.toUpper(),(value));
 
     for (QVector<QString>::iterator i = lines.begin(); i != lines.end(); ++i)
-        stream << *i << QLatin1Char('\n');
+        stream << *i << u'\n';
 
     configFile.close();
 
     if (createDir) {
-        QString path = QString(value).replace(QLatin1String("$HOME"), QLatin1String("~"));
+        QString path = QString(value).replace("$HOME"_L1, "~"_L1);
         fixBashShortcuts(path);
 
         return createDirectory(path).isEmpty() ? false : true;
@@ -279,16 +281,16 @@ QString XdgDirs::configHome(bool createDir)
 QStringList XdgDirs::dataDirs(const QString &postfix)
 {
     QString d = QFile::decodeName(qgetenv("XDG_DATA_DIRS"));
-    QStringList dirs = d.split(QLatin1Char(':'), Qt::SkipEmptyParts);
+    QStringList dirs = d.split(u':', Qt::SkipEmptyParts);
 
     if (dirs.isEmpty()) {
-        dirs.append(QString::fromLatin1("/usr/local/share"));
-        dirs.append(QString::fromLatin1("/usr/share"));
+        dirs.append("/usr/local/share"_L1);
+        dirs.append("/usr/share"_L1);
     } else {
         QMutableListIterator<QString> it(dirs);
         while (it.hasNext()) {
             const QString dir = it.next();
-            if (!dir.startsWith(QLatin1Char('/')))
+            if (!dir.startsWith(u'/'))
                 it.remove();
         }
     }
@@ -305,9 +307,9 @@ QStringList XdgDirs::configDirs(const QString &postfix)
     QStringList dirs;
     const QString env = QFile::decodeName(qgetenv("XDG_CONFIG_DIRS"));
     if (env.isEmpty())
-        dirs.append(QString::fromLatin1("/etc/xdg"));
+        dirs.append("/etc/xdg"_L1);
     else
-        dirs = env.split(QLatin1Char(':'), Qt::SkipEmptyParts);
+        dirs = env.split(u':', Qt::SkipEmptyParts);
 
     cleanAndAddPostfix(dirs, postfix);
     return dirs;
@@ -360,7 +362,7 @@ QStringList XdgDirs::autostartDirs(const QString &postfix)
     QStringList dirs;
     const QStringList s = configDirs();
     for (const QString &dir : s)
-        dirs << QString::fromLatin1("%1/autostart").arg(dir);
+        dirs << "%1/autostart"_L1.arg(dir);
 
     cleanAndAddPostfix(dirs, postfix);
     return dirs;

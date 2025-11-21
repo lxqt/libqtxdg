@@ -31,6 +31,7 @@
 #include <QDebug>
 #include <QStringList>
 
+using namespace Qt::Literals::StringLiterals;
 
 /**
  * See: http://standards.freedesktop.org/desktop-entry-spec
@@ -61,26 +62,26 @@ XdgMenuRuleOr::XdgMenuRuleOr(const QDomElement& element, QObject* parent) :
     {
         QDomElement e = iter.next();
 
-        if (e.tagName() == QLatin1String("Or"))
+        if (e.tagName() == "Or"_L1)
             mChilds.push_back(new XdgMenuRuleOr(e, this));
 
-        else if (e.tagName() == QLatin1String("And"))
+        else if (e.tagName() == "And"_L1)
             mChilds.push_back(new XdgMenuRuleAnd(e, this));
 
-        else if (e.tagName() == QLatin1String("Not"))
+        else if (e.tagName() == "Not"_L1)
             mChilds.push_back(new XdgMenuRuleNot(e, this));
 
-        else if (e.tagName() == QLatin1String("Filename"))
+        else if (e.tagName() == "Filename"_L1)
             mChilds.push_back(new XdgMenuRuleFileName(e, this));
 
-        else if (e.tagName() == QLatin1String("Category"))
+        else if (e.tagName() == "Category"_L1)
             mChilds.push_back(new XdgMenuRuleCategory(e, this));
 
-        else if (e.tagName() == QLatin1String("All"))
+        else if (e.tagName() == "All"_L1)
             mChilds.push_back(new XdgMenuRuleAll(e, this));
 
         else
-            qWarning() << QString::fromLatin1("Unknown rule") << e.tagName();
+            qWarning() << "Unknown rule"_L1 << e.tagName();
     }
 
 }

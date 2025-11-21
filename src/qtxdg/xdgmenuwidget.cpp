@@ -99,13 +99,13 @@ void XdgMenuWidgetPrivate::init(const QDomElement& xml)
     q->clear();
 
     QString title;
-    if (! xml.attribute(QLatin1String("title")).isEmpty())
-        title = xml.attribute(QLatin1String("title"));
+    if (! xml.attribute("title"_L1).isEmpty())
+        title = xml.attribute("title"_L1);
     else
-        title = xml.attribute(QLatin1String("name"));
+        title = xml.attribute("name"_L1);
     q->setTitle(escape(title));
 
-    //q->setToolTip(xml.attribute(QLatin1String("comment")));
+    //q->setToolTip(xml.attribute("comment"_L1));
     q->setToolTipsVisible(true);
 
 
@@ -114,7 +114,7 @@ void XdgMenuWidgetPrivate::init(const QDomElement& xml)
     if (parentMenu)
         parentIcon = parentMenu->icon();
 
-    q->setIcon(XdgIcon::fromTheme(mXml.attribute(QLatin1String("icon")), parentIcon));
+    q->setIcon(XdgIcon::fromTheme(mXml.attribute("icon"_L1), parentIcon));
 
     buildMenu();
 }
@@ -196,15 +196,15 @@ void XdgMenuWidgetPrivate::buildMenu()
         QDomElement xml = it.next();
 
         // Build submenu ........................
-        if (xml.tagName() == QLatin1String("Menu"))
+        if (xml.tagName() == "Menu"_L1)
             q->insertMenu(first, new XdgMenuWidget(xml, q));
 
         //Build application link ................
-        else if (xml.tagName() == QLatin1String("AppLink"))
+        else if (xml.tagName() == "AppLink"_L1)
             q->insertAction(first, createAction(xml));
 
         //Build separator .......................
-        else if (xml.tagName() == QLatin1String("Separator"))
+        else if (xml.tagName() == "Separator"_L1)
             q->insertSeparator(first);
 
     }
@@ -214,19 +214,19 @@ void XdgMenuWidgetPrivate::buildMenu()
 XdgAction* XdgMenuWidgetPrivate::createAction(const QDomElement& xml)
 {
     Q_Q(XdgMenuWidget);
-    XdgAction* action = new XdgAction(xml.attribute(QLatin1String("desktopFile")), q);
+    XdgAction* action = new XdgAction(xml.attribute("desktopFile"_L1), q);
 
     QString title;
-    if (!xml.attribute(QLatin1String("title")).isEmpty())
-        title = xml.attribute(QLatin1String("title"));
+    if (!xml.attribute("title"_L1).isEmpty())
+        title = xml.attribute("title"_L1);
     else
-        title = xml.attribute(QLatin1String("name"));
+        title = xml.attribute("name"_L1);
 
     action->setText(escape(title));
 
-    if (!xml.attribute(QLatin1String("genericName")).isEmpty() &&
-         xml.attribute(QLatin1String("genericName")) != title)
-        action->setToolTip(xml.attribute(QLatin1String("genericName")));
+    if (!xml.attribute("genericName"_L1).isEmpty() &&
+         xml.attribute("genericName"_L1) != title)
+        action->setToolTip(xml.attribute("genericName"_L1));
 
     return action;
 }
@@ -238,5 +238,5 @@ XdgAction* XdgMenuWidgetPrivate::createAction(const QDomElement& xml)
  ************************************************/
 QString XdgMenuWidgetPrivate::escape(QString string)
 {
-    return string.replace(QLatin1Char('&'), QLatin1String("&&"));
+    return string.replace(u'&', "&&"_L1);
 }

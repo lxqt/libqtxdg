@@ -21,9 +21,11 @@
 #include "tst_xdgdesktopfile.h"
 #include "XdgDesktopFile"
 
+#include <QString>
 #include <QTemporaryFile>
 #include <QTest>
 
+using namespace Qt::Literals::StringLiterals;
 
 class Language
 {
@@ -46,7 +48,7 @@ QTEST_MAIN(tst_xdgdesktopfile)
 
 void tst_xdgdesktopfile::testRead()
 {
-    QTemporaryFile file(QDir::temp().filePath(QStringLiteral("testReadXXXXXX.desktop")));
+    QTemporaryFile file(QDir::temp().filePath(u"testReadXXXXXX.desktop"_s));
     QVERIFY(file.open());
     const QString fileName = file.fileName();
     QTextStream ts(&file);
@@ -65,10 +67,10 @@ void tst_xdgdesktopfile::testRead()
 
     QVERIFY(df.isValid());
     QCOMPARE(df.type(), XdgDesktopFile::ApplicationType);
-    QCOMPARE(df.name(), QString::fromLatin1("MyApp"));
-    QCOMPARE(df.iconName(), QString::fromLatin1("foobar"));
-    QCOMPARE(df.mimeTypes(), QStringList() << QString::fromLatin1("text/plain")
-             << QString::fromLatin1("image/png"));
+    QCOMPARE(df.name(), "MyApp"_L1);
+    QCOMPARE(df.iconName(), "foobar"_L1);
+    QCOMPARE(df.mimeTypes(), QStringList() << "text/plain"_L1
+             << "image/png"_L1);
     QCOMPARE(df.fileName(), QFileInfo(fileName).canonicalFilePath());
 }
 
@@ -80,16 +82,16 @@ void tst_xdgdesktopfile::testReadLocalized_data()
     const QString pt = QString::fromUtf8("A Minha Aplicação");
     const QString pt_BR = QString::fromUtf8("O Meu Aplicativo");
 
-    QTest::newRow("pt") << QStringLiteral("pt") << pt;
-    QTest::newRow("pt_PT") << QStringLiteral("pt_PT")  << pt;
-    QTest::newRow("pt_BR") << QStringLiteral("pt_BR") << pt_BR;
+    QTest::newRow("pt") << u"pt"_s << pt;
+    QTest::newRow("pt_PT") << u"pt_PT"_s  << pt;
+    QTest::newRow("pt_BR") << u"pt_BR"_s << pt_BR;
 
-    QTest::newRow("de") << QStringLiteral("de") << QStringLiteral("My Application");
+    QTest::newRow("de") << u"de"_s << u"My Application"_s;
 }
 
 void tst_xdgdesktopfile::testReadLocalized()
 {
-    QTemporaryFile file(QDir::temp().filePath(QStringLiteral("testReadLocalizedXXXXXX.desktop")));
+    QTemporaryFile file(QDir::temp().filePath(u"testReadLocalizedXXXXXX.desktop"_s));
     QVERIFY(file.open());
     const QString fileName = file.fileName();
     QTextStream ts(&file);
@@ -114,5 +116,5 @@ void tst_xdgdesktopfile::testReadLocalized()
 
     Language lang(locale);
 
-    QCOMPARE(df.localizedValue(QStringLiteral("Name")).toString(), translation);
+    QCOMPARE(df.localizedValue(u"Name"_s).toString(), translation);
 }

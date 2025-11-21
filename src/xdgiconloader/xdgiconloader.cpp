@@ -57,6 +57,8 @@
 
 #include <private/qhexstring_p.h>
 
+using namespace Qt::Literals::StringLiterals;
+
 Q_GLOBAL_STATIC(XdgIconLoader, iconLoaderInstance)
 
 /* Theme to use in last resort, if the theme does not have the icon, neither the parents  */
@@ -66,7 +68,7 @@ static QString fallbackTheme()
         const QVariant themeHint = theme->themeHint(QPlatformTheme::SystemIconFallbackThemeName);
         if (themeHint.isValid()) {
             const QString theme = themeHint.toString();
-            if (theme != QLatin1String("hicolor"))
+            if (theme != "hicolor"_L1)
                 return theme;
         }
     }
@@ -138,7 +140,7 @@ Q_GLOBAL_STATIC(QFileSystemWatcher, gtkCachesWatcher)
 
 
 QIconCacheGtkReader::QIconCacheGtkReader(const QString &dirName)
-    : m_cacheFileInfo{dirName + QLatin1String("/icon-theme.cache")}
+    : m_cacheFileInfo{dirName + "/icon-theme.cache"_L1}
     , m_data(nullptr)
     , m_isValid(false)
 {
@@ -269,7 +271,7 @@ XdgIconTheme::XdgIconTheme(const QString &themeName)
     const QStringList iconDirs = QIcon::themeSearchPaths();
     for ( int i = 0 ; i < iconDirs.size() ; ++i) {
         QDir iconDir(iconDirs[i]);
-        QString themeDir = iconDir.path() + QLatin1Char('/') + themeName;
+        QString themeDir = iconDir.path() + u'/' + themeName;
         QFileInfo themeDirInfo(themeDir);
 
         if (themeDirInfo.isDir()) {
@@ -278,7 +280,7 @@ XdgIconTheme::XdgIconTheme(const QString &themeName)
         }
 
         if (!m_valid) {
-            themeIndex.setFileName(themeDir + QLatin1String("/index.theme"));
+            themeIndex.setFileName(themeDir + "/index.theme"_L1);
             if (themeIndex.exists())
                 m_valid = true;
         }
@@ -286,10 +288,10 @@ XdgIconTheme::XdgIconTheme(const QString &themeName)
 #ifndef QT_NO_SETTINGS
     if (themeIndex.exists()) {
         const QSettings indexReader(themeIndex.fileName(), QSettings::IniFormat);
-        m_followsColorScheme = indexReader.value(QStringLiteral("Icon Theme/FollowsColorScheme"), false).toBool();
+        m_followsColorScheme = indexReader.value(u"Icon Theme/FollowsColorScheme"_s, false).toBool();
         const QStringList keys = indexReader.allKeys();
         for (auto const &key : keys) {
-            if (key.endsWith(QLatin1String("/Size"))) {
+            if (key.endsWith("/Size"_L1)) {
                 // Note the QSettings ini-format does not accept
                 // slashes in key names, hence we have to cheat
                 if (int size = indexReader.value(key).toInt()) {
@@ -297,29 +299,29 @@ XdgIconTheme::XdgIconTheme(const QString &themeName)
                     QIconDirInfo dirInfo(directoryKey);
                     dirInfo.size = size;
                     QString type = indexReader.value(directoryKey +
-                                                     QLatin1String("/Type")
+                                                     "/Type"_L1
                                                      ).toString();
 
-                    if (type == QLatin1String("Fixed"))
+                    if (type == "Fixed"_L1)
                         dirInfo.type = QIconDirInfo::Fixed;
-                    else if (type == QLatin1String("Scalable"))
+                    else if (type == "Scalable"_L1)
                         dirInfo.type = QIconDirInfo::Scalable;
                     else
                         dirInfo.type = QIconDirInfo::Threshold;
 
                     dirInfo.threshold = indexReader.value(directoryKey +
-                                                        QLatin1String("/Threshold"),
+                                                        "/Threshold"_L1,
                                                         2).toInt();
 
                     dirInfo.minSize = indexReader.value(directoryKey +
-                                                         QLatin1String("/MinSize"),
+                                                         "/MinSize"_L1,
                                                          size).toInt();
 
                     dirInfo.maxSize = indexReader.value(directoryKey +
-                                                        QLatin1String("/MaxSize"),
+                                                        "/MaxSize"_L1,
                                                         size).toInt();
                     dirInfo.scale = indexReader.value(directoryKey +
-                                                      QLatin1String("/Scale"),
+                                                      "/Scale"_L1,
                                                       1).toInt();
                     m_keyList.append(dirInfo);
                 }
@@ -328,7 +330,7 @@ XdgIconTheme::XdgIconTheme(const QString &themeName)
 
         // Parent themes provide fallbacks for missing icons
         m_parents = indexReader.value(
-                QLatin1String("Icon Theme/Inherits")).toStringList();
+                "Icon Theme/Inherits"_L1).toStringList();
         m_parents.removeAll(QString());
 
         // Ensure a default platform fallback for all themes
@@ -386,9 +388,9 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
 
     const QStringList contentDirs = theme.contentDirs();
 
-    const QString svgext(QLatin1String(".svg"));
-    const QString pngext(QLatin1String(".png"));
-    const QString xpmext(QLatin1String(".xpm"));
+    const QString svgext(".svg"_L1);
+    const QString pngext(".png"_L1);
+    const QString xpmext(".xpm"_L1);
 
 
     QStringView iconNameFallback(iconName);
@@ -424,10 +426,10 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
                 }
             }
 
-            QString contentDir = contentDirs.at(i) + QLatin1Char('/');
+            QString contentDir = contentDirs.at(i) + u'/';
             for (int j = 0; j < subDirs.size() ; ++j) {
                 const QIconDirInfo &dirInfo = subDirs.at(j);
-                const QString subDir = contentDir + dirInfo.path + QLatin1Char('/');
+                const QString subDir = contentDir + dirInfo.path + u'/';
                 const QString pngPath = subDir + pngIconName;
                 if (QFile::exists(pngPath)) {
                     auto iconEntry = std::make_unique<PixmapEntry>();
@@ -481,9 +483,9 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
 
         // make sure that hicolor is also searched before dash fallbacks
         if (info.entries.empty()
-            && !parents.contains(QLatin1String("hicolor"))
-            && !visited.contains(QLatin1String("hicolor"))) {
-            info = findIconHelper(QLatin1String("hicolor"), iconName, visited);
+            && !parents.contains("hicolor"_L1)
+            && !visited.contains("hicolor"_L1)) {
+            info = findIconHelper("hicolor"_L1, iconName, visited);
         }
     }
 
@@ -492,7 +494,7 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
         // if the icon is not found in any inherited theme
         const auto fallbackPaths = QIcon::fallbackSearchPaths();
         for (const auto &fallbackPath : fallbackPaths) {
-            const QString pngPath = fallbackPath + QLatin1Char('/') + iconName + pngext;
+            const QString pngPath = fallbackPath + u'/' + iconName + pngext;
             if (QFile::exists(pngPath)) {
                 auto iconEntry = std::make_unique<PixmapEntry>();
                 QIconDirInfo dirInfo(fallbackPath);
@@ -500,7 +502,7 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
                 iconEntry->filename = pngPath;
                 info.entries.insert(info.entries.begin(), std::move(iconEntry));
             } else {
-                const QString svgPath = fallbackPath + QLatin1Char('/') + iconName + svgext;
+                const QString svgPath = fallbackPath + u'/' + iconName + svgext;
                 if (gSupportsSvg && QFile::exists(svgPath)) {
                     auto iconEntry = std::make_unique<ScalableEntry>();
                     QIconDirInfo dirInfo(fallbackPath);
@@ -514,7 +516,7 @@ QThemeIconInfo XdgIconLoader::findIconHelper(const QString &themeName,
 
     if (dashFallback && info.entries.empty()) {
         // If it's possible - find next fallback for the icon
-        const int indexOfDash = iconNameFallback.lastIndexOf(QLatin1Char('-'));
+        const int indexOfDash = iconNameFallback.lastIndexOf(u'-');
         if (indexOfDash != -1) {
             iconNameFallback.truncate(indexOfDash);
             QStringList _visited;
@@ -529,9 +531,9 @@ QThemeIconInfo XdgIconLoader::unthemedFallback(const QString &iconName, const QS
 {
     QThemeIconInfo info;
 
-    const QString svgext(QLatin1String(".svg"));
-    const QString pngext(QLatin1String(".png"));
-    const QString xpmext(QLatin1String(".xpm"));
+    const QString svgext(".svg"_L1);
+    const QString pngext(".png"_L1);
+    const QString xpmext(".xpm"_L1);
 
     for (const auto &contentDir : searchPaths)  {
         QDir currentDir(contentDir);
@@ -568,7 +570,7 @@ QThemeIconInfo XdgIconLoader::loadIcon(const QString &name) const
             auto unthemedInfo = unthemedFallback(name, QIcon::themeSearchPaths());
             if (unthemedInfo.entries.empty()) {
                 /* Freedesktop standard says to look in /usr/share/pixmaps last */
-                const QStringList pixmapPath = (QStringList() << QString::fromLatin1("/usr/share/pixmaps"));
+                const QStringList pixmapPath = (QStringList() << "/usr/share/pixmaps"_L1);
                 auto pixmapInfo = unthemedFallback(name, pixmapPath);
                 if (pixmapInfo.entries.empty()) {
                     return QThemeIconInfo();
@@ -801,7 +803,7 @@ QPixmap PixmapEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State st
         calculatedDpr = qMax(qreal(1.0), scale * ratio);
     }
 
-    QString key = QLatin1String("$qt_theme_")
+    QString key = "$qt_theme_"_L1
                   % HexString<quint64>(basePixmap.cacheKey())
                   % HexString<quint8>(mode)
                   % HexString<quint64>(QGuiApplication::palette().cacheKey())
@@ -809,7 +811,7 @@ QPixmap PixmapEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State st
                   % HexString<uint>(actualSize.height())
                   % HexString<quint16>(qRound(calculatedDpr * 1000));
 #else
-    QString key = QLatin1String("$qt_theme_")
+    QString key = "$qt_theme_"_L1
                   % HexString<qint64>(basePixmap.cacheKey())
                   % HexString<int>(mode)
                   % HexString<qint64>(QGuiApplication::palette().cacheKey())
@@ -848,7 +850,7 @@ QPixmap ScalableEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State 
         return pm;
 
 #if (QT_VERSION >= QT_VERSION_CHECK(6,8,0))
-    QString key = QLatin1String("lxqt_")
+    QString key = "lxqt_"_L1
                   % filename
                   % HexString<quint8>(mode)
                   % HexString<int>(state)
@@ -856,7 +858,7 @@ QPixmap ScalableEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State 
                   % HexString<uint>(size.height())
                   % HexString<quint16>(qRound(scale * 1000));
 #else
-    QString key = QLatin1String("lxqt_")
+    QString key = "lxqt_"_L1
                   % filename
                   % HexString<int>(mode)
                   % HexString<int>(state)
@@ -895,9 +897,9 @@ QPixmap ScalableEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State 
     return pm;
 }
 
-static const QString STYLE = QStringLiteral("\n.ColorScheme-Text, .ColorScheme-NeutralText {color:%1;}\
+static const QString STYLE = u"\n.ColorScheme-Text, .ColorScheme-NeutralText {color:%1;}\
 \n.ColorScheme-Background {color:%2;}\
-\n.ColorScheme-Highlight {color:%3;}");
+\n.ColorScheme-Highlight {color:%3;}"_s;
 // NOTE: Qt palette does not have any colors for positive/negative text
 // .ColorScheme-PositiveText,ColorScheme-NegativeText {color:%4;}
 
@@ -934,7 +936,7 @@ QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, Q
         hCol = pal.highlight().color().name();
     }
 #if (QT_VERSION >= QT_VERSION_CHECK(6,8,0))
-    QString key = QLatin1String("lxqt_")
+    QString key = "lxqt_"_L1
                   % filename
                   % HexString<quint8>(mode)
                   % HexString<int>(state)
@@ -943,7 +945,7 @@ QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, Q
                   % HexString<quint16>(qRound(scale * 1000))
                   % txtCol % bgCol % hCol;
 #else
-    QString key = QLatin1String("lxqt_")
+    QString key = "lxqt_"_L1
                   % filename
                   % HexString<int>(mode)
                   % HexString<int>(state)
@@ -971,8 +973,8 @@ QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, Q
             while (!xmlReader.atEnd())
             {
                 if (xmlReader.readNext() == QXmlStreamReader::StartElement
-                    && xmlReader.qualifiedName() == QLatin1String("style")
-                    && xmlReader.attributes().value(QLatin1String("id")) == QLatin1String("current-color-scheme"))
+                    && xmlReader.qualifiedName() == "style"_L1
+                    && xmlReader.attributes().value("id"_L1) == "current-color-scheme"_L1)
                 {
                     const auto attribs = xmlReader.attributes();
                     // store original data/text of the <style> element
@@ -983,7 +985,7 @@ QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, Q
                             origData += xmlReader.text();
                         xmlReader.readNext();
                     }
-                    writer.writeStartElement(QLatin1String("style"));
+                    writer.writeStartElement("style"_L1);
                     writer.writeAttributes(attribs);
                     writer.writeCharacters(origData);
                     writer.writeCharacters(styleSheet);
@@ -1028,7 +1030,7 @@ QPixmap XdgIconLoaderEngine::pixmap(const QSize &size, QIcon::Mode mode,
 
 QString XdgIconLoaderEngine::key() const
 {
-    return QLatin1String("XdgIconLoaderEngine");
+    return "XdgIconLoaderEngine"_L1;
 }
 
 QString XdgIconLoaderEngine::iconName()

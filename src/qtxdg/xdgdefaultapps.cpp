@@ -143,7 +143,7 @@ XdgDesktopFile *XdgDefaultApps::fileManager()
 
 QList<XdgDesktopFile *> XdgDefaultApps::fileManagers()
 {
-    return categoryAndMimeTypeApps("FileManager"_L1, QStringList() << "inode/directory"_L1);
+    return categoryAndMimeTypeApps(u"FileManager"_s, QStringList() << "inode/directory"_L1);
 }
 
 bool XdgDefaultApps::setEmailClient(const XdgDesktopFile &app)

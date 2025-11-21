@@ -1508,7 +1508,7 @@ QString findDesktopFile(const QString& desktopName)
 
     for (const QString &dirName : std::as_const(dataDirs))
     {
-        QString f = findDesktopFile(dirName + "/applications"_L1, desktopName);
+        const QString f = findDesktopFile(dirName + "/applications"_L1, desktopName);
         if (!f.isEmpty())
             return f;
     }

@@ -20,10 +20,6 @@ target_include_directories(qtxdg-desktop-file-start
     PRIVATE "${PROJECT_SOURCE_DIR}/qtxdg"
 )
 
-target_include_directories(qtxdg-iconfinder
-    PRIVATE "${Qt6Gui_PRIVATE_INCLUDE_DIRS}"
-)
-
 target_compile_definitions(qtxdg-desktop-file-start
     PRIVATE
         "-DQTXDG_VERSION=\"${QTXDG_VERSION_STRING}\""
@@ -41,7 +37,10 @@ target_link_libraries(qtxdg-desktop-file-start
 )
 
 target_link_libraries(qtxdg-iconfinder
-    ${QTXDGX_ICONLOADER_LIBRARY_NAME}
+    PRIVATE
+        Qt6::GuiPrivate
+    PUBLIC
+        ${QTXDGX_ICONLOADER_LIBRARY_NAME}
 )
 
 install(TARGETS

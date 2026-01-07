@@ -811,7 +811,7 @@ QPixmap PixmapEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State st
                   % HexString<quint64>(QGuiApplication::palette().cacheKey())
                   % HexString<uint>(actualSize.width())
                   % HexString<uint>(actualSize.height())
-                  % HexString<quint16>(std::round(calculatedDpr * 1000));
+                  % HexString<quint16>(qRound(calculatedDpr * 1000));
 #else
     QString key = "$qt_theme_"_L1
                   % HexString<qint64>(basePixmap.cacheKey())
@@ -858,7 +858,7 @@ QPixmap ScalableEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State 
                   % HexString<int>(state)
                   % HexString<uint>(size.width())
                   % HexString<uint>(size.height())
-                  % HexString<quint16>(std::round(scale * 1000));
+                  % HexString<quint16>(qRound(scale * 1000));
 #else
     QString key = "lxqt_"_L1
                   % filename
@@ -944,7 +944,7 @@ QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, Q
                   % HexString<int>(state)
                   % HexString<uint>(size.width())
                   % HexString<uint>(size.height())
-                  % HexString<quint16>(std::round(scale * 1000))
+                  % HexString<quint16>(qRound(scale * 1000))
                   % txtCol % bgCol % hCol;
 #else
     QString key = "lxqt_"_L1

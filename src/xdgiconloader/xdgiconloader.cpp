@@ -39,6 +39,8 @@
 #include <private/qguiapplication_p.h>
 #include <private/qicon_p.h>
 
+#include <cmath>
+
 #include <QtGui/QIconEnginePlugin>
 #include <QtGui/QPixmapCache>
 #include <qpa/qplatformtheme.h>
@@ -677,7 +679,7 @@ static int directorySizeDistance(const QIconDirInfo &dir, int iconsize, int icon
 {
     const int scaledIconSize = iconsize * iconscale;
     if (dir.type == QIconDirInfo::Fixed) {
-        return qAbs(dir.size * dir.scale - scaledIconSize);
+        return std::abs(dir.size * dir.scale - scaledIconSize);
 
     } else if (dir.type == QIconDirInfo::Scalable) {
         if (scaledIconSize < dir.minSize * dir.scale)
@@ -701,7 +703,7 @@ static int directorySizeDistance(const QIconDirInfo &dir, int iconsize, int icon
 
 QIconLoaderEngineEntry *XdgIconLoaderEngine::entryForSize(const QThemeIconInfo &info, const QSize &size, int scale)
 {
-    int iconsize = qMin(size.width(), size.height());
+    int iconsize = std::min(size.width(), size.height());
 
     // Note that info.entries are sorted so that png-files
     // come first
@@ -756,9 +758,9 @@ QSize XdgIconLoaderEngine::actualSize(const QSize &size, QIcon::Mode mode,
             if (0 == dir_size && nullptr != (pix_e = dynamic_cast<PixmapEntry *>(entry)))
             {
                 QSize pix_size = pix_e->basePixmap.size();
-                dir_size = qMin(pix_size.width(), pix_size.height());
+                dir_size = std::min(pix_size.width(), pix_size.height());
             }
-            int result = qMin(dir_size, qMin(size.width(), size.height()));
+            int result = std::min(dir_size, std::min(size.width(), size.height()));
             return {result, result};
         }
     }
@@ -800,7 +802,7 @@ QPixmap PixmapEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State st
     {
         qreal ratio = 0.5 * (qreal(actualSize.width()) / qreal(targetSize.width()) +
                              qreal(actualSize.height() / qreal(targetSize.height())));
-        calculatedDpr = qMax(qreal(1.0), scale * ratio);
+        calculatedDpr = std::max(qreal(1.0), scale * ratio);
     }
 
     QString key = "$qt_theme_"_L1
@@ -868,9 +870,9 @@ QPixmap ScalableEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State 
     if (!QPixmapCache::find(key, &pm))
     {
 #if (QT_VERSION >= QT_VERSION_CHECK(6,8,0))
-        int icnSize = qMin(size.width(), size.height()) * scale;
+        int icnSize = std::min(size.width(), size.height()) * scale;
 #else
-        int icnSize = qMin(size.width(), size.height());
+        int icnSize = std::min(size.width(), size.height());
 #endif
         pm = QPixmap(icnSize, icnSize);
         pm.fill(Qt::transparent);
@@ -956,9 +958,9 @@ QPixmap ScalableFollowsColorEntry::pixmap(const QSize &size, QIcon::Mode mode, Q
     if (!QPixmapCache::find(key, &pm))
     {
 #if (QT_VERSION >= QT_VERSION_CHECK(6,8,0))
-        int icnSize = qMin(size.width(), size.height()) * scale;
+        int icnSize = std::min(size.width(), size.height()) * scale;
 #else
-        int icnSize = qMin(size.width(), size.height());
+        int icnSize = std::min(size.width(), size.height());
 #endif
         pm = QPixmap(icnSize, icnSize);
         pm.fill(Qt::transparent);
@@ -1048,7 +1050,7 @@ bool XdgIconLoaderEngine::isNull()
 QPixmap XdgIconLoaderEngine::scaledPixmap(const QSize &size, QIcon::Mode mode, QIcon::State state, qreal scale)
 {
     ensureLoaded();
-    const int integerScale = qCeil(scale);
+    const int integerScale = std::ceil(scale);
 #if (QT_VERSION >= QT_VERSION_CHECK(6,8,0))
     QIconLoaderEngineEntry *entry = entryForSize(m_info, size, integerScale);
     return entry ? entry->pixmap(size, mode, state, scale) : QPixmap();

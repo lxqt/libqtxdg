@@ -1381,7 +1381,7 @@ bool XdgDesktopFile::isSuitable(bool excludeHidden, const QString &environment) 
     if (environment.isEmpty())
         env = QString::fromLocal8Bit(qgetenv("XDG_CURRENT_DESKTOP").toLower()).split(u':');
     else {
-        env.push_back(environment.toLower());
+        env = environment.toLower().split(u':');
     }
 
     const auto has_env_intersection = [&env] (const QStringList & values) -> bool {

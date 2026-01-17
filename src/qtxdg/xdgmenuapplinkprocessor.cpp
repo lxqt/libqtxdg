@@ -106,19 +106,9 @@ void XdgMenuApplinkProcessor::step2()
 
         XdgDesktopFile* file = fileInfo->desktopFile();
 
-        bool show = false;
         QStringList envs = mMenu->environments();
-        const int N = envs.size();
-        for (int i = 0; i < N; ++i)
-        {
-            if (file->isShown(envs.at(i)))
-            {
-                show = true;
-                break;
-            }
-        }
 
-        if (!show)
+        if (!file->isShown(envs.join(u':')))
             continue;
 
         QDomElement appLink = doc.createElement("AppLink"_L1);

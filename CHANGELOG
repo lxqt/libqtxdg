@@ -1,3 +1,11 @@
+libqtxdg-4.4.0 / 2026-04-20
+============================
+ * Modernized string nomenclature and classes.
+ * Fixed compilation with Qt ≥ 6.10.
+ * Prefer std:: functions.
+ * Added $XDG_STATE_HOME directory implementation.
+ * Fixed NotShowIn=LXQt handling in .desktop files.
+
 libqtxdg-4.3.0 / 2025-11-05
 ============================
  * Fixed building with Qt 6.10.

@@ -93,6 +93,11 @@ set_target_properties(${QTXDGX_LIBRARY_NAME} PROPERTIES
   SOVERSION ${QTXDG_MAJOR_VERSION}
 )
 
+target_compile_options(${QTXDGX_LIBRARY_NAME}
+    PRIVATE
+        "$<$<CXX_COMPILER_ID:Clang>:-Wno-c2y-extensions>"
+)
+
 target_compile_definitions(${QTXDGX_LIBRARY_NAME}
     PRIVATE
         "QTXDG_COMPILATION=\"1\""

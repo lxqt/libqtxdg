@@ -42,20 +42,4 @@
 #    define QTXDG_AUTOTEST               /* Building library, tests disabled */
 #endif
 
-#ifndef QL1S
-#define QL1S(x) QLatin1String(x)
-#endif
-
-#ifndef QL1C
-#define QL1C(x) QLatin1Char(x)
-#endif
-
-#ifndef QSL
-#define QSL(x) QStringLiteral(x)
-#endif
-
-#ifndef QBAL
-#define QBAL(x) QByteArrayLiteral(x)
-#endif
-
 #endif // QTXDG_MACROS_H

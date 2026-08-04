@@ -493,6 +493,7 @@ XdgDesktopFile::Type XdgDesktopFileData::detectType(XdgDesktopFile *q) const
 
 bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const QString & action, const QStringList& urls) const
 {
+    QStringList formattedUrls(urls.size());
     //DBusActivatable handling
     if (q->value("DBusActivatable"_L1, false).toBool()) {
         /* WARNING: We fallback to use Exec when the DBusActivatable fails.
@@ -516,13 +517,37 @@ bool XdgDesktopFileData::startApplicationDetached(const XdgDesktopFile *q, const
          * We consider that this violation is more acceptable than an failure
          * in launching an application.
          */
-        if (startByDBus(action, urls))
+
+        // Convert all local filesystem paths to URL format
+        // The spec states that filenames are an array of URIs, in UTF-8.
+        // Ref: https://specifications.freedesktop.org/desktop-entry/latest/dbus.html
+        for (qsizetype i = 0; i < urls.size(); ++i) {
+            const QUrl url(urls.at(i));
+            if (url.scheme().isEmpty()) {
+                // No scheme present: treat as a direct filesystem path
+                formattedUrls[i] = QUrl::fromLocalFile(urls.at(i)).toString();
+            } else {
+                formattedUrls[i] = urls.at(i);
+            }
+        }
+        if (startByDBus(action, formattedUrls))
             return true;
+    }
+
+    // Convert all to local filesystem paths.
+    // Some apps can't take an local fil in URL format
+    for (qsizetype i = 0; i < urls.size(); ++i) {
+        const QUrl url(urls.at(i));
+        if (url.scheme() == "file"_L1) {
+            formattedUrls[i] = url.toLocalFile();
+        } else {
+            formattedUrls[i] = urls.at(i);
+        }
     }
     QStringList args;
     QStringList appArgs = action.isEmpty()
-        ? q->expandExecString(urls)
-        : XdgDesktopAction{*q, action}.expandExecString(urls);
+        ? q->expandExecString(formattedUrls)
+        : XdgDesktopAction{*q, action}.expandExecString(formattedUrls);
 
     if (appArgs.isEmpty())
         return false;

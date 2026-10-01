@@ -22,7 +22,6 @@
 #include "xdgmimeapps_p.h"
 
 #include "xdgdesktopfile.h"
-#include "xdgmacros.h"
 #include "xdgmimeappsglibbackend.h"
 
 #include <QMutexLocker>

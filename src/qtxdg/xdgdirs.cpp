@@ -28,7 +28,7 @@
 // clazy:excludeall=non-pod-global-static
 
 #include "xdgdirs.h"
-#include <cstdlib>
+
 #include <QDir>
 #include <QDebug>
 #include <QLatin1StringView>

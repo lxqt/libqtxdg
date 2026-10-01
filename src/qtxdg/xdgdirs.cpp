@@ -32,6 +32,7 @@
 #include <QDir>
 #include <QDebug>
 #include <QLatin1StringView>
+#include <QList>
 #include <QStandardPaths>
 
 
@@ -214,7 +215,7 @@ bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool 
         return false;
 
     QTextStream stream(&configFile);
-    QVector<QString> lines;
+    QList<QString> lines;
     QString line;
     bool foundVar = false;
     while (!stream.atEnd())

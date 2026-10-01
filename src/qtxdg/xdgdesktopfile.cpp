@@ -35,9 +35,6 @@
 #include "xdgmimeapps.h"
 #include "xdgdefaultapps.h"
 
-#include <cstdlib>
-#include <unistd.h>
-
 #include <QDebug>
 #include <QDBusInterface>
 #include <QDBusObjectPath>

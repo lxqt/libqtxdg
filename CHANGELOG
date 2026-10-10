@@ -1,3 +1,13 @@
+libqtxdg-4.5.0 / 2026-11-05
+============================
+ * Don't show C2Y extensions warnings.
+ * Updated the address of Free Software Foundation.
+ * Dropped string macros.
+ * Open files in URI format with DBus activated apps.
+ * Removed version check for less than Qt 6.8.
+ * Dropped QVector.
+ * Removed unneeded headers.
+
 libqtxdg-4.4.0 / 2026-04-20
 ============================
  * Modernized string nomenclature and classes.

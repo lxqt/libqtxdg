@@ -4,7 +4,7 @@ libqtxdg-4.5.0 / 2026-11-05
  * Updated the address of Free Software Foundation.
  * Dropped string macros.
  * Open files in URI format with DBus activated apps.
- * Removed version check for less than Qt 6.8.
+ * Removed old codes belonging to Qt < 6.8 after bumping the minimum Qt version to 6.10.
  * Dropped QVector.
  * Removed unneeded headers.
 

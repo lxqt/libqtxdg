@@ -92,18 +92,17 @@ static QString qtxdgConfigFilename()
 static QList<XdgDesktopFile *> categoryAndMimeTypeApps(const QString &category, const QStringList &protocols)
 {
     XdgMimeApps db;
-    QList<XdgDesktopFile *> apps = db.categoryApps(category);
+    QList<XdgDesktopFile*> apps = db.categoryApps(category);
     const QSet<QString> protocolsSet = QSet<QString>(protocols.begin(), protocols.end());
-    QList<XdgDesktopFile*>::iterator it = apps.begin();
-    while (it != apps.end()) {
-        const auto list = (*it)->mimeTypes();
+    unsigned long i = 0;
+    for (XdgDesktopFile* app : apps) {
+        const auto list = app->mimeTypes();
         const QSet<QString> appSupportsSet = QSet<QString>(list.begin(), list.end());
-        if (appSupportsSet.contains(protocolsSet) && (*it)->isShown()) {
-            ++it;
-        } else {
-            delete *it;
-            it = apps.erase(it);
+        if (!appSupportsSet.contains(protocolsSet) || !app->isShown()) {
+            delete app;
+            apps.removeAt(i);
         }
+        i += 1;
     }
     return apps;
 }
@@ -190,15 +189,15 @@ XdgDesktopFile *XdgDefaultApps::terminal()
 QList<XdgDesktopFile *> XdgDefaultApps::terminals()
 {
     XdgMimeApps db;
-    QList<XdgDesktopFile *> terminalList = db.categoryApps("TerminalEmulator"_L1);
-    QList<XdgDesktopFile *>::iterator it = terminalList.begin();
-    while (it != terminalList.end()) {
-        if ((*it)->isShown()) {
-            ++it;
-        } else {
-            delete *it;
-            it = terminalList.erase(it);
+    QList<XdgDesktopFile*> terminalList = db.categoryApps("TerminalEmulator"_L1);
+    unsigned long i = 0;
+    for (XdgDesktopFile* term : terminalList)
+    {
+        if (!term->isShown()) {
+            delete term;
+            terminalList.removeAt(i);
         }
+        i += 1;
     }
     return terminalList;
 }

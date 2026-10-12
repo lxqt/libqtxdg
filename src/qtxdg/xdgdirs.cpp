@@ -239,8 +239,8 @@ bool XdgDirs::setUserDir(XdgDirs::UserDirectory dir, const QString& value, bool 
     if (!foundVar)
         stream << "XDG_%1_DIR=\"%2\"\n"_L1.arg(folderName.toUpper(),(value));
 
-    for (QVector<QString>::iterator i = lines.begin(); i != lines.end(); ++i)
-        stream << *i << u'\n';
+    for (const QString& line : lines)
+        stream << line << u'\n';
 
     configFile.close();
 

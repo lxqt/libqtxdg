@@ -793,21 +793,18 @@ bool XdgDesktopFile::load(const QString& fileName)
 bool XdgDesktopFile::save(QIODevice *device) const
 {
     QTextStream stream(device);
-    QMap<QString, QVariant>::const_iterator i = d->mItems.constBegin();
 
     QString section;
-    while (i != d->mItems.constEnd())
+    for (const auto [path, value] : d->mItems.asKeyValueRange())
     {
-        QString path = i.key();
-        QString sect =  path.section(u'/',0,0);
+        QString sect = path.section(u'/',0,0);
         if (sect != section)
         {
             section = sect;
             stream << u'[' << section << u']' << Qt::endl;
         }
         QString key = path.section(u'/', 1);
-        stream << key << u'=' << i.value().toString() << Qt::endl;
-        ++i;
+        stream << key << u'=' << value.toString() << Qt::endl;
     }
     return true;
 }

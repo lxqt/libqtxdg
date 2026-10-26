@@ -1,5 +1,3 @@
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
 set(libqtxdg_PUBLIC_H_FILES
     xdgaction.h
     xdgdesktopfile.h

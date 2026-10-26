@@ -1,7 +1,5 @@
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(QTX_LIBRARIES Qt6::Widgets Qt6::Xml Qt6::DBus)
-
 set(libqtxdg_PUBLIC_H_FILES
     xdgaction.h
     xdgdesktopfile.h
@@ -81,7 +79,9 @@ target_link_libraries(${QTXDGX_LIBRARY_NAME}
     PRIVATE
         Qt6::GuiPrivate
     PUBLIC
-        ${QTX_LIBRARIES}
+        Qt6::Widgets
+        Qt6::Xml
+        Qt6::DBus
         ${QTXDGX_ICONLOADER_LIBRARY_NAME}
         ${GLIB_LIBRARIES}
         ${GLIB_GOBJECT_LIBRARIES}

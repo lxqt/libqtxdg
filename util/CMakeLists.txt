@@ -1,5 +1,3 @@
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
 set(QTXDG_DESKTOP_FILE_START_SRCS
     qtxdg-desktop-file-start.cpp
 )

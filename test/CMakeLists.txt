@@ -7,8 +7,6 @@ add_definitions(
     -DQT_NO_KEYWORDS
 )
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
 macro(qtxdg_add_test)
     foreach(_testname ${ARGN})
         add_executable(${_testname} ${_testname}.cpp)
